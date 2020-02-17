@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="“网络编程就是，通过网络互连的计算机在运行程序的时候，进行数据交换的过程”  网络模型：  OSI  &amp;emsp;&amp;emsp;&amp;emsp; 开放系统互联Open System Interconnection 定义计算机互联标准 TCP&#x2F;IP&amp;emsp;&amp;emsp; 由网络层的IP协议和传输层的TCP协议组成 定义传输标准  OSI七层概述(从上到下) 应用层： 终端应用如：FTP&#x2F;HTTP(各种">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络编程">
+<meta property="og:url" content="http://yoursite.com/2017/07/04/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Ninja Blog">
+<meta property="og:description" content="“网络编程就是，通过网络互连的计算机在运行程序的时候，进行数据交换的过程”  网络模型：  OSI  &amp;emsp;&amp;emsp;&amp;emsp; 开放系统互联Open System Interconnection 定义计算机互联标准 TCP&#x2F;IP&amp;emsp;&amp;emsp; 由网络层的IP协议和传输层的TCP协议组成 定义传输标准  OSI七层概述(从上到下) 应用层： 终端应用如：FTP&#x2F;HTTP(各种">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://i.imgur.com/znUJ9I3.png">
+<meta property="og:image" content="http://i.imgur.com/WKDbuQR.png">
+<meta property="article:published_time" content="2017-07-04T10:51:30.000Z">
+<meta property="article:modified_time" content="2020-02-17T07:54:18.893Z">
+<meta property="article:author" content="Ninja Zhang">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://i.imgur.com/znUJ9I3.png">
+
+<link rel="canonical" href="http://yoursite.com/2017/07/04/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>网络编程 | Ninja Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ninja Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">阳光从树叶细缝中，露出了笑容，温暖了我的美梦</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/04/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/header/gugu.jpg">
+      <meta itemprop="name" content="Ninja Zhang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ninja Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          网络编程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-07-04 18:51:30" itemprop="dateCreated datePublished" datetime="2017-07-04T18:51:30+08:00">2017-07-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-17 15:54:18" itemprop="dateModified" datetime="2020-02-17T15:54:18+08:00">2020-02-17</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>“网络编程就是，通过网络互连的计算机在运行程序的时候，进行数据交换的过程”</p>
+</blockquote>
+<p>网络模型：</p>
+<ul>
+<li>OSI  &emsp;&emsp;&emsp; <a href="http://baike.baidu.com/item/OSI/5520" target="_blank" rel="noopener">开放系统互联Open System Interconnection</a> 定义计算机互联标准</li>
+<li>TCP/IP&emsp;&emsp; <a href="http://baike.baidu.com/item/TCP%2FIP协议" target="_blank" rel="noopener">由网络层的IP协议和传输层的TCP协议组成</a> 定义传输标准</li>
+</ul>
+<h2 id="OSI七层概述-从上到下"><a href="#OSI七层概述-从上到下" class="headerlink" title="OSI七层概述(从上到下)"></a>OSI七层概述(从上到下)</h2><ul>
+<li><strong>应用层：</strong> 终端应用如：FTP/HTTP(各种文件传输下载)，WEB(IE浏览)，QQ等电脑屏幕上看得见的东西。</li>
+<li><strong>表示层：</strong> 对接收的数据进行解释，加密解密，压缩解压等(计算机识别的东西变成人类识别的东西如图片声音)</li>
+<li><strong>会话层：</strong> 通过传输层(端口号：传输端口与接收端口)建立数据传输的通路。主要在你系统之间发起会话或者接收会话请求(设备之间需要互相认识可以是Ip也可以是MAC或者是主机名)</li>
+<li><strong>传输层：</strong> 定义一些传输数据的协议和端口号（www端口80等），如：TCP(传输控制协议，传输效率低，可靠性强，用于传输可靠性要求高，数据量大的数据)，UDP(用户数据报协议，与TCP特性相反，用于传输可靠性要求不高，数据量小的数据，如QQ聊天数据)。主要是将从下层接收的数据进行分段和传输，到达目的地址后再进行重组，常常把这一层数据叫做段。</li>
+<li><strong>网络层：</strong> 主要将从下层接收到的数据进行IP地址（例192.168.0.1）的封装和解封装。在这一层工作的设备是路由器，常把这层数据叫做数据包。</li>
+<li><strong>数据链路层：</strong> 主要将从物理层接收到的数据进行MAC地址(网卡的地址)的封装与解封装。常把这一层数据叫做帧。这一层工作的设备是交换机，数据通过交换机来传输。</li>
+<li><strong>物理层：</strong> 主要定义物理设备标准，如网线的接口类型，光纤的接口类型，各种传输介质的传输速率等。主要用来传输比特流，就是由01转化为电流弱强来进行传输，到达目的地后转换为01，这一层数据叫做比特。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="网络通信三要素"><a href="#网络通信三要素" class="headerlink" title="网络通信三要素"></a>网络通信三要素</h2><ul>
+<li><strong>IP地址</strong> </li>
+<li><strong>端口</strong></li>
+<li><strong>协议</strong></li>
+</ul>
+<h3 id="IP地址"><a href="#IP地址" class="headerlink" title="IP地址"></a>IP地址</h3><p><strong>网络中计算机的唯一标识。组成：网络号段+主机号段</strong><br>A类IP地址:第一段号码为网络号码，剩下的三段号码为本地计算机的号码 256*256*256<br>B类IP地址:前二段号码为网络号码，剩下的二段号码为本地计算机的号码<br>C类IP地址:前三段号码为网络号码，剩下的一段号码为本地计算机的号码</p>
+<p><strong>IP地址的分类：</strong><br>A类    1.0.0.1—127.255.255.254    </p>
+<ul>
+<li>10.X.X.X是私有地址(私有地址就是在互联网上不使用，而被用在局域网络中的地址)            </li>
+<li>127.X.X.X是保留地址，做循环测试用的。</li>
+</ul>
+<p>B类    128.0.0.1—191.255.255.254    </p>
+<ul>
+<li>172.16.0.0—172.31.255.255是私有地址。</li>
+<li>169.254.X.X是保留地址。</li>
+</ul>
+<p>C类    192.0.0.1—223.255.255.254    </p>
+<ul>
+<li>192.168.X.X是私有地址</li>
+</ul>
+<p>D类    224.0.0.1—239.255.255.254     </p>
+<p>E类    240.0.0.1—247.255.255.254    </p>
+<p><strong>特殊IP地址</strong><br>127.0.0.1 回环地址(本机)<br>x.x.x.255 广播地址<br>x.x.x.0   网络地址</p>
+<p><strong>两个DOS命令</strong><br>ipconfig 查看本机ip地址<br>ping + ip地址 测试本机与指定的ip地址间通信是否有问题  </p>
+<p><strong>InetAddress类 可获取ip</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class InetAddressDemo &#123;</span><br><span class="line">	public static void main(String[] args) throws UnknownHostException &#123;</span><br><span class="line">	InetAddress address &#x3D; InetAddress.getByName(&quot;DESKTOP-RVPDLCN&quot;);&#x2F;&#x2F; 根据主机名或者IP地址的字符串表示得到IP地址对象</span><br><span class="line">	&#x2F;&#x2F; 获取主机名和IP地址</span><br><span class="line">	String name &#x3D; address.getHostName();</span><br><span class="line">	String ip &#x3D; address.getHostAddress();</span><br><span class="line">	System.out.println(name + &quot;---&quot; + ip);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="端口号"><a href="#端口号" class="headerlink" title="端口号"></a>端口号</h3><p>正在运行的程序的标识<br>有效端口：0~65535，其中0~1024系统使用或保留端口。</p>
+<h3 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h3><p>通信的规则（在应用层上）  </p>
+<p><strong>UDP 如发短信</strong></p>
+<ul>
+<li>把数据打包</li>
+<li>数据有限制</li>
+<li>不建立连接</li>
+<li>速度快</li>
+<li>不可靠</li>
+</ul>
+<p><strong>TCP 如打电话</strong></p>
+<ul>
+<li>建立连接通道</li>
+<li>数据无限制</li>
+<li>速度慢</li>
+<li>可靠</li>
+</ul>
+<h2 id="Socket编程"><a href="#Socket编程" class="headerlink" title="Socket编程"></a>Socket编程</h2><p>Socket编程，网络编程，套接字编程。  Socket包含：<strong>IP地址+端口</strong><br>其本身不是协议，而是对协议的封装，或者说是一个可调用接口（api）</p>
+<h3 id="Socket原理机制"><a href="#Socket原理机制" class="headerlink" title="Socket原理机制"></a>Socket原理机制</h3><ol>
+<li>通信的两端都有Socket。</li>
+<li>网络通信其实就是Socket间的通信。</li>
+<li>数据在两个Socket间通过IO传输。</li>
+</ol>
+<h3 id="发送和接收数据"><a href="#发送和接收数据" class="headerlink" title="发送和接收数据"></a>发送和接收数据</h3><p>DatagramSocket(用来发送接收)&emsp;&emsp;DatagramPacket（用来打包）&emsp;&emsp;InetAddress（用来获取地址）</p>
+<h4 id="UDP案例"><a href="#UDP案例" class="headerlink" title="UDP案例"></a>UDP案例</h4><p>操作方法，先打开接收端，再打开发送端。当然如果不打开接收端也不会报错，因为UDP的特点就是不保证一定能收到数据。</p>
+<p><strong>UDP协议发送数据</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public class SendDemo &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		&#x2F;&#x2F; 创建发送端Socket对象</span><br><span class="line">		DatagramSocket ds &#x3D; new DatagramSocket();</span><br><span class="line">		&#x2F;&#x2F; 创建数据并把数据打包</span><br><span class="line">		byte[] bys &#x3D; &quot;hello,udp,我来了&quot;.getBytes();</span><br><span class="line">		int length &#x3D; bys.length;</span><br><span class="line">		InetAddress address &#x3D; InetAddress.getByName(&quot;DESKTOP-RVPDLCN&quot;);</span><br><span class="line">		int port &#x3D; 10086;</span><br><span class="line">		&#x2F;&#x2F;传入的四个数据分别为，将要发送的数据，其长度，远程主机的IP地址和远程主机的端口号。</span><br><span class="line">		DatagramPacket dp &#x3D; new DatagramPacket(bys, length, address, port);</span><br><span class="line">		&#x2F;&#x2F; 调用Socket对象的发送方法发送数据包</span><br><span class="line">		ds.send(dp);</span><br><span class="line">		&#x2F;&#x2F; 释放资源</span><br><span class="line">		ds.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>UDP协议接收数据</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class ReceiveDemo &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		&#x2F;&#x2F; 创建接收端Socket对象</span><br><span class="line">		DatagramSocket ds &#x3D; new DatagramSocket(10086);</span><br><span class="line">		&#x2F;&#x2F; 创建一个数据包（接收容器）</span><br><span class="line">		byte[] bys &#x3D; new byte[1024];</span><br><span class="line">		int length &#x3D; bys.length;</span><br><span class="line">		DatagramPacket dp &#x3D; new DatagramPacket(bys, length);</span><br><span class="line">		&#x2F;&#x2F; 调用Socket对象的接收方法接收数据</span><br><span class="line">		ds.receive(dp);&#x2F;&#x2F; 阻塞式</span><br><span class="line">		&#x2F;&#x2F; 解析数据包，并显示在控制台,获取对方的ip</span><br><span class="line">		InetAddress address &#x3D; dp.getAddress();</span><br><span class="line">		String ip &#x3D; address.getHostAddress();</span><br><span class="line">		byte[] bys2 &#x3D; dp.getData();</span><br><span class="line">		int len &#x3D; dp.getLength();</span><br><span class="line">		String s &#x3D; new String(bys2, 0, len);</span><br><span class="line">		System.out.println(ip + &quot;:&quot; + s);</span><br><span class="line">		&#x2F;&#x2F; 释放资源</span><br><span class="line">		ds.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>以下对代码进行优化，使用链式编程等技巧</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public class SendDemo2 &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		DatagramSocket ds &#x3D; new DatagramSocket();</span><br><span class="line">		byte[] bys &#x3D; &quot;helloworld&quot;.getBytes();</span><br><span class="line">		DatagramPacket dp &#x3D; new DatagramPacket(bys, bys.length,</span><br><span class="line">				InetAddress.getByName(&quot;DESKTOP-RVPDLCN&quot;), 12345);</span><br><span class="line">		ds.send(dp);</span><br><span class="line">		ds.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class ReceiveDemo2 &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		DatagramSocket ds &#x3D; new DatagramSocket(12345);</span><br><span class="line">		byte[] bys &#x3D; new byte[1024];</span><br><span class="line">		DatagramPacket dp &#x3D; new DatagramPacket(bys, bys.length);</span><br><span class="line">		ds.receive(dp);</span><br><span class="line">		String ip &#x3D; dp.getAddress().getHostAddress();</span><br><span class="line">		String s &#x3D; new String(dp.getData(), 0, dp.getLength());</span><br><span class="line">		System.out.println(&quot;from&quot; + ip + &quot;data is:&quot; + s);</span><br><span class="line">		ds.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>使用键盘录入进行数据传输</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">public class SendDemo2 &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		DatagramSocket ds &#x3D; new DatagramSocket();</span><br><span class="line">		&#x2F;&#x2F; 封装键盘录入数据</span><br><span class="line">		BufferedReader br &#x3D; new BufferedReader(new InputStreamReader(System.in));</span><br><span class="line">		String line &#x3D; null;</span><br><span class="line">		while ((line &#x3D; br.readLine()) !&#x3D; null) &#123;</span><br><span class="line">			if (&quot;886&quot;.equals(line)) &#123;</span><br><span class="line">				break;</span><br><span class="line">			&#125;</span><br><span class="line">			byte[] bys &#x3D; line.getBytes();</span><br><span class="line">			DatagramPacket dp &#x3D; new DatagramPacket(bys, bys.length,</span><br><span class="line">					InetAddress.getByName(&quot;DESKTOP-RVPDLCN&quot;), 12346);</span><br><span class="line">                    &#x2F;&#x2F;如果想让所有人知道，可以改为广播地址xxx.xxx.xxx.255</span><br><span class="line">			ds.send(dp);</span><br><span class="line">		&#125;</span><br><span class="line">		ds.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class ReceiveDemo2 &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		DatagramSocket ds &#x3D; new DatagramSocket(12346);</span><br><span class="line">		while (true) &#123;</span><br><span class="line">			byte[] bys &#x3D; new byte[1024];</span><br><span class="line">			DatagramPacket dp &#x3D; new DatagramPacket(bys, bys.length);</span><br><span class="line">			ds.receive(dp);</span><br><span class="line">			String ip &#x3D; dp.getAddress().getHostAddress();</span><br><span class="line">			String s &#x3D; new String(dp.getData(), 0, dp.getLength());</span><br><span class="line">			System.out.println(&quot;from&quot; + ip + &quot;data is:&quot; + s);</span><br><span class="line">			&#x2F;&#x2F; 接收端一直开着等待接收数据，不需要关闭</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>小例子：</strong> 使用多线程及UDP协议完成聊天室，详情见下次博客</p>
+<h4 id="TCP案例"><a href="#TCP案例" class="headerlink" title="TCP案例"></a>TCP案例</h4><p>客户端键盘录入数据，服务器输出到控制台</p>
+<p>TCP需要保持连接通道，所以必须先开启接收端再开启发送端。这里我们先写一个服务器端。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public class ClientDemo &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		Socket s &#x3D; new Socket(&quot;10.202.198.103&quot;, 6666);</span><br><span class="line">		&#x2F;&#x2F; 键盘录入</span><br><span class="line">		BufferedReader br &#x3D; new BufferedReader(new InputStreamReader(System.in));</span><br><span class="line">		&#x2F;&#x2F; 把通道内的流给包装一下</span><br><span class="line">		BufferedWriter bw &#x3D; new BufferedWriter(new OutputStreamWriter(</span><br><span class="line">				s.getOutputStream()));</span><br><span class="line">		String line &#x3D; null;</span><br><span class="line">		while ((line &#x3D; br.readLine()) !&#x3D; null) &#123;</span><br><span class="line">			&#x2F;&#x2F; 键盘录入数据要自定义结束标记</span><br><span class="line">			if (&quot;886&quot;.equals(line)) &#123;</span><br><span class="line">				break;</span><br><span class="line">			&#125;</span><br><span class="line">			bw.write(line);</span><br><span class="line">			&#x2F;&#x2F;行分隔符</span><br><span class="line">			bw.newLine();</span><br><span class="line">			bw.flush();</span><br><span class="line">		&#125;</span><br><span class="line">		&#x2F;&#x2F; 释放资源</span><br><span class="line">		s.close();</span><br><span class="line">		&#x2F;&#x2F; br.close(); 有结束标记了不需要关闭</span><br><span class="line">		&#x2F;&#x2F; bw.close(); s关了，bw必关了</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>客户端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public class ServerDemo &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		&#x2F;&#x2F; 创建Socket对象</span><br><span class="line">		ServerSocket ss &#x3D; new ServerSocket(6666);</span><br><span class="line">		&#x2F;&#x2F; 监听客户端连接</span><br><span class="line">		Socket s &#x3D; ss.accept();</span><br><span class="line">		String ip &#x3D; s.getInetAddress().getHostAddress();</span><br><span class="line">		&#x2F;&#x2F; 包装通道内的流</span><br><span class="line">		BufferedReader br &#x3D; new BufferedReader(new InputStreamReader(</span><br><span class="line">				s.getInputStream()));</span><br><span class="line">		String line &#x3D; null;</span><br><span class="line">		while ((line &#x3D; br.readLine()) !&#x3D; null) &#123;</span><br><span class="line">			System.out.println(ip + &quot;---&quot; + line);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		s.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先打开接收端（服务器端）再打开发送端（服务器端），并输入信息。最终效果如下：</p>
+<p><img src="http://i.imgur.com/znUJ9I3.png" alt="">)<img src="http://i.imgur.com/WKDbuQR.png" alt=""></p>
+<p>当然，tcp更多的用于文件例如图片传输，但原理是一样的。</p>
+<blockquote>
+<p>记录了学习网络编程的基础知识</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/07/02/%E5%B9%B4%E8%BD%BB%E5%B0%B1%E6%98%AF%E8%A6%81%E6%8A%98%E8%85%BE/" rel="prev" title="年轻就是要折腾">
+      <i class="fa fa-chevron-left"></i> 年轻就是要折腾
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/07/04/%E7%AE%80%E5%8D%95%E7%9A%84%E8%81%8A%E5%A4%A9%E5%AE%A4demo/" rel="next" title="简单的聊天室demo">
+      简单的聊天室demo <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OSI七层概述-从上到下"><span class="nav-number">1.</span> <span class="nav-text">OSI七层概述(从上到下)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络通信三要素"><span class="nav-number">2.</span> <span class="nav-text">网络通信三要素</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IP地址"><span class="nav-number">2.1.</span> <span class="nav-text">IP地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#端口号"><span class="nav-number">2.2.</span> <span class="nav-text">端口号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#协议"><span class="nav-number">2.3.</span> <span class="nav-text">协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Socket编程"><span class="nav-number">3.</span> <span class="nav-text">Socket编程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Socket原理机制"><span class="nav-number">3.1.</span> <span class="nav-text">Socket原理机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发送和接收数据"><span class="nav-number">3.2.</span> <span class="nav-text">发送和接收数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#UDP案例"><span class="nav-number">3.2.1.</span> <span class="nav-text">UDP案例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP案例"><span class="nav-number">3.2.2.</span> <span class="nav-text">TCP案例</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ninja Zhang"
+      src="/img/header/gugu.jpg">
+  <p class="site-author-name" itemprop="name">Ninja Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ninja Zhang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

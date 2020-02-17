@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="“本例基于Web基础的servlet展开，虽然较简单，但对Web的三大组件进行了结合。 ”  主要实现三个功能：  提供用户登录界面，提供注销功能。 显示当前网站的所有登录用户信息  管理员可以踢除指定的登录用户">
+<meta property="og:type" content="article">
+<meta property="og:title" content="统计当前网站在线用户信息的简单实例">
+<meta property="og:url" content="http://yoursite.com/2017/07/02/%E7%BB%9F%E8%AE%A1%E5%BD%93%E5%89%8D%E7%BD%91%E7%AB%99%E5%9C%A8%E7%BA%BF%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E4%BE%8B/index.html">
+<meta property="og:site_name" content="Ninja Blog">
+<meta property="og:description" content="“本例基于Web基础的servlet展开，虽然较简单，但对Web的三大组件进行了结合。 ”  主要实现三个功能：  提供用户登录界面，提供注销功能。 显示当前网站的所有登录用户信息  管理员可以踢除指定的登录用户">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-07-02T15:22:11.000Z">
+<meta property="article:modified_time" content="2020-02-17T07:54:06.778Z">
+<meta property="article:author" content="Ninja Zhang">
+<meta property="article:tag" content="Web基础">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2017/07/02/%E7%BB%9F%E8%AE%A1%E5%BD%93%E5%89%8D%E7%BD%91%E7%AB%99%E5%9C%A8%E7%BA%BF%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E4%BE%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>统计当前网站在线用户信息的简单实例 | Ninja Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ninja Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">阳光从树叶细缝中，露出了笑容，温暖了我的美梦</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/02/%E7%BB%9F%E8%AE%A1%E5%BD%93%E5%89%8D%E7%BD%91%E7%AB%99%E5%9C%A8%E7%BA%BF%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E4%BE%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/header/gugu.jpg">
+      <meta itemprop="name" content="Ninja Zhang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ninja Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          统计当前网站在线用户信息的简单实例
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-07-02 23:22:11" itemprop="dateCreated datePublished" datetime="2017-07-02T23:22:11+08:00">2017-07-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-17 15:54:06" itemprop="dateModified" datetime="2020-02-17T15:54:06+08:00">2020-02-17</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>“本例基于Web基础的servlet展开，虽然较简单，但对Web的三大组件进行了结合。 ”</p>
+</blockquote>
+<p><strong>主要实现三个功能</strong>：</p>
+<ul>
+<li>提供用户登录界面，提供注销功能。</li>
+<li>显示当前网站的所有登录用户信息 </li>
+<li>管理员可以踢除指定的登录用户</li>
+</ul>
+<a id="more"></a>
+
+<p><strong>友情提示：</strong> Web的三大组件都需要在web.xml中配置哦！</p>
+<h2 id="登录界面-login-jsp"><a href="#登录界面-login-jsp" class="headerlink" title="登录界面 login.jsp"></a>登录界面 login.jsp</h2><p>这里比较简单，假设什么人都能进入，不涉及数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;form action&#x3D;&quot;$&#123;pageContext.request.contextPath &#125;&#x2F;LoginServlet&quot; method&#x3D;&quot;post&quot;&gt;</span><br><span class="line">	用户名:&lt;input type&#x3D;&quot;text&quot; name&#x3D;&quot;username&quot; &#x2F;&gt;&lt;br&gt;</span><br><span class="line">	&lt;input type&#x3D;&quot;submit&quot; value&#x3D;&quot;提交&quot;&#x2F;&gt;</span><br><span class="line">&lt;&#x2F;form&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="处理登录请求-LoginServlet"><a href="#处理登录请求-LoginServlet" class="headerlink" title="处理登录请求 LoginServlet"></a>处理登录请求 LoginServlet</h2><p>由于什么人都能进入，所有我们省去了校验用户名等操作，即假设登录成功。我们将拿到的用户数据放到session域中。核心代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">String username &#x3D; request.getParameter(&quot;username&quot;);</span><br><span class="line">HttpSession session  &#x3D; request.getSession(true);</span><br><span class="line">session.setAttribute(&quot;user&quot;, username);</span><br><span class="line">&#x2F;&#x2F; 把登录用户的IP地址存放到session中</span><br><span class="line">session.setAttribute(&quot;ip&quot;, request.getRemoteHost());</span><br><span class="line">&#x2F;&#x2F; 跳转到用户主页</span><br><span class="line">response.sendRedirect(request.getContextPath() + &quot;&#x2F;index.jsp&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>此时我们已经将用户的数据存入到了session域当中去了。但如果我们的用户名是中文的很有可能出现乱码。这里我们需要添加一个解决post乱码的代码。<br>在最前面加上：<code>request.setCharacterEncoding(&quot;utf-8&quot;);</code>很显然，这句代码是复用的，每一个servlet都需要它的支持，这时候我们想到另一种一劳永逸的方法，就是添加一个过滤器，对其进行过滤，解决代码复写问题，详细代码见<a href="http://blog.csdn.net/ninja_z/article/details/73801005#t4" target="_blank" rel="noopener">post/get乱码过滤器解决方案</a></p>
+<h3 id="监听器-OnLineListener"><a href="#监听器-OnLineListener" class="headerlink" title="监听器 OnLineListener"></a>监听器 OnLineListener</h3><p>由于我们需要得到所有在线用户的信息，就需要监听user属性名称的增加。响应的接口的介绍参见<a href="http://blog.csdn.net/ninja_z/article/details/73826354#t10" target="_blank" rel="noopener">HttpSessionAttributeLisener</a><br>下面是该监听器的具体代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">public class OnLineListener implements HttpSessionAttributeListener &#123;</span><br><span class="line">	&#x2F;**</span><br><span class="line">	 * 当用户登录成功后,会执行session.setAttribute(&quot;user&quot;, username); 该方法用于监听用户的user属性的添加</span><br><span class="line">	 *&#x2F;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void attributeAdded(HttpSessionBindingEvent event) &#123;</span><br><span class="line">		&#x2F;&#x2F; 得到属性名</span><br><span class="line">		String name &#x3D; event.getName();</span><br><span class="line">		ServletContext context &#x3D; event.getSession().getServletContext();</span><br><span class="line">		&#x2F;&#x2F;如果取出的属性名是user的话，即拿到用户名</span><br><span class="line">		if (&quot;user&quot;.equals(name)) &#123;</span><br><span class="line">			&#x2F;&#x2F; 同步的代码块,为了避免多个登录用户同时操作onLine数据时引发的并发问题</span><br><span class="line">			synchronized (OnLineListener.class) &#123;</span><br><span class="line">				&#x2F;&#x2F; 1 把当前登录的session对象封装到map集合中</span><br><span class="line">				&#x2F;&#x2F; 1.1 先从context域中获取session数据</span><br><span class="line">				Map&lt;String, HttpSession&gt; onLine &#x3D; (Map&lt;String, HttpSession&gt;) context</span><br><span class="line">						.getAttribute(&quot;onLine&quot;);</span><br><span class="line">				&#x2F;&#x2F; 1.2 如果网站第一个登录用户,onLine为null,这时新建一个map集合</span><br><span class="line">				if (onLine &#x3D;&#x3D; null) &#123;</span><br><span class="line">					onLine &#x3D; new HashMap&lt;String, HttpSession&gt;();</span><br><span class="line">				&#125;</span><br><span class="line">				&#x2F;&#x2F; 1.3把当前用户的session存入map集合</span><br><span class="line">				HttpSession session &#x3D; event.getSession();</span><br><span class="line">				onLine.put(session.getId(), session);</span><br><span class="line">				&#x2F;&#x2F; 2 把封装好的map保存到context域中</span><br><span class="line">				context.setAttribute(&quot;onLine&quot;, onLine);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void attributeReplaced(HttpSessionBindingEvent event) &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	&#x2F;&#x2F;这部分代码可先不看，阅读之后内容回头再看</span><br><span class="line">	@Override</span><br><span class="line">	public void attributeRemoved(HttpSessionBindingEvent event) &#123;</span><br><span class="line">		String name &#x3D; event.getName();</span><br><span class="line">		ServletContext context &#x3D; event.getSession().getServletContext();</span><br><span class="line">		String sessionId &#x3D; event.getSession().getId();</span><br><span class="line">		if (&quot;user&quot;.equals(name)) &#123;</span><br><span class="line">			&#x2F;&#x2F; 1 获取context域中的map集合</span><br><span class="line">			Map&lt;String, HttpSession&gt; onLine &#x3D; (Map&lt;String, HttpSession&gt;) context</span><br><span class="line">					.getAttribute(&quot;onLine&quot;);</span><br><span class="line">			&#x2F;&#x2F; 2 移除对应的session对象</span><br><span class="line">			onLine.remove(sessionId);</span><br><span class="line">			&#x2F;&#x2F; 3 把修改后的map保存到context域中</span><br><span class="line">			context.setAttribute(&quot;onLine&quot;, onLine);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>web.xml中的配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;listener&gt;</span><br><span class="line">	&lt;listener-class&gt;cn.ninja.web.OnLineListener&lt;&#x2F;listener-class&gt;</span><br><span class="line">&lt;&#x2F;listener&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong> 这里的编程技巧，onLine是先取再判断是否为空，空则说明是第一个用户，在新建一个Map。这样的写法完美的避免了每一次进入监听器都会重新建立一个Map的错误。并且，这里选择将Map放入context域中，其原因是context都能取得到，而session虽然也能取得到，但其每一个session对应一个用户使其并不合适放所有用户的集合。</p>
+<h2 id="网站主页-index-jsp"><a href="#网站主页-index-jsp" class="headerlink" title="网站主页 index.jsp"></a>网站主页 index.jsp</h2><p>主要包括显示用户名，安全退出功能，查看在线登录用户功能</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">欢迎回来,$&#123;sessionScope.user &#125;,</span><br><span class="line">&lt;a href&#x3D;&quot;$&#123;pageContext.request.contextPath &#125;&#x2F;LogoutServlet&quot;&gt;【安全退出】&lt;&#x2F;a&gt;&lt;br&#x2F;&gt;</span><br><span class="line">&lt;a href&#x3D;&quot;$&#123;pageContext.request.contextPath &#125;&#x2F;GetOnLineServlet&quot;&gt;【查看在线登录用户】&lt;&#x2F;a&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="处理查看在线用户请求-GetOnLineServlet"><a href="#处理查看在线用户请求-GetOnLineServlet" class="headerlink" title="处理查看在线用户请求 GetOnLineServlet"></a>处理查看在线用户请求 GetOnLineServlet</h2><p>我们想要获得在线用户的登录名，ip地址，登录时间，最后访问时间。但是，我们之前获得的Map没办法直接取到这些值。所以我们这里先定义一个JavaBean取名为OnLineBean，来封装这些属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">private String sessionId;&#x2F;&#x2F; session对象的id，它的作用我们之后再讲</span><br><span class="line">private String name;&#x2F;&#x2F; 登录名</span><br><span class="line">private String ip;&#x2F;&#x2F; ip</span><br><span class="line">private String loginTime;&#x2F;&#x2F; 登录时间</span><br><span class="line">private String lastTime;&#x2F;&#x2F; 最后访问时间</span><br><span class="line">&#x2F;&#x2F;getter setter方法</span><br></pre></td></tr></table></figure>
+
+<p>以下我们给出GetOnLineServlet的核心代码，用于获得每个属性，并转发到在线用户信息界面</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 1从context域中取出map集合</span><br><span class="line">Map&lt;String, HttpSession&gt; onLine &#x3D; (Map&lt;String, HttpSession&gt;) this</span><br><span class="line">		.getServletContext().getAttribute(&quot;onLine&quot;);</span><br><span class="line">&#x2F;&#x2F; 2 创建一个新的List集合</span><br><span class="line">List&lt;OnLineBean&gt; list &#x3D; new ArrayList&lt;OnLineBean&gt;();</span><br><span class="line">SimpleDateFormat sdf &#x3D; new SimpleDateFormat(&quot;yyyy-MM-dd hh:mm:ss&quot;);</span><br><span class="line">&#x2F;&#x2F; 3遍历map集合</span><br><span class="line">if (onLine !&#x3D; null) &#123;</span><br><span class="line">	synchronized (GetOnLineServlet.class) &#123;</span><br><span class="line">		for (Entry&lt;String, HttpSession&gt; entry : onLine.entrySet()) &#123;</span><br><span class="line">			OnLineBean bean &#x3D; new OnLineBean();</span><br><span class="line">			bean.setSessionId(entry.getKey());</span><br><span class="line">			HttpSession session &#x3D; entry.getValue();</span><br><span class="line">			bean.setName((String) session.getAttribute(&quot;user&quot;));</span><br><span class="line">			bean.setIp((String) session.getAttribute(&quot;ip&quot;));</span><br><span class="line">			bean.setLoginTime(sdf.format(new Date(session</span><br><span class="line">					.getCreationTime())));</span><br><span class="line">			bean.setLastTime(sdf.format(new Date(session</span><br><span class="line">					.getLastAccessedTime())));</span><br><span class="line">			&#x2F;&#x2F; 把封装好的javabean放入list集合中</span><br><span class="line">			list.add(bean);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F; 4 把list转发到jsp页面中</span><br><span class="line">request.setAttribute(&quot;list&quot;, list);</span><br><span class="line">request.getRequestDispatcher(&quot;&#x2F;online.jsp&quot;).forward(request, response);</span><br></pre></td></tr></table></figure>
+
+<h2 id="在线用户列表页面-onLine-jsp"><a href="#在线用户列表页面-onLine-jsp" class="headerlink" title="在线用户列表页面 onLine.jsp"></a>在线用户列表页面 onLine.jsp</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;table align&#x3D;&quot;left&quot; border&#x3D;&quot;1&quot; width&#x3D;&quot;600px&quot;&gt;</span><br><span class="line">    	&lt;tr&gt;</span><br><span class="line">    		&lt;th&gt;编号&lt;&#x2F;th&gt;</span><br><span class="line">    		&lt;th&gt;登录名&lt;&#x2F;th&gt;</span><br><span class="line">    		&lt;th&gt;登录时间&lt;&#x2F;th&gt;</span><br><span class="line">    		&lt;th&gt;最后访问时间&lt;&#x2F;th&gt;</span><br><span class="line">    		&lt;th&gt;IP&lt;&#x2F;th&gt;</span><br><span class="line">    		&lt;th&gt;操作&lt;&#x2F;th&gt;</span><br><span class="line">    	&lt;&#x2F;tr&gt;</span><br><span class="line">  &lt;c:forEach items&#x3D;&quot;$&#123;requestScope.list &#125;&quot; var&#x3D;&quot;bean&quot; varStatus&#x3D;&quot;varSta&quot;&gt;</span><br><span class="line">    	&lt;tr&gt;</span><br><span class="line">    		&lt;td&gt;$&#123;varSta.count &#125;&lt;&#x2F;td&gt;</span><br><span class="line">    		&lt;td&gt;$&#123;bean.name &#125;&lt;&#x2F;td&gt;</span><br><span class="line">    		&lt;td&gt;$&#123;bean.loginTime &#125;&lt;&#x2F;td&gt;</span><br><span class="line">    		&lt;td&gt;$&#123;bean.lastTime &#125;&lt;&#x2F;td&gt;</span><br><span class="line">    		&lt;td&gt;$&#123;bean.ip &#125;&lt;&#x2F;td&gt;</span><br><span class="line">    		&lt;td&gt;&lt;a href&#x3D;&quot;$&#123;pageContext.request.contextPath &#125;&#x2F;KickOutServlet?sessionId&#x3D;$&#123;bean.sessionId &#125;&quot;&gt;移除&lt;&#x2F;a&gt;&lt;&#x2F;td&gt;</span><br><span class="line">    	&lt;&#x2F;tr&gt;</span><br><span class="line">  &lt;&#x2F;c:forEach&gt;  	</span><br><span class="line">&lt;&#x2F;table&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="踢人功能请求-KickOutServlet"><a href="#踢人功能请求-KickOutServlet" class="headerlink" title="踢人功能请求 KickOutServlet"></a>踢人功能请求 KickOutServlet</h2><p>由onLine.jsp 可知，发生踢人请求时，会传递一个sessionId的参数，这也就是为什么需要把它包装在OnLineBean中的原因。接着我们从Map中获得相应的session对象，并将其信息remove，最后重定向到查看在线用户的网页上来。<br>这里需要使用之前的那个OnLineListener监听器来删除一些信息。见attributeRemoved方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 1 接收到踢出的id</span><br><span class="line">String sessionId &#x3D; request.getParameter(&quot;sessionId&quot;);</span><br><span class="line">&#x2F;&#x2F; 2 强制注销指定id的用户</span><br><span class="line">Map&lt;String, HttpSession&gt; onLine &#x3D; (Map&lt;String, HttpSession&gt;) this</span><br><span class="line">		.getServletContext().getAttribute(&quot;onLine&quot;);</span><br><span class="line">&#x2F;&#x2F; 查找需要注销的session对象</span><br><span class="line">HttpSession session &#x3D; onLine.get(sessionId);</span><br><span class="line">if (session !&#x3D; null) &#123;</span><br><span class="line">	session.removeAttribute(&quot;user&quot;);&#x2F;&#x2F; 自动会调用监听器,移除map中的已经注销的用户信息</span><br><span class="line">	session.removeAttribute(&quot;ip&quot;);</span><br><span class="line">&#125;</span><br><span class="line">response.sendRedirect(request.getContextPath() + &quot;&#x2F;GetOnLineServlet&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>这样，我们就可以成功踢人啦~<br>慢着，如果到此为止的话，我们实现的是相互踢人，这显然是不合理的。应该拥有管理权限的人才能踢人哦。<br>所以呢，我们这里需要加一个过滤器，将不是管理员的人过滤掉，这里的管理员暂且就定为本地ip啦~</p>
+<h3 id="管理员过滤器-SecuryFilter"><a href="#管理员过滤器-SecuryFilter" class="headerlink" title="管理员过滤器 SecuryFilter"></a>管理员过滤器 SecuryFilter</h3><p>我们将这个过滤器主要用来对KickOutServlet进行过滤，也就是在执行这个请求前执行过滤器，如果是管理员就放行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public class SecuryFilter implements Filter &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void destroy() &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void doFilter(ServletRequest request, ServletResponse response,</span><br><span class="line">			FilterChain chain) throws IOException, ServletException &#123;</span><br><span class="line">		&#x2F;&#x2F;获得ip地址</span><br><span class="line">		String ip &#x3D; request.getRemoteHost();</span><br><span class="line">		response.setContentType(&quot;text&#x2F;html;charset&#x3D;utf-8&quot;);&#x2F;&#x2F;这句可以放进乱码过滤器</span><br><span class="line">		if (&quot;localhost&quot;.equals(ip) || &quot;127.0.0.1&quot;.equals(ip)) &#123;</span><br><span class="line">			&#x2F;&#x2F; 1管理员</span><br><span class="line">			chain.doFilter(request, response);</span><br><span class="line"></span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			&#x2F;&#x2F; 2非管理员</span><br><span class="line">			response.getWriter().write(&quot;别想删除了,你不是管理员&quot;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void init(FilterConfig filterConfig) throws ServletException &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>web.xml中对过滤器进行配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;filter&gt;</span><br><span class="line">	&lt;filter-name&gt;SecuryFilter&lt;&#x2F;filter-name&gt;</span><br><span class="line">	&lt;filter-class&gt;cn.ninja.web.SecuryFilter&lt;&#x2F;filter-class&gt;</span><br><span class="line">&lt;&#x2F;filter&gt;</span><br><span class="line">&lt;filter-mapping&gt;</span><br><span class="line">	&lt;filter-name&gt;SecuryFilter&lt;&#x2F;filter-name&gt;</span><br><span class="line">	&lt;url-pattern&gt;&#x2F;KickOutServlet&lt;&#x2F;url-pattern&gt;</span><br><span class="line">&lt;&#x2F;filter-mapping&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="用户的注销功能请求-LogoutServlet"><a href="#用户的注销功能请求-LogoutServlet" class="headerlink" title="用户的注销功能请求 LogoutServlet"></a>用户的注销功能请求 LogoutServlet</h2><p>用户注销，同样的会触发removeAttribute对应的监听器，这里即OnLineListener，所以不用再写啦~<br>最后重定向到登录界面。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * 用户注销,删除保存登录成功时session对象中的数据</span><br><span class="line"> *&#x2F;</span><br><span class="line">HttpSession session &#x3D; request.getSession(false);</span><br><span class="line">if (session !&#x3D; null) &#123;</span><br><span class="line">	session.removeAttribute(&quot;user&quot;);</span><br><span class="line">	session.removeAttribute(&quot;ip&quot;);</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;* 这里触发监听器 *&#x2F;</span><br><span class="line"></span><br><span class="line">response.sendRedirect(request.getContextPath() + &quot;&#x2F;login.jsp&quot;);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>到此，全部的功能都已经实现啦~虽然这是个简单的小案例，但涵盖的内容包括了Web的三大组件，以及过滤器监听器，特记录下来，对这块知识做个总结。</p>
+<blockquote>
+<p>“本次案例并没有使用多个ip去测，之后需要学习如何在一台电脑上虚拟多个局域网ip，来访问网站，以实现查看多个用户登录信息的测试”</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Web%E5%9F%BA%E7%A1%80/" rel="tag"># Web基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/07/01/Welcome/" rel="prev" title="Welcome">
+      <i class="fa fa-chevron-left"></i> Welcome
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/07/02/%E5%B9%B4%E8%BD%BB%E5%B0%B1%E6%98%AF%E8%A6%81%E6%8A%98%E8%85%BE/" rel="next" title="年轻就是要折腾">
+      年轻就是要折腾 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#登录界面-login-jsp"><span class="nav-number">1.</span> <span class="nav-text">登录界面 login.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理登录请求-LoginServlet"><span class="nav-number">2.</span> <span class="nav-text">处理登录请求 LoginServlet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#监听器-OnLineListener"><span class="nav-number">2.1.</span> <span class="nav-text">监听器 OnLineListener</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网站主页-index-jsp"><span class="nav-number">3.</span> <span class="nav-text">网站主页 index.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理查看在线用户请求-GetOnLineServlet"><span class="nav-number">4.</span> <span class="nav-text">处理查看在线用户请求 GetOnLineServlet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在线用户列表页面-onLine-jsp"><span class="nav-number">5.</span> <span class="nav-text">在线用户列表页面 onLine.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#踢人功能请求-KickOutServlet"><span class="nav-number">6.</span> <span class="nav-text">踢人功能请求 KickOutServlet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#管理员过滤器-SecuryFilter"><span class="nav-number">6.1.</span> <span class="nav-text">管理员过滤器 SecuryFilter</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用户的注销功能请求-LogoutServlet"><span class="nav-number">7.</span> <span class="nav-text">用户的注销功能请求 LogoutServlet</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ninja Zhang"
+      src="/img/header/gugu.jpg">
+  <p class="site-author-name" itemprop="name">Ninja Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ninja Zhang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

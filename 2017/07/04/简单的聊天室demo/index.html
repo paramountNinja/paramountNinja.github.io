@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="主要讲解网上聊天的基本原理，没有涉及到图形用户界面，这里用console终端进行展示  &amp;emsp;&amp;emsp;聊天室的多线程的用处在于，我们不需要等待接收端展现数据就可以进行再一次的数据传输。这如同我们在微信上聊天，我们可以同时发很多表情包，而不用等待它展现在屏幕上。并且，可以实现发送和接收在一个屏幕上展示的功能。 发送端线程&amp;emsp;&amp;emsp;首先，我们做一个发送端线程，这里的线程我们均">
+<meta property="og:type" content="article">
+<meta property="og:title" content="简单的聊天室demo">
+<meta property="og:url" content="http://yoursite.com/2017/07/04/%E7%AE%80%E5%8D%95%E7%9A%84%E8%81%8A%E5%A4%A9%E5%AE%A4demo/index.html">
+<meta property="og:site_name" content="Ninja Blog">
+<meta property="og:description" content="主要讲解网上聊天的基本原理，没有涉及到图形用户界面，这里用console终端进行展示  &amp;emsp;&amp;emsp;聊天室的多线程的用处在于，我们不需要等待接收端展现数据就可以进行再一次的数据传输。这如同我们在微信上聊天，我们可以同时发很多表情包，而不用等待它展现在屏幕上。并且，可以实现发送和接收在一个屏幕上展示的功能。 发送端线程&amp;emsp;&amp;emsp;首先，我们做一个发送端线程，这里的线程我们均">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://i.imgur.com/ZueYKua.png">
+<meta property="article:published_time" content="2017-07-04T12:43:10.000Z">
+<meta property="article:modified_time" content="2020-02-17T07:52:52.998Z">
+<meta property="article:author" content="Ninja Zhang">
+<meta property="article:tag" content="多线程">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://i.imgur.com/ZueYKua.png">
+
+<link rel="canonical" href="http://yoursite.com/2017/07/04/%E7%AE%80%E5%8D%95%E7%9A%84%E8%81%8A%E5%A4%A9%E5%AE%A4demo/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>简单的聊天室demo | Ninja Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ninja Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">阳光从树叶细缝中，露出了笑容，温暖了我的美梦</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/04/%E7%AE%80%E5%8D%95%E7%9A%84%E8%81%8A%E5%A4%A9%E5%AE%A4demo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/header/gugu.jpg">
+      <meta itemprop="name" content="Ninja Zhang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ninja Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          简单的聊天室demo
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-07-04 20:43:10" itemprop="dateCreated datePublished" datetime="2017-07-04T20:43:10+08:00">2017-07-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-17 15:52:52" itemprop="dateModified" datetime="2020-02-17T15:52:52+08:00">2020-02-17</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>主要讲解网上聊天的基本原理，没有涉及到图形用户界面，这里用console终端进行展示</p>
+</blockquote>
+<p>&emsp;&emsp;聊天室的多线程的用处在于，我们不需要等待接收端展现数据就可以进行再一次的数据传输。这如同我们在微信上聊天，我们可以同时发很多表情包，而不用等待它展现在屏幕上。并且，可以实现发送和接收在一个屏幕上展示的功能。</p>
+<h2 id="发送端线程"><a href="#发送端线程" class="headerlink" title="发送端线程"></a>发送端线程</h2><p>&emsp;&emsp;首先，我们做一个发送端线程，这里的线程我们均使用实现Runnable接口的方法，请参见，<a href="http://blog.csdn.net/ninja_z/article/details/73356430" target="_blank" rel="noopener">多线程的实现方法</a>。</p>
+<a id="more"></a>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public class SendThread implements Runnable &#123;</span><br><span class="line">	private DatagramSocket ds;</span><br><span class="line">	&#x2F;&#x2F; 使用外部传入Socket</span><br><span class="line">	public SendThread(DatagramSocket ds) &#123;</span><br><span class="line">		this.ds &#x3D; ds;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			&#x2F;&#x2F; 创建一个使用默认大小输入缓冲区的缓冲字符输入流</span><br><span class="line">			BufferedReader br &#x3D; new BufferedReader(new InputStreamReader(</span><br><span class="line">					System.in));</span><br><span class="line">			String line &#x3D; null;</span><br><span class="line">			while ((line &#x3D; br.readLine()) !&#x3D; null) &#123;&#x2F;&#x2F;读取输入的内容</span><br><span class="line">				if (&quot;886&quot;.equals(line)) &#123;&#x2F;&#x2F;如果是886就退出</span><br><span class="line">					break;</span><br><span class="line">				&#125;</span><br><span class="line">				byte[] bys &#x3D; line.getBytes();</span><br><span class="line">				&#x2F;&#x2F;将数据打包</span><br><span class="line">				DatagramPacket dp &#x3D; new DatagramPacket(bys, bys.length,</span><br><span class="line">						InetAddress.getByName(&quot;DESKTOP-RVPDLCN&quot;), 12306);</span><br><span class="line">				&#x2F;&#x2F;用Socket进行发送</span><br><span class="line">				ds.send(dp);</span><br><span class="line">			&#125;</span><br><span class="line">			ds.close();</span><br><span class="line">		&#125; catch (IOException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="接收端线程"><a href="#接收端线程" class="headerlink" title="接收端线程"></a>接收端线程</h2><p>接收端不需要关闭资源，一直接收数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public class ReceiveThread implements Runnable &#123;</span><br><span class="line">	DatagramSocket ds;</span><br><span class="line">	&#x2F;&#x2F;使用外部传入的Socket</span><br><span class="line">	public ReceiveThread(DatagramSocket ds) &#123;</span><br><span class="line">		this.ds &#x3D; ds;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		while (true) &#123;&#x2F;&#x2F;无限接收</span><br><span class="line">			byte[] bys &#x3D; new byte[1024];</span><br><span class="line">			DatagramPacket dp &#x3D; new DatagramPacket(bys, bys.length);</span><br><span class="line">			try &#123;</span><br><span class="line">				ds.receive(dp);</span><br><span class="line">			&#125; catch (IOException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			String ip &#x3D; dp.getAddress().getHostAddress();</span><br><span class="line">			String s &#x3D; new String(dp.getData(), 0, dp.getLength());</span><br><span class="line">			System.out.println(&quot;from&quot; + ip + &quot;data is:&quot; + s);</span><br><span class="line">			&#x2F;&#x2F; 接收端一直开着等待接收数据，不需要关闭</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>用于控制两个线程的开启，使得在一个窗口中展现发送和接收的效果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class ChatRoom &#123;</span><br><span class="line">	public static void main(String[] args) throws SocketException &#123;</span><br><span class="line">		&#x2F;&#x2F;创建两个Socket一个用于发送，一个用于接收</span><br><span class="line">		DatagramSocket dsSend &#x3D; new DatagramSocket();</span><br><span class="line">		DatagramSocket dsReceive &#x3D; new DatagramSocket(12306);</span><br><span class="line">		&#x2F;&#x2F;传入Socket并创建线程</span><br><span class="line">		SendThread st &#x3D; new SendThread(dsSend);</span><br><span class="line">		ReceiveThread rt &#x3D; new ReceiveThread(dsReceive);</span><br><span class="line">		Thread t1 &#x3D; new Thread(st);</span><br><span class="line">		Thread t2 &#x3D; new Thread(rt);</span><br><span class="line">		&#x2F;&#x2F;开启线程</span><br><span class="line">		t1.start();</span><br><span class="line">		t2.start();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="效果展示"><a href="#效果展示" class="headerlink" title="效果展示"></a>效果展示</h2><p><img src="http://i.imgur.com/ZueYKua.png" alt="chatroom"></p>
+<p>&emsp;&emsp;输入一句话，显示来自哪个ip 内容是什么。我们可以看到这里自己跟自己聊。<br>&emsp;&emsp;那么如何实现多人聊天呢？很简单，这里用到ip地址分类中的广播地址，只要在发送端中，将<code>InetAddress.getByName(&quot;DESKTOP-RVPDLCN&quot;)</code>修改为<code>InetAddress.getByName(&quot;xxx.xxx.xxx.255&quot;)</code>即可实现多人聊天的功能。注意：这里的DESKTOP-RVPDLCN是我的电脑的名字，也可以改成其对应的ip地址，例如我的ip地址是192.168.3.7，那么我们只要将其改为192.168.3.255就能实现广播了。<br>&emsp;&emsp;或许你会觉得在一个窗体里发送和接收看起来很费劲，当然，那是因为我们这里没有使用将输入和显示窗体分开的技术，想象一下qq聊天的界面。这里主要讲解了其中的原理。</p>
+<blockquote>
+<p>记录了如何制作一个简易聊天室的过程。这里有前端技术以及其他的一些功能还需要进一步的学习。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag"># 多线程</a>
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/07/04/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="prev" title="网络编程">
+      <i class="fa fa-chevron-left"></i> 网络编程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/10/31/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%AC%94%E8%AE%B01/" rel="next" title="深入理解java虚拟机笔记1">
+      深入理解java虚拟机笔记1 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#发送端线程"><span class="nav-number">1.</span> <span class="nav-text">发送端线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#接收端线程"><span class="nav-number">2.</span> <span class="nav-text">接收端线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#客户端"><span class="nav-number">3.</span> <span class="nav-text">客户端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#效果展示"><span class="nav-number">4.</span> <span class="nav-text">效果展示</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ninja Zhang"
+      src="/img/header/gugu.jpg">
+  <p class="site-author-name" itemprop="name">Ninja Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ninja Zhang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

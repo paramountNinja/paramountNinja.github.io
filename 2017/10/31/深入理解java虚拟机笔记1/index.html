@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Java内存区域与内存溢出异常java虚拟机在执行程序过程中，把 管理的内存 划分若干不同数据区域。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解java虚拟机笔记1">
+<meta property="og:url" content="http://yoursite.com/2017/10/31/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%AC%94%E8%AE%B01/index.html">
+<meta property="og:site_name" content="Ninja Blog">
+<meta property="og:description" content="Java内存区域与内存溢出异常java虚拟机在执行程序过程中，把 管理的内存 划分若干不同数据区域。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.imgur.com/pRuJpNj.png">
+<meta property="og:image" content="https://i.imgur.com/EiuG8Gd.png">
+<meta property="og:image" content="https://i.imgur.com/38gegU0.png">
+<meta property="article:published_time" content="2017-10-31T06:39:59.000Z">
+<meta property="article:modified_time" content="2020-02-17T07:53:26.074Z">
+<meta property="article:author" content="Ninja Zhang">
+<meta property="article:tag" content="JVM">
+<meta property="article:tag" content="内存分配">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/pRuJpNj.png">
+
+<link rel="canonical" href="http://yoursite.com/2017/10/31/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%AC%94%E8%AE%B01/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>深入理解java虚拟机笔记1 | Ninja Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ninja Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">阳光从树叶细缝中，露出了笑容，温暖了我的美梦</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/31/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%AC%94%E8%AE%B01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/header/gugu.jpg">
+      <meta itemprop="name" content="Ninja Zhang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ninja Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入理解java虚拟机笔记1
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-10-31 14:39:59" itemprop="dateCreated datePublished" datetime="2017-10-31T14:39:59+08:00">2017-10-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-17 15:53:26" itemprop="dateModified" datetime="2020-02-17T15:53:26+08:00">2020-02-17</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Java内存区域与内存溢出异常"><a href="#Java内存区域与内存溢出异常" class="headerlink" title="Java内存区域与内存溢出异常"></a>Java内存区域与内存溢出异常</h2><p>java虚拟机在执行程序过程中，把 <strong>管理的内存</strong> 划分若干不同数据区域。<br><img src="https://i.imgur.com/pRuJpNj.png" alt=""></p>
+<a id="more"></a>
+
+<ol>
+<li><p><strong>程序计数器</strong></p>
+<ol>
+<li>内存较小空间；当前线程所执行的字节码的行号指示器。</li>
+<li>字节码解释器工作：改变计数器的值选取下一条需要执行的字节码指令，计数器功能有分支、循环、跳转、异常处理、线程恢复等。</li>
+<li><strong>多线程</strong>情况下，通过线程轮流切换并分配处理器执行时间。一个处理器内核只执行一条线程指令。每条线程需要一个独立的程序计数器。互不影响，独立存储的内存区域为 <strong>线程私有</strong> 的内存。（注：超线程处理器的cpu线程数不等于cpu的核心数）。<a href="https://zhidao.baidu.com/question/872330577606459452.html" target="_blank" rel="noopener" title="处理器几核几线程的意思">处理器几核几线程</a></li>
+<li>如果正在执行Native方法，则计数器值为空<code>Undefined</code>（注：Native方法：Java调用非Java代码的接口。方法的实现由非Java语言实现，比如C或C++。）</li>
+<li><strong>唯一一个</strong>在java虚拟机规范中<strong>没有规定</strong>任何<code>OutOfMemoryError</code>（内存溢出）情况的内存区域。</li>
+</ol>
+</li>
+<li><p><strong>java虚拟机栈</strong></p>
+<ol>
+<li><p><strong>线程私有</strong>，生命周期与线程相同</p>
+</li>
+<li><p>描述的是java方法执行的内存模型：方法在执行的同时创建一个<strong>栈帧</strong>，用于存储<strong>局部变量表、操作数栈、动态链接、方法出口</strong>等信息。</p>
+</li>
+<li><p>每个方法从调用到执行完成的过程，就对应一个栈帧在虚拟机栈中入栈到出栈的过程。</p>
+</li>
+<li><p><strong>局部变量表</strong>存放了<strong>编译期</strong>可知的</p>
+<ul>
+<li>基本数据类型（<code>byte char boolean short int long float double</code>）</li>
+<li>对象引用 </li>
+<li>returnAddress类型（指向了一条字节码指令的地址）</li>
+</ul>
+</li>
+<li><p>两种异常:1.如果线程请求的栈深度大于虚拟机所允许的深度。将抛出<code>StackOverflowError</code>异常；2.如果扩展时无法申请到足够的内存，就会抛出<code>OutOfMemoryError</code>异常。</p>
+</li>
+</ol>
+</li>
+<li><p><strong>本地方法栈</strong></p>
+<ol>
+<li>虚拟机栈为虚拟机执行java方法（也就是字节码）服务，而本地方法栈则为虚拟机使用到的Native方法服务。</li>
+<li>两种异常（同虚拟机栈）：<code>StackOverflowError</code> <code>OutOfMemoryError</code></li>
+</ol>
+</li>
+<li><p><strong>Java堆</strong></p>
+<ol>
+<li>内存最大的一块，<strong>线程共享</strong>，在虚拟机启动时创建</li>
+<li>存放<strong>对象实例</strong>，几乎所有对象实例都在这里分配内存</li>
+<li>垃圾回收器管理的主要区域，所以也叫 <strong>GC堆</strong></li>
+<li>可以处于物理上不连续的内存空间中，只要逻辑上连续即可</li>
+<li>如果堆无法再扩展时，<code>OutOfMemoryError</code></li>
+</ol>
+</li>
+<li><p><strong>方法区</strong></p>
+<ol>
+<li><strong>线程共享</strong> </li>
+<li>存储<strong>已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码</strong>等数据</li>
+<li>java虚拟机规范把方法区描述为堆的一个逻辑部分，但它有一个<strong>别名Non-Heap（非堆）</strong></li>
+<li>不需要连续的内存，可以选择固定大小，可扩展，可以选择不实现垃圾收集</li>
+<li>当方法区无法满足内存分配需求时，将抛出<code>OutOfMemoryError</code>异常</li>
+<li><strong>运行时常量池</strong>：方法区的一部分，用于存放编译期生成的各种字面量和符号引用。</li>
+</ol>
+</li>
+<li><p><strong>直接内存</strong></p>
+<ol>
+<li>不是虚拟机运行时数据区的一部分</li>
+<li>可以使用Native函数库直接分配堆外内存，避免了在java堆和Native堆中来回复制数据</li>
+</ol>
+</li>
+</ol>
+<h2 id="HotSpot虚拟机对象探秘"><a href="#HotSpot虚拟机对象探秘" class="headerlink" title="HotSpot虚拟机对象探秘"></a>HotSpot虚拟机对象探秘</h2><h3 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h3><p>虚拟机遇到一条new指令时：总结来说步骤：</p>
+<blockquote>
+<p>1）类加载检查，2）分配内存空间，3）初始化，4）设置对象头信息</p>
+</blockquote>
+<ol>
+<li>首先检查这个指令的参数是否能在<strong>常量池</strong>中定位到一个类的符号引用，并检查这个符号引用代表的类是否已被加载、解析和初始化过。如果没有，那么必须先执行相应的类加载过程。</li>
+<li>类加载检查通过后，虚拟机将为新生对象分配内存。内存大小在类加载完成后可完全确定，为对象分配空间的任务等同于把一块确定大小的内存从<strong>Java堆</strong>中划分出来。<br>分配方式有如下两种，<strong>选择哪种由java堆是否规整决定，而java堆是否规整由所采用的垃圾收集器是否带有压缩整理功能决定</strong>。<ol>
+<li><strong>指针碰撞</strong>：假设Java堆中内存是绝对规整的，所用过得放一边，没用过的放一边，中间放着一个指针作为分界点的指示器，则新对象所分配内存就是把那个指针向空间空间挪动一个对象大小的距离。</li>
+<li><strong>空闲列表</strong>：如果Java堆中内存不规整，已使用的内存和空闲内存相互交错，则虚拟机必须维护一个列表，记录哪些内存块是可用的，分配的时候从列表中找到一块足够大的空间划分给对象实例，并更新列表上的记录。</li>
+</ol>
+<strong>并发</strong>情况下，可能出现正在给对象A分配内存，指针还没来得及修改，对象B又同时使用原来的指针分配内存。<br><strong>解决方法</strong>：1对分配内存空间的动作进行同步处理，保证操作的原子性；2内存分配的动作按照线程划分在不同的空间中进行，即每个线程在Java堆中预先分配一小块内存（本地线程分配缓冲TLAB）。用完并分配新的TLAB的时候，才需要同步锁定。</li>
+<li>内存分配完成后，虚拟机将分配到的内存空间都初始化为零值（不包括对象头），保证了对象的实例字段在Java代码中可以不赋初始值就直接使用，程序能访问到这些字段的数据类型所对应的零值。</li>
+<li>虚拟机对对象进行必要的设置，例如：对象是哪个类的实例，如何找到类的元数据信息、对象的哈希码、对象的GC分代年龄等信息。信息存放在对象的对象头中。</li>
+<li>一般来说（字节码中是否跟随invokespecial指令决定），执行new指令之后会接着执行<init>方法，把对象按照程序员的意愿进行初始化，这样可用对象才算完全产生出来。</li>
+</ol>
+<h3 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h3><p>HotSpot中，对象在内存中存储的布局可以分为3块区域：</p>
+<blockquote>
+<p><strong>对象头、实例数据、对齐填充</strong>。</p>
+</blockquote>
+<ol>
+<li><p>对象头包括两部分信息，</p>
+<ol>
+<li>存储对象自身的<strong>运行时数据</strong>（如哈希吗、GC分代年龄、锁状态标志、线程持有的锁、 偏向线程ID、 偏向时间戳等。</li>
+<li>类型指针（对象指向它类元数据的指针），<strong>虚拟机通过这个指针来确定这个对象是哪个类的实例</strong>。如果对象是一个Java数组，那在对象头中还必须有一块用于记录数组长度的数据。</li>
+</ol>
+</li>
+<li><p>实例数据（对象真正存储的有效信息）</p>
+<ol>
+<li>程序代码中所定义的各种类型的字段内容。</li>
+<li>无论是从父类继承下来的，还是在子类中定义的，都需要记录起来。</li>
+<li>存储顺序会受到虚拟机分配策略参数（FieldsAllocationStyle）和字段在Java源码中定义顺序的影响。</li>
+</ol>
+</li>
+<li><p>对齐填充</p>
+<ol>
+<li>并不必然存在，没有特别含义，占位符作用。</li>
+<li>HotSpot VM的自动内存管理要求对象起始地址必须是8字节的整数倍，对象头部分正好是8字节的倍数，若对象实例数据部分没有对齐时，就需要通过对齐填充来补全。</li>
+</ol>
+</li>
+</ol>
+<h3 id="对象的访问定位"><a href="#对象的访问定位" class="headerlink" title="对象的访问定位"></a>对象的访问定位</h3><blockquote>
+<p>通过栈上的reference数据来操作堆上的具体对象<br>对象访问方式也是取决于虚拟机实现而定的。<br>目前主流的访问方式：句柄、直接指针。</p>
+</blockquote>
+<ol>
+<li><p>句柄</p>
+<ol>
+<li>堆中划分一块内存作为句柄池</li>
+<li>reference中存储的就是对象的句柄地址</li>
+<li>句柄中包含<strong>对象实例数据</strong>与<strong>类型数据</strong>各自的具体地址信息</li>
+<li>优势：reference中存储的是稳定的句柄地址，在对象被移动（垃圾收集时移动对象是非常普遍的行为）时只会改变句柄中的实例数据指针，而reference本身不需要修改。<br><img src="https://i.imgur.com/EiuG8Gd.png" alt="通过句柄访问对象"></li>
+</ol>
+</li>
+<li><p>直接指针</p>
+<ol>
+<li>若使用直接指针访问，Java堆对象的布局中就必须考虑如何放置访问类型数据的相关信息</li>
+<li>reference中存储的直接就是对象地址</li>
+<li>速度更快，它节省了一次指针定位的时间开销，由于对象的访问在Java中非常频繁，因此这类开销积少成多后也是一项非常可观的执行成本。 </li>
+<li>HotSpot使用直接指针访问。<br><img src="https://i.imgur.com/38gegU0.png" alt="通过直接指针访问对象"></li>
+</ol>
+</li>
+</ol>
+<h2 id="实战：OutOfMemoryError异常"><a href="#实战：OutOfMemoryError异常" class="headerlink" title="实战：OutOfMemoryError异常"></a>实战：OutOfMemoryError异常</h2><blockquote>
+<p>除了程序计数器外，其他几个运行时区域都有发生OutOfMemoryError异常的可能。</p>
+</blockquote>
+<h3 id="Java堆溢出"><a href="#Java堆溢出" class="headerlink" title="Java堆溢出"></a>Java堆溢出</h3><blockquote>
+<p>VM Args：-Xms20m-Xmx20m-XX：+HeapDumpOnOutOfMemoryError<br>限制Java堆20MB，不可扩展，即将堆的最小值Xms和最小值Xmx都设置为一样的<br>+HeapDumpOnOutOfMemoryError可以让虚拟机在出现内存溢出异常时Dump出当前的内存堆<br>转储快照以便事后进行分析。<br>异常测试：不断创建新的对象</p>
+</blockquote>
+<p>Java堆用于存储对象实例，只要不断地创建对象，并且保证GC Roots到对象之间有可达<br>路径来避免垃圾回收机制清除这些对象，那么在对象数量到达最大堆的容量限制后就会产生<br>内存溢出异常。</p>
+<h3 id="虚拟机栈和本地方法栈溢出"><a href="#虚拟机栈和本地方法栈溢出" class="headerlink" title="虚拟机栈和本地方法栈溢出"></a>虚拟机栈和本地方法栈溢出</h3><blockquote>
+<p>VM Args：-Xss128k<br>将栈内存容量设置为128k<br>异常测试：定义大量本地变量（局部变量），增大此变量表的长度，不停运行一个方法<br>异常测试：创建很多线程导致内存溢出</p>
+</blockquote>
+<ol>
+<li>HotSpot虚拟机中并不区分虚拟机栈和本地方法栈</li>
+<li>如果线程请求的栈深度大于虚拟机所允许的最大深度，将抛出StackOverflowError异常。</li>
+<li>如果虚拟机在扩展栈时无法申请到足够的内存空间，则抛出OutOfMemoryError异常。</li>
+<li>一些互相重叠的地方：当栈空间无法继续分配时，到底是内存太小，还是已使用的栈空间太大，其本质上只是对同一件事情的两种描述而已</li>
+<li>在单个线程下，无论是由于栈帧太大还是虚拟机栈容量太小，当内存无法分配的时候，虚拟机抛出的都是StackOverflowError异常。</li>
+<li>如果测试时不限于单线程，通过不断地建立线程的方式倒是可以产生内存溢出异常。但是这样产生的内存溢出异常与栈空间是否足够大并不存在任何联系，或者准确地说，在这种情况下，为每个线程的栈分配的内存越大，反而越容易产生内存溢出异常。</li>
+</ol>
+<h3 id="方法区和运行时常量池溢出"><a href="#方法区和运行时常量池溢出" class="headerlink" title="方法区和运行时常量池溢出"></a>方法区和运行时常量池溢出</h3><blockquote>
+<p>VM Args：-XX：PermSize=10M-XX：MaxPermSize=10M<br>JDK1.6之前版本，常量池分配在永久代内，通过-XX：PermSize和-XX：MaxPermSize限制方法区大小，从而间接限制其中常量池的容量<br>方法区用于存放Class的相关信息，如类名、 访问修饰符、 常量池、 字段描述、 方法描述<br>等。 对于这些区域的测试，基本的思路是运行时产生大量的类去填满方法区，直到溢出</p>
+</blockquote>
+<h3 id="本机直接内存溢出"><a href="#本机直接内存溢出" class="headerlink" title="本机直接内存溢出"></a>本机直接内存溢出</h3><blockquote>
+<p>VM Args：-Xmx20M-XX：MaxDirectMemorySize=10M</p>
+</blockquote>
+<p>由DirectMemory导致的内存溢出，一个明显的特征是在Heap Dump文件中不会看见明显<br>的异常，如果发现OOM之后Dump文件很小，而程序中又直接或间接使用了NIO，那就<br>可以考虑检查一下是不是这方面的原因。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JVM/" rel="tag"># JVM</a>
+              <a href="/tags/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/" rel="tag"># 内存分配</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/07/04/%E7%AE%80%E5%8D%95%E7%9A%84%E8%81%8A%E5%A4%A9%E5%AE%A4demo/" rel="prev" title="简单的聊天室demo">
+      <i class="fa fa-chevron-left"></i> 简单的聊天室demo
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/11/02/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/" rel="next" title="多线程基础知识点">
+      多线程基础知识点 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java内存区域与内存溢出异常"><span class="nav-number">1.</span> <span class="nav-text">Java内存区域与内存溢出异常</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HotSpot虚拟机对象探秘"><span class="nav-number">2.</span> <span class="nav-text">HotSpot虚拟机对象探秘</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对象的创建"><span class="nav-number">2.1.</span> <span class="nav-text">对象的创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象的内存布局"><span class="nav-number">2.2.</span> <span class="nav-text">对象的内存布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象的访问定位"><span class="nav-number">2.3.</span> <span class="nav-text">对象的访问定位</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实战：OutOfMemoryError异常"><span class="nav-number">3.</span> <span class="nav-text">实战：OutOfMemoryError异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java堆溢出"><span class="nav-number">3.1.</span> <span class="nav-text">Java堆溢出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机栈和本地方法栈溢出"><span class="nav-number">3.2.</span> <span class="nav-text">虚拟机栈和本地方法栈溢出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法区和运行时常量池溢出"><span class="nav-number">3.3.</span> <span class="nav-text">方法区和运行时常量池溢出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#本机直接内存溢出"><span class="nav-number">3.4.</span> <span class="nav-text">本机直接内存溢出</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ninja Zhang"
+      src="/img/header/gugu.jpg">
+  <p class="site-author-name" itemprop="name">Ninja Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ninja Zhang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

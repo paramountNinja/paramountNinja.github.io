@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="整理自微信公众号：程序员小灰；链接：什么是volatile关键字  Java内存模型&amp;emsp;&amp;emsp;Java内存模型简称JMM（Java Memory Model），是Java虚拟机所定义的一种抽象规范，用来屏蔽不同硬件和操作系统的内存访问差异，让java程序在各种平台下都能达到一致的内存访问效果。&amp;emsp;&amp;emsp;Java内存模型如下图：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="什么是volatile关键字">
+<meta property="og:url" content="http://yoursite.com/2018/01/05/%E4%BB%80%E4%B9%88%E6%98%AFvolatile%E5%85%B3%E9%94%AE%E5%AD%97/index.html">
+<meta property="og:site_name" content="Ninja Blog">
+<meta property="og:description" content="整理自微信公众号：程序员小灰；链接：什么是volatile关键字  Java内存模型&amp;emsp;&amp;emsp;Java内存模型简称JMM（Java Memory Model），是Java虚拟机所定义的一种抽象规范，用来屏蔽不同硬件和操作系统的内存访问差异，让java程序在各种平台下都能达到一致的内存访问效果。&amp;emsp;&amp;emsp;Java内存模型如下图：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.imgur.com/VlA8f9b.png">
+<meta property="og:image" content="https://i.imgur.com/l0AuYcT.png">
+<meta property="og:image" content="https://i.imgur.com/M9wRzO7.png">
+<meta property="og:image" content="https://i.imgur.com/t88hnkv.png">
+<meta property="og:image" content="https://i.imgur.com/hvyKDTB.png">
+<meta property="og:image" content="https://i.imgur.com/cLtsXut.png">
+<meta property="og:image" content="https://i.imgur.com/TSvXmw1.png">
+<meta property="og:image" content="https://i.imgur.com/a5Rjv7w.png">
+<meta property="og:image" content="https://i.imgur.com/BhTMtBI.png">
+<meta property="og:image" content="https://i.imgur.com/C8RfTbU.png">
+<meta property="og:image" content="https://i.imgur.com/SAkjk0d.png">
+<meta property="article:published_time" content="2018-01-05T14:54:47.000Z">
+<meta property="article:modified_time" content="2020-02-17T07:53:55.430Z">
+<meta property="article:author" content="Ninja Zhang">
+<meta property="article:tag" content="并发">
+<meta property="article:tag" content="JMM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/VlA8f9b.png">
+
+<link rel="canonical" href="http://yoursite.com/2018/01/05/%E4%BB%80%E4%B9%88%E6%98%AFvolatile%E5%85%B3%E9%94%AE%E5%AD%97/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>什么是volatile关键字 | Ninja Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ninja Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">阳光从树叶细缝中，露出了笑容，温暖了我的美梦</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/05/%E4%BB%80%E4%B9%88%E6%98%AFvolatile%E5%85%B3%E9%94%AE%E5%AD%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/header/gugu.jpg">
+      <meta itemprop="name" content="Ninja Zhang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ninja Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          什么是volatile关键字
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-01-05 22:54:47" itemprop="dateCreated datePublished" datetime="2018-01-05T22:54:47+08:00">2018-01-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-17 15:53:55" itemprop="dateModified" datetime="2020-02-17T15:53:55+08:00">2020-02-17</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>整理自微信公众号：程序员小灰；链接：<a href="http://mp.weixin.qq.com/s/DZkGRTan2qSzJoDAx7QJag" target="_blank" rel="noopener">什么是volatile关键字</a></p>
+</blockquote>
+<h1 id="Java内存模型"><a href="#Java内存模型" class="headerlink" title="Java内存模型"></a>Java内存模型</h1><p>&emsp;&emsp;Java内存模型简称JMM（Java Memory Model），是Java虚拟机所定义的一种抽象规范，用来屏蔽不同硬件和操作系统的内存访问差异，让java程序在各种平台下都能达到一致的内存访问效果。<br>&emsp;&emsp;Java内存模型如下图：<br><img src="https://i.imgur.com/VlA8f9b.png" alt=""></p>
+<a id="more"></a>
+
+<p>这里需要解释几个概念：</p>
+<ol>
+<li><p><strong>主内存（Main Memory）</strong><br>主内存可以简单理解为计算机当中的内存，但又不完全等同。主内存被所有的线程所共享，对于一个共享变量（比如静态变量，或是堆内存中的实例）来说，主内存当中存储了它的“本尊”。</p>
+</li>
+<li><p><strong>工作内存（Working Memory）</strong><br>工作内存可以简单理解为计算机当中的CPU高速缓存，但又不完全等同。每一个线程拥有自己的工作内存，对于一个共享变量来说，工作内存当中存储了它的“副本”。  </p>
+</li>
+</ol>
+<p>线程对共享变量的所有操作都必须在工作内存进行，不能直接读写主内存中的变量。不同线程之间也无法访问彼此的工作内存，变量值的传递只能通过主内存来进行。  </p>
+<blockquote>
+<p>直接操纵主内存太慢了，JVM为了提高性能使用了工作内存。如同CPU高速缓存和主内存的关系。</p>
+</blockquote>
+<p>以上说的这些可能有点抽象，大家来看看下面这个例子：</p>
+<p>对于一个静态变量<br><code>static int s = 0；</code></p>
+<p>线程A执行如下代码：<br><code>s = 3；</code></p>
+<p>那么，JMM的工作流程如下图所示：<br><img src="https://i.imgur.com/l0AuYcT.png" alt=""><br><img src="https://i.imgur.com/M9wRzO7.png" alt=""></p>
+<p>通过一系列内存读写的操作指令（JVM内存模型共定义了8种内存操作指令），线程A把静态变量 s=0 从主内存读到工作内存，再把 s=3 的更新结果同步到主内存当中。从单线程的角度来看，这个过程没有任何问题。</p>
+<p>这时候我们引入线程B，执行如下代码：</p>
+<p><code>System.out.println(&quot;s=&quot; + s);</code></p>
+<blockquote>
+<p>思考：如果线程A先执行，线程B后执行，线程B的输出结果会是什么？</p>
+</blockquote>
+<p>引入线程B以后，当线程A首先执行，极大的可能是出现下面情况：<br><img src="https://i.imgur.com/t88hnkv.png" alt=""><br><img src="https://i.imgur.com/hvyKDTB.png" alt=""><br>此时线程B从主内存得到的s值是3，理所当然输出 s=3，这种情况不难理解。但是，有较小的几率出现另一种情况：<br><img src="https://i.imgur.com/cLtsXut.png" alt=""><br><img src="https://i.imgur.com/TSvXmw1.png" alt=""><br>因为工作内存所更新的变量并不会立即同步到主内存，所以虽然线程A在工作内存当中已经把变量s的值更新成3，但是线程B从主内存得到的变量s的值仍然是0，从而输出 s=0。</p>
+<blockquote>
+<p>怎样才能解决这个问题，使用Synchronized同步锁吗？同步锁虽然可以保证线程安全，但是对程序性能的影响太大了，那么volatile这种轻量级的解决方法登场啦！</p>
+</blockquote>
+<h1 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h1><h2 id="可见性"><a href="#可见性" class="headerlink" title="可见性"></a>可见性</h2><p>volatile关键字具有许多特性，其中最重要的特性就是保证了用volatile修饰的变量对所有线程的可见性。</p>
+<p>这里的可见性是什么意思呢？当一个线程修改了变量的值，新的值会立刻同步到主内存当中。而其他线程读取这个变量的时候，也会从主内存中拉取最新的变量值。</p>
+<blockquote>
+<p>为什么volatile关键字可以有这样的特性？这得益于java语言的先行发生原则（happens-before）</p>
+</blockquote>
+<h2 id="happens-before"><a href="#happens-before" class="headerlink" title="happens-before"></a>happens-before</h2><p>在计算机科学中，先行发生原则是两个事件的结果之间的关系，如果一个事件发生在另一个事件之前，结果必须反映，即使这些事件实际上是乱序执行的（通常是优化程序流程）。</p>
+<p>这里所谓的事件，实际上就是各种指令操作，比如读操作、写操作、初始化操作、锁操作等等。</p>
+<p>先行发生原则作用于很多场景下，包括同步锁、线程启动、线程终止、volatile。我们这里只列举出volatile相关的规则：</p>
+<p>对于一个volatile变量的写操作先行发生于后面对这个变量的读操作。</p>
+<p>回到上述的代码例子，如果在静态变量s之前加上volatile修饰符：</p>
+<p><code>volatile static int s = 0；</code></p>
+<p>线程A执行如下代码：<br><code>s = 3；</code></p>
+<p>这时候我们引入线程B，执行如下代码：<br><code>System.out.println(&quot;s=&quot; + s);</code></p>
+<p>当线程A先执行的时候，把s = 3写入主内存的事件必定会先于读取s的事件。所以线程B的输出一定是s = 3。</p>
+<blockquote>
+<p>volatile关键字可以保证线程安全了吗？事实上并不是，volatile只能保证变量的可见性，并不能保证变量的原子性</p>
+</blockquote>
+<p>我们来看一个例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public class VolatileTest2 &#123;</span><br><span class="line">    public volatile static int count &#x3D; 0;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        for (int i &#x3D; 0; i &lt; 10; i++) &#123;</span><br><span class="line">            new Thread(new Runnable() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public void run() &#123;</span><br><span class="line">                    try &#123;</span><br><span class="line">                        Thread.sleep(1);</span><br><span class="line">                    &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                    &#x2F;&#x2F;synchronized (VolatileTest2.class) &#123;</span><br><span class="line">                    for (int i &#x3D; 0; i &lt; 100; i++) &#123;</span><br><span class="line">                        count++;  &#x2F;&#x2F;本身不是原子性操作</span><br><span class="line">                    &#125;</span><br><span class="line">                    &#x2F;&#x2F;&#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br><span class="line">        try &#123;</span><br><span class="line">            Thread.sleep(2000);&#x2F;&#x2F;目的让count最后输出</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(&quot;count &#x3D; &quot; + count);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码是什么意思呢？很简单，开启10个线程，每个线程当中让静态变量count自增100次。执行之后会发现，最终count的结果值未必是1000，有可能小于1000。</p>
+<p>使用volatile修饰的变量，为什么并发自增的时候会出现这样的问题呢？这是因为count++这一行代码本身并不是原子性操作，在字节码层面可以拆分成如下指令：</p>
+<p>getstatic        //读取静态变量（count）<br>iconst_1        //定义常量1<br>iadd               //count增加1<br>putstatic        //把count结果同步到主内存</p>
+<p>虽然每一次执行 getstatic 的时候，获取到的都是主内存的最新变量值，但是进行iadd的时候，由于并不是原子性操作，其他线程在这过程中很可能让count自增了很多次。这样一来本线程所计算更新的是一个陈旧的count值，自然无法做到线程安全：<br><img src="https://i.imgur.com/a5Rjv7w.png" alt=""><br><img src="https://i.imgur.com/BhTMtBI.png" alt=""><br>因此，什么时候适合用volatile呢？</p>
+<p><strong>1. 运行结果并不依赖变量的当前值，或者能够确保只有单一的线程修改变量的值。</strong></p>
+<p><strong>2. 变量不需要与其他的状态变量共同参与不变约束。</strong></p>
+<p>第一条很好理解，就是上面的代码例子。第二条是什么意思呢？可以看看下面这个场景：<br><code>volatile static int start = 3;</code><br><code>volatile static int end = 6;</code></p>
+<p>线程A执行如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">while (start &lt; end) &#123;</span><br><span class="line">  &#x2F;&#x2F;do something</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>线程B执行如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">start +&#x3D; 3;</span><br><span class="line">end +&#x3D; 3;</span><br></pre></td></tr></table></figure>
+<p>这种情况下，一旦在线程A的循环中执行了线程B，start有可能先更新成6，造成了一瞬间 start == end，从而跳出while循环的可能性。</p>
+<h1 id="volatile对指令重排的影响"><a href="#volatile对指令重排的影响" class="headerlink" title="volatile对指令重排的影响"></a>volatile对指令重排的影响</h1><h2 id="什么是指令重排"><a href="#什么是指令重排" class="headerlink" title="什么是指令重排"></a>什么是指令重排</h2><p>指令重排是指JVM在编译Java代码的时候，或者CPU在执行JVM字节码的时候，对现有的指令顺序进行重新排序。</p>
+<p>指令重排的目的是为了在不改变程序执行结果的前提下，优化程序的运行效率。需要注意的是，这里所说的不改变执行结果，指的是不改变<strong>单线程</strong>下的程序执行结果。</p>
+<p>然而，指令重排是一把双刃剑，虽然优化了程序的执行效率，但是在某些情况下，会影响到多线程的执行结果。我们来看看下面的例子：<br><code>boolean contextReady = false;</code></p>
+<p>在线程A中执行:  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">context &#x3D; loadContext();	</span><br><span class="line">contextReady &#x3D; true;</span><br></pre></td></tr></table></figure>
+
+<p>在线程B中执行:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">while( ! contextReady )&#123; </span><br><span class="line">   	sleep(200);</span><br><span class="line">&#125;</span><br><span class="line">doAfterContextReady (context);</span><br></pre></td></tr></table></figure>
+
+
+<p>以上程序看似没有问题。线程B循环等待上下文context的加载，一旦context加载完成，contextReady == true的时候，才执行doAfterContextReady 方法。</p>
+<p>但是，如果线程A执行的代码发生了指令重排，初始化和contextReady的赋值交换了顺序：<br><code>boolean contextReady = false;</code></p>
+<p>在线程A中执行:  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">contextReady &#x3D; true;  </span><br><span class="line">context &#x3D; loadContext();</span><br></pre></td></tr></table></figure>
+
+<p>在线程B中执行:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">while( ! contextReady )&#123; </span><br><span class="line">   	sleep(200);</span><br><span class="line">&#125;</span><br><span class="line">doAfterContextReady (context);</span><br></pre></td></tr></table></figure>
+
+<p>这个时候，很可能context对象还没有加载完成，变量contextReady 已经为true，线程B直接跳出了循环等待，开始执行doAfterContextReady 方法，结果自然会出现错误。</p>
+<p>需要注意的是，这里java代码的重排只是为了简单示意，真正的指令重排是在字节码指令的层面。</p>
+<blockquote>
+<p>如何解决指令重排问题呢？这里有个法宝内存屏障</p>
+</blockquote>
+<h2 id="什么是内存屏障"><a href="#什么是内存屏障" class="headerlink" title="什么是内存屏障"></a>什么是内存屏障</h2><p>内存屏障（Memory Barrier）是一种CPU指令。</p>
+<p>内存屏障也称为内存栅栏或栅栏指令，是一种屏障指令，它使CPU或编译器对屏障指令之前和之后发出的内存操作执行一个排序约束。 这通常意味着在屏障之前发布的操作被保证在屏障之后发布的操作之前执行。</p>
+<p>内存屏障共分为四种类型：</p>
+<ul>
+<li><p><strong>LoadLoad屏障：</strong><br>抽象场景：Load1; LoadLoad; Load2<br>Load1 和 Load2 代表两条读取指令。在Load2要读取的数据被访问前，保证Load1要读取的数据被读取完毕。</p>
+</li>
+<li><p><strong>StoreStore屏障：</strong><br>抽象场景：Store1; StoreStore; Store2<br>Store1 和 Store2代表两条写入指令。在Store2写入执行前，保证Store1的写入操作对其它处理器可见</p>
+</li>
+<li><p><strong>LoadStore屏障：</strong><br>抽象场景：Load1; LoadStore; Store2<br>在Store2被写入前，保证Load1要读取的数据被读取完毕。</p>
+</li>
+<li><p><strong>StoreLoad屏障：</strong><br>抽象场景：Store1; StoreLoad; Load2<br>在Load2读取操作执行前，保证Store1的写入对所有处理器可见<br>StoreLoad屏障的开销是四种屏障中最大的。</p>
+</li>
+</ul>
+<blockquote>
+<p>volatile做了什么？</p>
+</blockquote>
+<p>在一个变量被volatile修饰后，JVM会为我们做两件事：</p>
+<ol>
+<li>在每个volatile写操作前插入StoreStore屏障，在写操作后插入StoreLoad屏障。</li>
+<li>在每个volatile读操作前插入LoadLoad屏障，在读操作后插入LoadStore屏障。</li>
+</ol>
+<p>或许这样说有些抽象，我们看一看刚才线程A代码的例子：</p>
+<p><code>boolean contextReady = false;</code></p>
+<p>在线程A中执行:<br><code>context = loadContext();</code><br><code>contextReady = true;</code><br>我们给contextReady 增加volatile修饰符，会带来什么效果呢？<br><img src="https://i.imgur.com/C8RfTbU.png" alt=""></p>
+<p>由于加入了StoreStore屏障，屏障上方的普通写入语句 <code>context = loadContext()</code>  和屏障下方的volatile写入语句 <code>contextReady = true</code> 无法交换顺序，从而成功阻止了指令重排序。<br><img src="https://i.imgur.com/SAkjk0d.png" alt=""></p>
+<blockquote>
+<p>那么内存屏障和java语言的happens-before是什么关系呢？</p>
+</blockquote>
+<p>happens-before是JSR-133规范之一，内存屏障是CPU指令。<br>可以简单认为前者是最终目的，后者是实现手段。</p>
+<h2 id="总结特性"><a href="#总结特性" class="headerlink" title="总结特性"></a>总结特性</h2><p><strong>volatile特性之一：</strong></p>
+<p>保证变量在线程之间的可见性。可见性的保证是基于CPU的内存屏障指令，被JSR-133抽象为happens-before原则。</p>
+<p><strong>volatile特性之二：</strong></p>
+<p>阻止编译时和运行时的指令重排。编译时JVM编译器遵循内存屏障的约束，运行时依靠CPU屏障指令来阻止重排。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag"># 并发</a>
+              <a href="/tags/JMM/" rel="tag"># JMM</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/01/01/%E6%AF%8F%E6%97%A5%E5%88%B7%E9%A2%98%E8%AE%A1%E5%88%92/" rel="prev" title="每日刷题计划">
+      <i class="fa fa-chevron-left"></i> 每日刷题计划
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/01/07/%E4%BB%80%E4%B9%88%E6%98%AFCAS%E6%9C%BA%E5%88%B6/" rel="next" title="什么是CAS机制">
+      什么是CAS机制 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java内存模型"><span class="nav-number">1.</span> <span class="nav-text">Java内存模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#volatile"><span class="nav-number">2.</span> <span class="nav-text">volatile</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#可见性"><span class="nav-number">2.1.</span> <span class="nav-text">可见性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#happens-before"><span class="nav-number">2.2.</span> <span class="nav-text">happens-before</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#volatile对指令重排的影响"><span class="nav-number">3.</span> <span class="nav-text">volatile对指令重排的影响</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是指令重排"><span class="nav-number">3.1.</span> <span class="nav-text">什么是指令重排</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是内存屏障"><span class="nav-number">3.2.</span> <span class="nav-text">什么是内存屏障</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结特性"><span class="nav-number">3.3.</span> <span class="nav-text">总结特性</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ninja Zhang"
+      src="/img/header/gugu.jpg">
+  <p class="site-author-name" itemprop="name">Ninja Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ninja Zhang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

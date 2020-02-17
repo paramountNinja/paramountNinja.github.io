@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="github地址：https:&#x2F;&#x2F;github.com&#x2F;paramountNinja&#x2F;nowcoder  以下记录coding目录，不定期更新（以github目录为准）  nowcoder每日刷题计划，记录做过的题目，内容包含剑指offer、程序员面试金典(CTCI)、数据结构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="每日刷题计划">
+<meta property="og:url" content="http://yoursite.com/2018/01/01/%E6%AF%8F%E6%97%A5%E5%88%B7%E9%A2%98%E8%AE%A1%E5%88%92/index.html">
+<meta property="og:site_name" content="Ninja Blog">
+<meta property="og:description" content="github地址：https:&#x2F;&#x2F;github.com&#x2F;paramountNinja&#x2F;nowcoder  以下记录coding目录，不定期更新（以github目录为准）  nowcoder每日刷题计划，记录做过的题目，内容包含剑指offer、程序员面试金典(CTCI)、数据结构">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-01-01T02:49:02.000Z">
+<meta property="article:modified_time" content="2020-02-17T07:49:10.894Z">
+<meta property="article:author" content="Ninja Zhang">
+<meta property="article:tag" content="数据结构与算法">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2018/01/01/%E6%AF%8F%E6%97%A5%E5%88%B7%E9%A2%98%E8%AE%A1%E5%88%92/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>每日刷题计划 | Ninja Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ninja Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">阳光从树叶细缝中，露出了笑容，温暖了我的美梦</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/01/%E6%AF%8F%E6%97%A5%E5%88%B7%E9%A2%98%E8%AE%A1%E5%88%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/header/gugu.jpg">
+      <meta itemprop="name" content="Ninja Zhang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ninja Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          每日刷题计划
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-01-01 10:49:02" itemprop="dateCreated datePublished" datetime="2018-01-01T10:49:02+08:00">2018-01-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-17 15:49:10" itemprop="dateModified" datetime="2020-02-17T15:49:10+08:00">2020-02-17</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>github地址：<a href="https://github.com/paramountNinja/nowcoder" target="_blank" rel="noopener">https://github.com/paramountNinja/nowcoder</a></p>
+<blockquote>
+<p>以下记录coding目录，不定期更新（以github目录为准）</p>
+</blockquote>
+<h1 id="nowcoder"><a href="#nowcoder" class="headerlink" title="nowcoder"></a>nowcoder</h1><p>每日刷题计划，记录做过的题目，内容包含剑指offer、程序员面试金典(CTCI)、数据结构</p>
+<a id="more"></a>
+<blockquote>
+<p>下面标题括号内的为对应包名</p>
+</blockquote>
+<h2 id="剑指offer-offer"><a href="#剑指offer-offer" class="headerlink" title="剑指offer(offer)"></a>剑指offer(offer)</h2><p>java实现</p>
+<ul>
+<li>03二维数组中的查找</li>
+<li>04替换空格</li>
+<li>05从尾到头打印链表</li>
+<li>06重建二叉树</li>
+<li>07用两个栈实现队列</li>
+<li>08旋转数组的最小数字</li>
+<li>09斐波那契数列</li>
+<li>09跳台阶</li>
+<li>09变态跳台阶</li>
+<li>09矩阵覆盖</li>
+<li>10二进制中1的个数</li>
+<li>11数值的整数次方</li>
+<li>14调整数组顺序使奇数位于偶数前面</li>
+<li>15链表中倒数第k个结点</li>
+<li>16反转链表</li>
+<li>17合并两个排序的链表</li>
+<li>18树的子结构</li>
+<li>19二叉树的镜像</li>
+<li>20顺时针打印矩阵</li>
+<li>21包含min函数的栈</li>
+<li>22栈的压入弹出序列</li>
+<li>23从上往下打印二叉树</li>
+<li>24二叉搜索树的后序遍历序列</li>
+<li>25二叉树中和为某一值的路径</li>
+<li>26复杂链表的复制</li>
+<li>27二叉搜索树与双向链表</li>
+<li>28字符串的排列</li>
+<li>29数组中出现次数超过一半的数字</li>
+<li>30最小的k个数</li>
+<li>31连续子数组的最大和</li>
+<li>32从1到n整数中1出现的次数</li>
+<li>33把数组排成最小的数</li>
+<li>34丑数</li>
+<li>35第一个只出现一次的字符</li>
+<li>36数组中的逆序对</li>
+<li>37两个链表的第一个公共结点</li>
+<li>38数字在排序数组中出现的次数</li>
+<li>39二叉树的深度</li>
+<li>39判断是否为平衡二叉树</li>
+<li>40数组中只出现一次的数字</li>
+<li>41和为S的连续正数序列</li>
+<li>41和为S的两个数字</li>
+<li>42左旋转字符串</li>
+<li>42翻转单词顺序列</li>
+<li>44扑克牌顺子</li>
+<li>45圆圈中最后剩下的数</li>
+<li>46求1+2+3+…+n</li>
+<li>47不用加减乘除做加法</li>
+<li>49把字符串转换成整数</li>
+<li>50数组中重复的数字</li>
+<li>51构建乘积数组</li>
+<li>52正则表达式匹配</li>
+<li>53表示数值的字符串</li>
+<li>54字符流中第一个不重复的字符</li>
+<li>55链表中环的入口结点</li>
+<li>56删除链表中重复的结点</li>
+<li>57二叉树的下一个结点</li>
+<li>58对称的二叉树</li>
+<li>59按之字形顺序打印二叉树</li>
+<li>60把二叉树打印成多行</li>
+<li>61序列化二叉树</li>
+<li>62二叉搜索树的第k个结点</li>
+<li>63数据流中的中位数</li>
+<li>64滑动窗口的最大</li>
+<li>65矩阵中的路径</li>
+<li>66机器人的运行范围</li>
+</ul>
+<h2 id="程序员金典-ctci"><a href="#程序员金典-ctci" class="headerlink" title="程序员金典(ctci)"></a>程序员金典(ctci)</h2><ul>
+<li>1.1确定字符互异</li>
+<li>1.2原串反转</li>
+<li>1.3确定两串乱序同构</li>
+<li>1.4替换空格(同offer04)</li>
+<li>1.5基本字符串压缩</li>
+<li>1.6像素反转</li>
+<li>1.7清除行列</li>
+<li>1.8翻转字串</li>
+<li>2.2链表中倒数第k个结点(同offer15)</li>
+<li>2.3访问单个节点的删除</li>
+<li>2.4链表分割</li>
+<li>2.5链式A+B</li>
+<li>2.7回文链表</li>
+<li>3.3集合栈</li>
+<li>3.5用两个栈实现队列(同offer07)</li>
+<li>3.6双栈排列</li>
+<li>3.7猫狗收容所</li>
+<li>4.1二叉树平衡检查(同offer39)</li>
+<li>4.2有向路径检查</li>
+<li>4.3高度最小的BST</li>
+<li>4.4输出单层结点</li>
+<li>4.5检查是否为BST二叉查找树(类offer62)</li>
+<li>4.6寻找下一个结点(类offer57)</li>
+<li>4.7二叉树最近公共祖先</li>
+<li>4.9二叉树中和为某一值的路径(同offer25)</li>
+<li>5.1二进制插入</li>
+<li>7.7第k个数</li>
+<li>9.1上楼梯(类offer09)</li>
+<li>9.2_1机器人走方格(类offer66)</li>
+<li>9.2_2机器人走方格有障碍</li>
+<li>9.3.1魔术索引(升序)</li>
+<li>9.3.2魔术索引(不下降)</li>
+<li>9.4集合的子集</li>
+<li>9.5字符串排列(类offer28)</li>
+<li>9.6合法括号序列判断</li>
+<li>9.7洪水</li>
+<li>9.8硬币问题</li>
+<li>11.9数组中的逆序对(同offer36)</li>
+</ul>
+<h2 id="公司模拟真题-simulation"><a href="#公司模拟真题-simulation" class="headerlink" title="公司模拟真题(simulation)"></a>公司模拟真题(simulation)</h2><ul>
+<li>最多硬币问题</li>
+<li>最小不能表示的数(美团)</li>
+<li>整数划分最大乘积(招行信用卡)</li>
+<li>判断字符串由子串复制组成(招行信用卡)</li>
+<li>括号配对所有情况(招行信用卡)</li>
+<li>符合条件的子串(58)</li>
+<li>翻转数列(腾讯)</li>
+<li>歌单组成方式(腾讯)</li>
+<li>因式分解(京东)</li>
+</ul>
+<h2 id="数据结构-base"><a href="#数据结构-base" class="headerlink" title="数据结构(base)"></a>数据结构(base)</h2><ul>
+<li>排序算法（src/base/sort）</li>
+<li>二叉堆（最大堆）</li>
+<li>深度优先搜索DFS</li>
+<li>广度优先搜索BFS</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" rel="tag"># 数据结构与算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/11/05/Java%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" rel="prev" title="Java异常处理">
+      <i class="fa fa-chevron-left"></i> Java异常处理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/01/05/%E4%BB%80%E4%B9%88%E6%98%AFvolatile%E5%85%B3%E9%94%AE%E5%AD%97/" rel="next" title="什么是volatile关键字">
+      什么是volatile关键字 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#nowcoder"><span class="nav-number">1.</span> <span class="nav-text">nowcoder</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#剑指offer-offer"><span class="nav-number">1.1.</span> <span class="nav-text">剑指offer(offer)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序员金典-ctci"><span class="nav-number">1.2.</span> <span class="nav-text">程序员金典(ctci)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#公司模拟真题-simulation"><span class="nav-number">1.3.</span> <span class="nav-text">公司模拟真题(simulation)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据结构-base"><span class="nav-number">1.4.</span> <span class="nav-text">数据结构(base)</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ninja Zhang"
+      src="/img/header/gugu.jpg">
+  <p class="site-author-name" itemprop="name">Ninja Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ninja Zhang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

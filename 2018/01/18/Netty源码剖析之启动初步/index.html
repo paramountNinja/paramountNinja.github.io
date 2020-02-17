@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Netty是对nio进行封装的框架，并改善了nio的不足  Netty架构Netty的模块组件  bootstrap： Netty服务端及客户端启动类 buffer：缓冲相关，对NIO Buffer做了一些优化、封装 channel：处理客户端与服务端之间的连接通道 container：连接其他容器的代码，例如Spring handler：实现协议编解码等附加功能， logging：日志 uti">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty源码剖析之启动初步">
+<meta property="og:url" content="http://yoursite.com/2018/01/18/Netty%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%E4%B9%8B%E5%90%AF%E5%8A%A8%E5%88%9D%E6%AD%A5/index.html">
+<meta property="og:site_name" content="Ninja Blog">
+<meta property="og:description" content="Netty是对nio进行封装的框架，并改善了nio的不足  Netty架构Netty的模块组件  bootstrap： Netty服务端及客户端启动类 buffer：缓冲相关，对NIO Buffer做了一些优化、封装 channel：处理客户端与服务端之间的连接通道 container：连接其他容器的代码，例如Spring handler：实现协议编解码等附加功能， logging：日志 uti">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/img/article/netty20.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty21.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty3.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty4.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty5.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty6.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty7.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty8.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty9.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty10.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty11.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty12.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty13.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty14.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty15.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty16.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty17.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty18.png">
+<meta property="og:image" content="http://yoursite.com/img/article/netty19.png">
+<meta property="article:published_time" content="2018-01-18T09:00:41.000Z">
+<meta property="article:modified_time" content="2020-02-17T07:51:48.625Z">
+<meta property="article:author" content="Ninja Zhang">
+<meta property="article:tag" content="netty">
+<meta property="article:tag" content="nio">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/article/netty20.png">
+
+<link rel="canonical" href="http://yoursite.com/2018/01/18/Netty%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%E4%B9%8B%E5%90%AF%E5%8A%A8%E5%88%9D%E6%AD%A5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Netty源码剖析之启动初步 | Ninja Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ninja Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">阳光从树叶细缝中，露出了笑容，温暖了我的美梦</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/18/Netty%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%E4%B9%8B%E5%90%AF%E5%8A%A8%E5%88%9D%E6%AD%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/header/gugu.jpg">
+      <meta itemprop="name" content="Ninja Zhang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ninja Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Netty源码剖析之启动初步
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-01-18 17:00:41" itemprop="dateCreated datePublished" datetime="2018-01-18T17:00:41+08:00">2018-01-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-17 15:51:48" itemprop="dateModified" datetime="2020-02-17T15:51:48+08:00">2020-02-17</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>Netty是对nio进行封装的框架，并改善了nio的不足</p>
+</blockquote>
+<h1 id="Netty架构"><a href="#Netty架构" class="headerlink" title="Netty架构"></a>Netty架构</h1><p><strong>Netty的模块组件</strong></p>
+<ul>
+<li><strong>bootstrap</strong>： Netty服务端及客户端启动类</li>
+<li><strong>buffer</strong>：缓冲相关，对NIO Buffer做了一些优化、封装</li>
+<li><strong>channel</strong>：处理客户端与服务端之间的连接通道</li>
+<li><strong>container</strong>：连接其他容器的代码，例如Spring</li>
+<li><strong>handler</strong>：实现协议编解码等附加功能，</li>
+<li><strong>logging</strong>：日志</li>
+<li><strong>util</strong>：工具类</li>
+</ul>
+<a id="more"></a>
+
+<p><strong>Netty的运作流程</strong></p>
+<blockquote>
+<p>主从多线程reactor模型<br><img src="/img/article/netty20.png" alt=""></p>
+</blockquote>
+<p>首先让我们来看看Netty的启动和创建过程吧</p>
+<p>编写server端代码，来启动Netty<br><img src="/img/article/netty21.png" alt=""></p>
+<p>这个时候，<code>boss</code>和<code>worker</code>两个线程池就被放入Factory工厂里构造Netty啦！</p>
+<p>于是我们跟踪进源码里，经过调用一系列的构造方法的重载，看到</p>
+<p><img src="/img/article/netty3.png" alt=""></p>
+<p><code>bossCount</code>被设置成了1<br><code>workerCount</code>被设置成了8(若为四核电脑：4*2)<br>然后分别创建<code>NioWorkerPool</code>和<code>NioServerBossPool</code>实例。</p>
+<p><strong>也就是我们结构图中的sub和main两个Reactor了。</strong></p>
+<blockquote>
+<p>本文先讲解下<code>NioWorkerPool</code>的创建过程</p>
+</blockquote>
+<h1 id="NioWorkerPool"><a href="#NioWorkerPool" class="headerlink" title="NioWorkerPool"></a>NioWorkerPool</h1><p>我们继续追踪进源码，经过调用构造器的重载</p>
+<p><img src="/img/article/netty4.png" alt=""></p>
+<p>这里出现了<code>NioWorkerPool</code>的父类，这里我们列出继承关系图</p>
+<p><img src="/img/article/netty5.png" alt=""></p>
+<p>调用<code>AbstractNioWorkerPool</code>的构造器，其中核心代码</p>
+<p><img src="/img/article/netty6.png" alt=""></p>
+<p>我们可以看到在这里，创建了一个AbstractNioWorker的数组，其数量为workerCount个，也就是8个。</p>
+<p>那么<code>AbstractNioWorker</code>是什么呢？下面是继承关系</p>
+<p><img src="/img/article/netty7.png" alt=""></p>
+<p><strong>在一个<code>AbstractNioWorkerPool</code>有八个<code>AbstractNioWorker</code>空间，而每一个<code>AbstractNioWorker</code>又是实现了Runnable接口的。</strong>  </p>
+<p>然后我们返回到<code>NioWorkerPool</code>的构造函数中，继续执行<code>this.init()</code>方法;</p>
+<p>我们发现这个<code>init()</code>方法其实也是执行的父类<code>AbstractNioWorkerPool</code>的方法，这里执行的主要目的是给之前开辟的那个数组的每个元素实例化</p>
+<p><img src="/img/article/netty8.png" alt=""></p>
+<p>这里的<code>newWorker()</code>方法是干什么的呢？经过跟踪，又在<code>NioWorkerPool</code>中找到，毋庸置疑，就是实例化一个<code>NioWorker</code>了。</p>
+<p><strong>到这里，我们创建了一个<code>NioWorkerPool</code>,其中有八个<code>NioWorker</code>，每一个<code>NioWorker</code>都给它配上一个线程池。</strong></p>
+<p>我们列出目前几个关键类的结构，来帮助整理思路</p>
+<p><img src="/img/article/netty9.png" alt=""><br><img src="/img/article/netty10.png" alt=""><br><img src="/img/article/netty11.png" alt=""></p>
+<blockquote>
+<p>接下来我们需要做的就是了解一个NioWorker实例到底做了什么？它是如何处理事件的呢？</p>
+</blockquote>
+<h1 id="NioWorker"><a href="#NioWorker" class="headerlink" title="NioWorker"></a>NioWorker</h1><p>我们去跟踪<code>NioWorker</code>的构造方法，他调用了他的父类<code>AbstractNioWorker</code>的构造器，接着又调用父类<code>AbstractNioSelector</code>的构造器</p>
+<p><img src="/img/article/netty12.png" alt=""><br>我们主要看框出来的代码，首先把之前传进去的线程池赋给他，<strong>即一个<code>NioWorker</code>对应一个<code>Executor</code></strong>；然后我们来看<code>openSelector()</code>方法，同样也在<code>AbstractNioSelector</code>当前类下<br><img src="/img/article/netty13.png" alt=""></p>
+<p>让我们来研究下<code>start()</code>方法和<code>newThreadRenamingRunnable()</code>方法分别是干嘛的</p>
+<p><strong>newThreadRenamingRunnable()</strong></p>
+<p>为了方便理解，我们列出<code>AbstractNioWorker</code>以及<code>AbstractNioSelector</code>的类结构，<code>NioWorker</code>的结构上面已经列出</p>
+<p><img src="/img/article/netty14.png" alt=""><br><img src="/img/article/netty15.png" alt=""></p>
+<p>可以从图中看出在<code>AbstractNioWorker</code>中实现了<code>newThreadRenamingRunnable()</code>的方法<br><img src="/img/article/netty16.png" alt=""></p>
+<p>继续跟踪，去看下ThreadRenamingRunnable是干什么用的<br><img src="/img/article/netty17.png" alt=""><br>这里就是赋了一个Runnable变量为一个NioWorker实例，我们这里给他取个名字叫做“<strong>nio工人</strong>”</p>
+<blockquote>
+<p>到这里貌似走不下去了，我们回过头去看看start到底干了什么事情！</p>
+</blockquote>
+<p><strong>start()</strong></p>
+<p>跟踪进入，即<code>DeadLockProofWorker</code>类<br><img src="/img/article/netty18.png" alt=""></p>
+<p>我们惊奇的发现，这里的需要执行一个run()方法，正是start的第二个参数也就是一个<code>ThreadRenamingRunnable</code>实例中的run()方法！<br><img src="/img/article/netty19.png" alt=""><br>在这个方法中，调用本类中的Runnable变量的run()方法，这个变量不就是我们前面所述的“<strong>nio工人</strong>”吗？也就是一个NioWorker实例</p>
+<p><strong>饶了半天原来start()方法最终需要执行的就是一个NioWorker实例中的一个run()方法！</strong></p>
+<p><strong>或者说，AbstractNioSelector的openSelector()方法核心思路就是去执行NioWorker的run()方法！</strong></p>
+<blockquote>
+<p>通过代码追踪，其实也就是调用父类的父类<code>AbstractNioSelector</code>的<code>run()</code>方法，其中包含多路复用最核心的思路，我们下次来详细讲解！</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/netty/" rel="tag"># netty</a>
+              <a href="/tags/nio/" rel="tag"># nio</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/01/07/%E4%BB%80%E4%B9%88%E6%98%AFCAS%E6%9C%BA%E5%88%B6/" rel="prev" title="什么是CAS机制">
+      <i class="fa fa-chevron-left"></i> 什么是CAS机制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/01/21/Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E5%92%8C%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" rel="next" title="Nginx反向代理和负载均衡">
+      Nginx反向代理和负载均衡 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Netty架构"><span class="nav-number">1.</span> <span class="nav-text">Netty架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NioWorkerPool"><span class="nav-number">2.</span> <span class="nav-text">NioWorkerPool</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NioWorker"><span class="nav-number">3.</span> <span class="nav-text">NioWorker</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ninja Zhang"
+      src="/img/header/gugu.jpg">
+  <p class="site-author-name" itemprop="name">Ninja Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ninja Zhang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

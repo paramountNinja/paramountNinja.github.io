@@ -1,0 +1,1499 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>算法之字符串的排列</title>
+    <url>/2018/04/09/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%8E%92%E5%88%97/</url>
+    <content><![CDATA[<p><strong>题目描述:</strong><br>输入一个字符串,按字典序打印出该字符串中字符的所有排列。<br>例如输入字符串abc,则打印出由字符a,b,c所能排列出来的所有字符串abc,acb,bac,bca,cab和cba。<br><strong>输入描述:</strong><br>输入一个字符串,长度不超过9(可能有字符重复),字符只包括大小写字母。</p>
+<a id="more"></a>
+<p><strong>思路:</strong><br>通过交换得到不同的平行情况，通过固定位置得到当前情况下的不同情况。如下图所示：<br><img src="/img/article/code1.PNG" alt=""></p>
+<ol>
+<li>首先交换A和A，其实就是固定好A；  </li>
+<li>然后我们交换B和B得到第一种情况，固定好B，最终只有一个元素未固定那么可以输出ABC；  </li>
+<li>此时发生回溯，交换回B和B回到上一层，然后交换B和C，其实就是固定住C。最终只有一个元素未固定那么可以输出ACB；  </li>
+<li>此时发生回溯，往上交换回元素，同样的方法走后面几条路径；  </li>
+<li>最终通过排序将所有的情况按照字典序排列</li>
+</ol>
+<p><strong>代码:</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.Collections;</span><br><span class="line"></span><br><span class="line">public class Solution &#123;</span><br><span class="line">    public ArrayList&lt;String&gt; Permutation(String str) &#123;</span><br><span class="line">        ArrayList&lt;String&gt; res &#x3D; new ArrayList&lt;&gt;();</span><br><span class="line">        if (str &#x3D;&#x3D; null) return res;</span><br><span class="line">        char[] chars &#x3D; str.toCharArray();</span><br><span class="line">        PermutationHelper(res, chars, 0);</span><br><span class="line">        Collections.sort(res);</span><br><span class="line">        return res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void PermutationHelper(ArrayList&lt;String&gt; list, char[] chars, int toFix) &#123;</span><br><span class="line">        if (toFix &#x3D;&#x3D; chars.length - 1) &#123;&#x2F;&#x2F;已经到达最后一个数</span><br><span class="line">            String s &#x3D; String.valueOf(chars);</span><br><span class="line">            if (!list.contains(s)) list.add(s);</span><br><span class="line">        &#125;</span><br><span class="line">        for (int i &#x3D; toFix; i &lt; chars.length; i++) &#123;</span><br><span class="line">            swap(chars, i, toFix); &#x2F;&#x2F;图中横向平行的交换的过程，固定当前的位置的值</span><br><span class="line">            PermutationHelper(list, chars, toFix + 1);&#x2F;&#x2F;纵向延伸</span><br><span class="line">            swap(chars, toFix, i);&#x2F;&#x2F;回溯</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void swap(char[] chars, int i, int j) &#123;</span><br><span class="line">        char temp &#x3D; chars[i];</span><br><span class="line">        chars[i] &#x3D; chars[j];</span><br><span class="line">        chars[j] &#x3D; temp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>数据结构与算法</tag>
+        <tag>递归</tag>
+        <tag>回溯</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>支付宝当面付对接流程</title>
+    <url>/2018/03/25/%E6%94%AF%E4%BB%98%E5%AE%9D%E5%BD%93%E9%9D%A2%E4%BB%98%E5%AF%B9%E6%8E%A5%E6%B5%81%E7%A8%8B/</url>
+    <content><![CDATA[<p><img src="/img/article/alipay1.PNG" alt=""></p>
+]]></content>
+      <tags>
+        <tag>项目点</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Redis实现消息队列</title>
+    <url>/2018/03/16/Redis%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/</url>
+    <content><![CDATA[<p>主要使用redis数据结构的列表，通过lpush和brpop实现  </p>
+<p>画了一张图</p>
+<p><img src="/img/article/redis1.PNG" alt=""></p>
+]]></content>
+      <tags>
+        <tag>项目点</tag>
+        <tag>redis</tag>
+        <tag>消息队列</tag>
+        <tag>异步</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>深入理解java虚拟机笔记2</title>
+    <url>/2018/03/05/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%AC%94%E8%AE%B02/</url>
+    <content><![CDATA[<blockquote>
+<p>哪些内存需要回收？什么时候回收？如何回收？</p>
+</blockquote>
+<p><strong>程序计数器、 虚拟机栈、 本地方法栈</strong>3个区域随线程而生，随线程而灭；<br>栈中的栈帧随着方法的进入和退出而有条不紊地执行着出栈和入栈操作。<br>这几个区域的内存分配和回收都<strong>具备确定性</strong>，在这几个区域内就<strong>不需要</strong>过多考虑回收的问<br>题，因为方法结束或者线程结束时，内存自然就跟随着回收了。<br><strong>Java堆和方法区</strong>则不一<br>样，一个接口中的多个实现类需要的内存可能不一样，一个方法中的多个分支需要的内存也<br>可能不一样，我们只有在程序处于运行期间时才能知道会创建哪些对象，这部分内存的分配<br>和回收都是<strong>动态</strong>的，垃圾收集器所关注的是这部分内存。</p>
+<a id="more"></a>
+
+<h2 id="判断对象是否存活算法"><a href="#判断对象是否存活算法" class="headerlink" title="判断对象是否存活算法"></a>判断对象是否存活算法</h2><ol>
+<li><p><strong>引用计数算法</strong><br>给对象中添加一个引用计数器，每当有一个地方引用它时，计数器值就加1；当引用失效时，计数器值就减1；任何时刻计数器为0的对象就是不可能再被使用的。 主流的Java虚拟机里面<strong>没有选用引用计数算法</strong>来管理内存，其中最主要的原因是它<strong>很难解决对象之间相互循环引用</strong>的问题。</p>
+</li>
+<li><p><strong>可达性分析算法</strong><br>通过一系列的称为“GC Roots”的对象作为起始点，从这些节点开始向下搜索，搜索所走过的路径称为引用链（Reference Chain），当一个对象到GC Roots<strong>没有任何引用链相连</strong>（用图论的话来说，就是从GC Roots到这个对象不可达）时，则证明此对象是不可用的。  </p>
+<p>如图：对象object5、object6、object7虽然互相有关联，但是它们到GC Roots是不可达的，所以它们将会被判定为是可回收的对象。<br><img src="/img/article/gc1.jpg" alt="">  </p>
+<p>在Java语言中，可作为<strong>GC Roots的对象</strong>包括下面几种：</p>
+<ul>
+<li>虚拟机栈（栈帧中的本地变量表）中引用的对象。</li>
+<li>方法区中类静态属性引用的对象。</li>
+<li>方法区中常量引用的对象。</li>
+<li>本地方法栈中JNI（即一般说的Native方法）引用的对象。</li>
+</ul>
+</li>
+</ol>
+<h2 id="再谈引用"><a href="#再谈引用" class="headerlink" title="再谈引用"></a>再谈引用</h2><blockquote>
+<p>这样一类对象：当内存空间还足够时，则能保留在内存之中；如果内存空间在进行垃圾收集后还是非常紧张，则可以抛弃这些对象。 很多系统的缓存功能都符合这样的应用场景</p>
+</blockquote>
+<ol>
+<li><strong>强引用</strong><br>指在程序代码之中普遍存在的，类似<code>“Object obj=new Object（）”</code>这类的引用，只要强引用还存在，垃圾收集器永远不会回收掉被引用的对象。</li>
+<li><strong>软引用</strong><br>用来描述一些还有用但并非必需的对象。 对于软引用关联着的对象，在系统将要发生内存溢出异常之前，将会把这些对象列进回收范围之中进行<strong>第二次</strong>回收。 <strong>如果这次回收还没有足够的内存</strong>，才会抛出内存溢出异常。 在JDK 1.2之后，提供了SoftReference类来实现软引用。</li>
+<li><strong>弱引用</strong><br>用来描述非必需对象的，但是它的强度比软引用更弱一些，被弱引用关联的对象只能生存到<strong>下一次垃圾收集</strong>发生之前。 当垃圾收集器工作时，<strong>无论当前内存是否足够</strong>，都会回收掉只被弱引用关联的对象。 在JDK 1.2之后，提供了WeakReference类来实现弱引用。</li>
+<li><strong>虚引用</strong><br>也称为幽灵引用或者幻影引用，它是最弱的一种引用关系。 一个对象是否有虚引用的存在，完全不会对其生存时间构成影响，也无法通过虚引用来取得一个对象实例。 为一个对象设置虚引用关联的<strong>唯一目的就是能在这个对象被收集器回收时收到一个系统通知。</strong> 在JDK 1.2之后，提供了PhantomReference类来实现虚引用。</li>
+</ol>
+<h2 id="两次标记，一次自救机会"><a href="#两次标记，一次自救机会" class="headerlink" title="两次标记，一次自救机会"></a>两次标记，一次自救机会</h2><blockquote>
+<p>即使在可达性分析算法中不可达的对象，也并非是“非死不可”的</p>
+</blockquote>
+<p><strong>至少要经历两次标记过程：</strong>  </p>
+<ol>
+<li>如果对象在进行可达性分析后发现没有与GC Roots相连接的引用链，那它将会被第一次标记并且进行一次筛选，筛选的条件是此对象是否有必要执行finalize（）方法。 当对象没有覆盖finalize（）方法，或<br>者finalize（）方法已经被虚拟机调用过，虚拟机将这两种情况都视为“没有必要执行”。</li>
+</ol>
+<blockquote>
+<p>注：finalize() 当垃圾回收器确定不存在对该对象的更多引用时，由对象的垃圾回收器调用此方法。</p>
+</blockquote>
+<ol start="2">
+<li>如果这个对象被判定为有必要执行finalize（）方法，那么这个对象将会放置在一个叫做<strong>F-Queue</strong>的队列之中，并在稍后由一个由虚拟机自动建立的、 低优先级的Finalizer线程去执行它。 这里所谓的“执行”是指虚拟机会触发这个方法，但并不承诺会等待它运行结束，这样做的原因是，如果一个对象在finalize（）方法中执行缓慢，或者发生了死循环（更极端的情况），将很可能会<strong>导致F-Queue队列中其他对象永久处于等待</strong>，甚至导致整个内存回收系统崩溃。 <strong>finalize（）方法是对象逃脱死亡命运的最后一次机会</strong>，稍后GC将对F-Queue中的对象<br>进行第二次小规模的标记，如果对象要在finalize（）中成功拯救自己——只要重新与引用链<br>上的任何一个对象建立关联即可，<strong>譬如把自己（this关键字）赋值给某个类变量或者对象的成员变量</strong>，那在第二次标记时它将被移除出“即将回收”的集合；如果对象这时候还没有逃脱，那基本上它就真的被回收了。</li>
+</ol>
+<ul>
+<li>对象可以在被GC时自我拯救。</li>
+<li>这种自救的机会只有一次，因为一个对象的finalize()方法最多只会被系统自动调用一次</li>
+</ul>
+<h2 id="回收方法区"><a href="#回收方法区" class="headerlink" title="回收方法区"></a>回收方法区</h2><blockquote>
+<p>方法区又称永久代；主要回收废弃常量和无用的类</p>
+</blockquote>
+<p>判断一个类是否为“无用的类”的3个条件：</p>
+<ol>
+<li>该类<strong>所有的实例</strong>都已经被回收，也就是Java堆中不存在该类的任何实例。</li>
+<li>加载该类的<strong>ClassLoader</strong>已经被回收。</li>
+<li>对应的java.lang.Class对象没在任何地方被引用，无法在任何地方通过<strong>反射</strong>访问该类的方法。</li>
+</ol>
+<h2 id="垃圾收集算法"><a href="#垃圾收集算法" class="headerlink" title="垃圾收集算法"></a>垃圾收集算法</h2><h3 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h3><p>   分为“标记”和“清除”两个阶段：<br>   首先标记出所有需要回收的对象，在标记完成后统一回收所有被标记的对象。<br>   两个不足：  </p>
+<ul>
+<li>效率问题，标记和清除两个过程的效率都不高；</li>
+<li>空间问题，标记清除之后会产生大量不连续的内存碎片，空间碎片太多可能会导致以后在程序运行过程中需要分配较大对象时，无法找到足够的连续内存而不得不提前触发另一次垃圾收集动作。 </li>
+</ul>
+<h3 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a>复制算法</h3><p>   将可用内存按容量划分为大小相等的两块，<strong>每次只使用其中的一块</strong>。<br>   <strong>当这一块的内存用完了，就将还存活着的对象复制到另外一块上面，然后再把已使用过的内存空间一次清理掉。</strong> 这样使得每次都是对整个半区进行内存回收，内存分配时也就不用考虑内存碎片等复杂情况，只要移动堆顶指针，按顺序分配内存即可，实现简单，运行高效。<br>   <strong>只是这种算法的代价是将内存缩小为了原来的一半，未免太高了一点。</strong><br>   <strong>改进：</strong> Eden：Survivor = 8：1</p>
+<h3 id="标记-整理算法"><a href="#标记-整理算法" class="headerlink" title="标记-整理算法"></a>标记-整理算法</h3><p>   <em>运用于老年代</em><br>   标记过程同1；后续不直接清理，而是让所有存活的对象都向一端移动，然后直接清理掉端边界以外的内存。</p>
+<h3 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h3><p>当前商业虚拟机的垃圾收集<strong>都采用</strong>“分代收集”（Generational Collection）算法，根据对象存活周期的不同将内存划分为几块。<br>把Java堆分为<strong>新生代和老年代</strong><br>    - <strong>新生代</strong> 每次垃圾收集时都发现有大批对象死去，只有少量存活，那就选用<strong>复制算法</strong>，只需要付出少量存活对象的复制成本就可以完成收集。<br>    - <strong>老年代</strong> 因为对象存活率高、 没有额外空间对它进行分配担保，就必须使用<strong>“标记—清理”或者“标记—整理”</strong>算法来进行回收</p>
+<h2 id="垃圾收集器"><a href="#垃圾收集器" class="headerlink" title="垃圾收集器"></a>垃圾收集器</h2><blockquote>
+<p>如果说收集算法是内存回收的方法论，那么垃圾收集器就是内存回收的具体实现。</p>
+</blockquote>
+<p><img src="/img/article/gc2.jpg" alt=""><br>说明：展示了7种作用于不同分代的收集器，如果两个收集器之间存在连线，就说明它们可以搭配使用。 虚拟机所处的区域，则表示它是属于新生代收集器还是老年代收集器。</p>
+<h3 id="Serial"><a href="#Serial" class="headerlink" title="Serial"></a>Serial</h3><p><strong>单线程</strong>：但它的“单线程”的意义并不仅仅说明它只会使用一个CPU或一条收集线程去完成垃圾收集工作，更重要的是在它进行垃圾收集时，<strong>必须暂停其他所有的工作线程</strong>，直到它收集结束。<br><img src="/img/article/gc3.jpg" alt=""> </p>
+<p>实际上到现在为止，它依然是虚拟机运行在Client模式下的默认<strong>新生代收集器</strong>。<br>优点：简单而高效（与其他收集器的单线程比），对于限定单个CPU的环境来说，Serial收集器由于没有线程交互的开销，专心做垃圾收集自然可以获得最高的单线程收集效率。</p>
+<h3 id="ParNew"><a href="#ParNew" class="headerlink" title="ParNew"></a>ParNew</h3><p>ParNew收集器其实就是Serial收集器的<strong>多线程版本</strong>，除了使用多条线程进行垃圾收集之外，其余行为包括Serial收集器可用的所有控制参数（例如：-XX：SurvivorRatio、 -XX：<br>PretenureSizeThreshold、 -XX：HandlePromotionFailure等）、 收集算法、 Stop The World、 对象分配规则、 回收策略等都与Serial收集器完全一样，在实现上，这两种收集器也共用了相当多的代码。<br><img src="/img/article/gc4.jpg" alt=""></p>
+<p>许多运行在Server模式下的虚拟机中首选的<strong>新生代收集器</strong>，其中有一个与性能无关但很重要的原因是，<strong>除了Serial收集器外，目前只有它能与CMS收集器配合工作。</strong></p>
+<h3 id="Parallel-Scavenge"><a href="#Parallel-Scavenge" class="headerlink" title="Parallel Scavenge"></a>Parallel Scavenge</h3><p>新生代收集器，使用复制算法的收集器，并行的多线程收集器（同ParNew）  </p>
+<p>但目标是达到一个<strong>可控制的吞吐量</strong>（Throughput）。<br>所谓吞吐量就是CPU用于运行用户代码的时间与CPU总消耗时间的比值，<br>即<strong>吞吐量=运行用户代码时间/（运行用户代码时间+垃圾收集时间）</strong>，<br>虚拟机总共运行了100分钟，其中垃圾收集花掉1分钟，那吞吐量就是99%。</p>
+<h3 id="Serial-Old"><a href="#Serial-Old" class="headerlink" title="Serial Old"></a>Serial Old</h3><p><strong>serial收集器的老年代版本，单线程收集器，使用“标记-整理”算法。</strong></p>
+<h3 id="Parallel-Old"><a href="#Parallel-Old" class="headerlink" title="Parallel Old"></a>Parallel Old</h3><p><strong>Parallel Scavenge收集器的老年代版本，多线程和“标记-整理”算法</strong><br>在注重吞吐量以及CPU资源敏感的场合，都可以优先考虑Parallel Scavenge加Parallel Old<br>收集器。<br><img src="/img/article/gc5.jpg" alt=""></p>
+<h3 id="CMS"><a href="#CMS" class="headerlink" title="CMS"></a>CMS</h3><blockquote>
+<p><strong>一种以获取最短回收停顿时间为目标的收集器。</strong></p>
+</blockquote>
+<p>目前很大一部分的Java应用集中在互联网站或者B/S系统的<strong>服务端</strong>上，这类应用尤其重视服务的响应速度，希望系统停顿时间最短，以给用户带来较好的体验。 CMS收集器就非常符合这类应用的需求。  </p>
+<p>“Mark Sweep” ——- “标记—清除”  </p>
+<p>运作过程4个步骤</p>
+<ul>
+<li><strong>初始标记（CMS initial mark）</strong><br>需要“Stop The World”。<br>标记一下GC Roots能直接关联到的对象，速度很快</li>
+<li><strong>并发标记（CMS concurrent mark）</strong><br>进行GC RootsTracing的过程</li>
+<li><strong>重新标记（CMS remark）</strong><br>需要“Stop The World”。<br>修正并发标记期间因用户程序继续运作而导致标记产生变动的那一部分对象的标记记录，这个阶段的停顿时间一般会比初始标记阶段稍长一些，但远比并发标记的时间短。</li>
+<li><strong>并发清除（CMS concurrent sweep）</strong></li>
+</ul>
+<p><img src="/img/article/gc6.jpg" alt=""></p>
+<p>缺点:  </p>
+<ol>
+<li><p>CMS收集器对CPU资源非常敏感。在并发阶段，它虽然不会导致用户线程停顿，但是会因为占用了一部分线程（或者说CPU资源）而导致应用程序变慢，总吞吐量会降低。  </p>
+</li>
+<li><p>CMS收集器无法处理浮动垃圾（Floating Garbage），可能出现“Concurrent Mode Failure”失败而导致另一次Full GC的产生。  </p>
+</li>
+<li><p>CMS是一款基于“标记—清除”算法实现的收集器，收集结束时会有大量<br>空间碎片产生。 空间碎片过多时，将会给大对象分配带来很大麻烦，往往会出现老年代还有很大空间剩余。</p>
+</li>
+</ol>
+<h3 id="G1"><a href="#G1" class="headerlink" title="G1"></a>G1</h3><p>G1是一款面向服务端应用的垃圾收集器，具有如下特点：</p>
+<ul>
+<li><strong>并行与并发</strong>：使用多个CPU（CPU或者CPU核心）来缩短Stop-The-World停顿的时间，通过并发的方式让Java程序继续执行。</li>
+<li><strong>分代收集</strong>：虽然G1可以不需要其他收集器配合就能<strong>独立管理整个GC堆</strong>，但它能够采用不同的方式去处理新创建的对象和已经存活了一段时间、 熬过多次GC的旧对象以获取更好的收集效果。</li>
+<li><strong>空间整合</strong>：与CMS的“标记—清理”算法不同，G1从整体来看是基于“标记—整理”算法实<br>现的收集器，从局部（两个Region之间）上来看是基于“复制”算法实现的，但无论如何，这<br>两种算法都意味着<strong>G1运作期间不会产生内存空间碎片</strong>，收集后能提供规整的可用内存。 这种<br>特性<strong>有利于程序长时间运行</strong>，分配大对象时不会因为无法找到连续内存空间而提前触发下一<br>次GC。</li>
+<li><strong>可预测的停顿</strong>：这是G1相对于CMS的另一大优势，G1除了追求低停顿外，还能建立可预测的停顿时间模型，能让使用者明确指定在一个长度为M毫秒的时间片段内，消耗在垃圾收集上的时间不得超过N毫秒，这几乎已经是实时Java（RTSJ）的垃圾收集器的特征了。</li>
+</ul>
+<p>使用G1收集器时，Java堆的内存布局就与其他收集器有很大差别，它将整个Java堆划分<br>为多个大小相等的独立区域（Region），虽然还保留有新生代和老年代的概念，但新生代和<br>老年代不再是物理隔离的了，它们都是一部分Region（不需要连续）的集合。</p>
+<p><strong>G1收集器的运作大致可划分为以下几个步骤：</strong></p>
+<ul>
+<li>初始标记（Initial Marking）</li>
+<li>并发标记（Concurrent Marking）</li>
+<li>最终标记（Final Marking）</li>
+<li>筛选回收（Live Data Counting and Evacuation）</li>
+</ul>
+<p><img src="/img/article/gc7.jpg" alt=""></p>
+]]></content>
+      <tags>
+        <tag>JVM</tag>
+        <tag>垃圾收集</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Nginx反向代理和负载均衡</title>
+    <url>/2018/01/21/Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E5%92%8C%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</url>
+    <content><![CDATA[<blockquote>
+<p>最近，一休在学习分布式架构，作为一个新手，有很多不明白的地方，于是就去找大师请教。</p>
+</blockquote>
+<a id="more"></a>
+
+<p><strong>一休</strong>：我们在发布网站的时候必须要拥有一台独立的服务器吗？<br><strong>大师</strong>：不一定哦！对于大公司是这样的，但对于小公司并不是的。</p>
+<p><strong>一休</strong>：不是独立的服务器，难道还和别人公用一个服务器啊？<br><strong>大师</strong>：是这样的，其实你可以和别人公用一台服务器，只是端口不同罢了。  </p>
+<p><strong>一休</strong>：那我在域名绑定的时候不是绑定的是ip地址吗？他怎么知道我想要访问哪个端口呀？<br><strong>大师</strong>：你知道nginx吗？它就可以实现反向代理，然后把你的域名绑定到你想要访问的端口上面。</p>
+<p><strong>一休</strong>：我听说过nginx，但什么是反向代理呢？<br><strong>大师</strong>：<strong>反向代理就是作为一台代理服务器来接受internet上客户端的请求，然后将请求转发给内部网络上的服务器，等服务器处理好任务后，再将结果转发给客户端。</strong></p>
+<p>我们来看下图<br><img src="/img/article/nginx1.png" alt=""></p>
+<p>接着我们来模拟一个场景：<strong>在一个服务器（假设服务器ip为192.168.2.3）上建立两个tomcat，一个端口设置在8080，一个端口设置在8081</strong>。</p>
+<p>首先设置一下本地的hosts文件，来模拟绑定域名的过程<br><img src="/img/article/nginx2.png" alt=""><br>其含义是我们将两个不同的域名都绑定到一台相同的服务器上，<strong>目标是</strong>当我们访问<code>8080.ninja.com</code>时，访问的是运行在8080端口的tomcat；当我们访问<code>8081.ninja.com</code>时，访问的是运行在8081端口的tomcat；</p>
+<p><strong>一休</strong>：那么nginx怎么做到转发给不同端口的tomcat呢？<br><strong>大师</strong>：这就需要我们配置<code>nginx.conf</code>这个文件了！</p>
+<p>我们来看下<code>nginx.conf</code>这个文件的核心部分的结构（省略了部分）<br><img src="/img/article/nginx3.png" alt=""></p>
+<p><code>http</code>就像是一个<strong>插座</strong>，我们可以在其中插入多个<code>upstream</code>和<code>server</code></p>
+<ul>
+<li>upstream对应的是具体的服务</li>
+<li>server对应的是一台虚拟主机</li>
+</ul>
+<p>当我们访问<code>8080.ninja.com</code>的时候，就会通过<code>proxy_pass</code>找到相应的<code>upstream</code>，然后访问该端口上的网站。</p>
+<p>同理，我们可以在<code>http</code>上插入8081端口的服务，也就是再加上一个<code>upstream</code>和一个<code>server</code>，最终我们可以用下图来表示转发的过程<br><img src="/img/article/nginx4.png" alt=""></p>
+<p><strong>一休</strong>：反向代理的转发过程我懂了，能不能给我讲讲负载均衡呢？<br><strong>大师</strong>：在实际开发中，对于同一功能的工程我们通常使用集群的方式来缓解并发访问的压力。  </p>
+<p><strong>也就是使用多个服务器来实现相同的功能模块</strong></p>
+<p>例如在我们下订单的时候需要访问<strong>订单模块</strong>的服务器，那么在双十一这些高并发的情况下，我们如何均匀的分发给不同的服务器呢？</p>
+<p>nginx就可以通过设置<code>nginx.conf</code>来做到这一点</p>
+<p>还记得<code>upstream</code>吗？我们可以在一个<code>upstream</code>里面添加不同的服务器的具体服务来实现负载均衡。配置如下：<br><img src="/img/article/nginx5.png" alt=""></p>
+<p>当我们访问<code>www.ninja.com</code>的时候，如果不加<code>weight</code>权重，那么就以轮询的方式访问两个服务器，如果加了权重，那可能4次里面有3次访问的是<code>192.168.2.4</code>这个服务器了。这样就可以减轻服务器的压力了！</p>
+<p>总结如下图：<br><img src="/img/article/nginx6.png" alt=""></p>
+<p><strong>一休</strong>：总算搞懂了nginx的反向代理和负载均衡，谢谢大师~<br><strong>大师</strong>：nginx支持很高的并发量，很多大公司都在用呢！当然nginx的功能远不止这些，要学的还有很多啊！</p>
+<p>本篇完~</p>
+]]></content>
+      <tags>
+        <tag>分布式</tag>
+        <tag>nginx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Netty源码剖析之启动初步</title>
+    <url>/2018/01/18/Netty%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%E4%B9%8B%E5%90%AF%E5%8A%A8%E5%88%9D%E6%AD%A5/</url>
+    <content><![CDATA[<blockquote>
+<p>Netty是对nio进行封装的框架，并改善了nio的不足</p>
+</blockquote>
+<h1 id="Netty架构"><a href="#Netty架构" class="headerlink" title="Netty架构"></a>Netty架构</h1><p><strong>Netty的模块组件</strong></p>
+<ul>
+<li><strong>bootstrap</strong>： Netty服务端及客户端启动类</li>
+<li><strong>buffer</strong>：缓冲相关，对NIO Buffer做了一些优化、封装</li>
+<li><strong>channel</strong>：处理客户端与服务端之间的连接通道</li>
+<li><strong>container</strong>：连接其他容器的代码，例如Spring</li>
+<li><strong>handler</strong>：实现协议编解码等附加功能，</li>
+<li><strong>logging</strong>：日志</li>
+<li><strong>util</strong>：工具类</li>
+</ul>
+<a id="more"></a>
+
+<p><strong>Netty的运作流程</strong></p>
+<blockquote>
+<p>主从多线程reactor模型<br><img src="/img/article/netty20.png" alt=""></p>
+</blockquote>
+<p>首先让我们来看看Netty的启动和创建过程吧</p>
+<p>编写server端代码，来启动Netty<br><img src="/img/article/netty21.png" alt=""></p>
+<p>这个时候，<code>boss</code>和<code>worker</code>两个线程池就被放入Factory工厂里构造Netty啦！</p>
+<p>于是我们跟踪进源码里，经过调用一系列的构造方法的重载，看到</p>
+<p><img src="/img/article/netty3.png" alt=""></p>
+<p><code>bossCount</code>被设置成了1<br><code>workerCount</code>被设置成了8(若为四核电脑：4*2)<br>然后分别创建<code>NioWorkerPool</code>和<code>NioServerBossPool</code>实例。</p>
+<p><strong>也就是我们结构图中的sub和main两个Reactor了。</strong></p>
+<blockquote>
+<p>本文先讲解下<code>NioWorkerPool</code>的创建过程</p>
+</blockquote>
+<h1 id="NioWorkerPool"><a href="#NioWorkerPool" class="headerlink" title="NioWorkerPool"></a>NioWorkerPool</h1><p>我们继续追踪进源码，经过调用构造器的重载</p>
+<p><img src="/img/article/netty4.png" alt=""></p>
+<p>这里出现了<code>NioWorkerPool</code>的父类，这里我们列出继承关系图</p>
+<p><img src="/img/article/netty5.png" alt=""></p>
+<p>调用<code>AbstractNioWorkerPool</code>的构造器，其中核心代码</p>
+<p><img src="/img/article/netty6.png" alt=""></p>
+<p>我们可以看到在这里，创建了一个AbstractNioWorker的数组，其数量为workerCount个，也就是8个。</p>
+<p>那么<code>AbstractNioWorker</code>是什么呢？下面是继承关系</p>
+<p><img src="/img/article/netty7.png" alt=""></p>
+<p><strong>在一个<code>AbstractNioWorkerPool</code>有八个<code>AbstractNioWorker</code>空间，而每一个<code>AbstractNioWorker</code>又是实现了Runnable接口的。</strong>  </p>
+<p>然后我们返回到<code>NioWorkerPool</code>的构造函数中，继续执行<code>this.init()</code>方法;</p>
+<p>我们发现这个<code>init()</code>方法其实也是执行的父类<code>AbstractNioWorkerPool</code>的方法，这里执行的主要目的是给之前开辟的那个数组的每个元素实例化</p>
+<p><img src="/img/article/netty8.png" alt=""></p>
+<p>这里的<code>newWorker()</code>方法是干什么的呢？经过跟踪，又在<code>NioWorkerPool</code>中找到，毋庸置疑，就是实例化一个<code>NioWorker</code>了。</p>
+<p><strong>到这里，我们创建了一个<code>NioWorkerPool</code>,其中有八个<code>NioWorker</code>，每一个<code>NioWorker</code>都给它配上一个线程池。</strong></p>
+<p>我们列出目前几个关键类的结构，来帮助整理思路</p>
+<p><img src="/img/article/netty9.png" alt=""><br><img src="/img/article/netty10.png" alt=""><br><img src="/img/article/netty11.png" alt=""></p>
+<blockquote>
+<p>接下来我们需要做的就是了解一个NioWorker实例到底做了什么？它是如何处理事件的呢？</p>
+</blockquote>
+<h1 id="NioWorker"><a href="#NioWorker" class="headerlink" title="NioWorker"></a>NioWorker</h1><p>我们去跟踪<code>NioWorker</code>的构造方法，他调用了他的父类<code>AbstractNioWorker</code>的构造器，接着又调用父类<code>AbstractNioSelector</code>的构造器</p>
+<p><img src="/img/article/netty12.png" alt=""><br>我们主要看框出来的代码，首先把之前传进去的线程池赋给他，<strong>即一个<code>NioWorker</code>对应一个<code>Executor</code></strong>；然后我们来看<code>openSelector()</code>方法，同样也在<code>AbstractNioSelector</code>当前类下<br><img src="/img/article/netty13.png" alt=""></p>
+<p>让我们来研究下<code>start()</code>方法和<code>newThreadRenamingRunnable()</code>方法分别是干嘛的</p>
+<p><strong>newThreadRenamingRunnable()</strong></p>
+<p>为了方便理解，我们列出<code>AbstractNioWorker</code>以及<code>AbstractNioSelector</code>的类结构，<code>NioWorker</code>的结构上面已经列出</p>
+<p><img src="/img/article/netty14.png" alt=""><br><img src="/img/article/netty15.png" alt=""></p>
+<p>可以从图中看出在<code>AbstractNioWorker</code>中实现了<code>newThreadRenamingRunnable()</code>的方法<br><img src="/img/article/netty16.png" alt=""></p>
+<p>继续跟踪，去看下ThreadRenamingRunnable是干什么用的<br><img src="/img/article/netty17.png" alt=""><br>这里就是赋了一个Runnable变量为一个NioWorker实例，我们这里给他取个名字叫做“<strong>nio工人</strong>”</p>
+<blockquote>
+<p>到这里貌似走不下去了，我们回过头去看看start到底干了什么事情！</p>
+</blockquote>
+<p><strong>start()</strong></p>
+<p>跟踪进入，即<code>DeadLockProofWorker</code>类<br><img src="/img/article/netty18.png" alt=""></p>
+<p>我们惊奇的发现，这里的需要执行一个run()方法，正是start的第二个参数也就是一个<code>ThreadRenamingRunnable</code>实例中的run()方法！<br><img src="/img/article/netty19.png" alt=""><br>在这个方法中，调用本类中的Runnable变量的run()方法，这个变量不就是我们前面所述的“<strong>nio工人</strong>”吗？也就是一个NioWorker实例</p>
+<p><strong>饶了半天原来start()方法最终需要执行的就是一个NioWorker实例中的一个run()方法！</strong></p>
+<p><strong>或者说，AbstractNioSelector的openSelector()方法核心思路就是去执行NioWorker的run()方法！</strong></p>
+<blockquote>
+<p>通过代码追踪，其实也就是调用父类的父类<code>AbstractNioSelector</code>的<code>run()</code>方法，其中包含多路复用最核心的思路，我们下次来详细讲解！</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>netty</tag>
+        <tag>nio</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>什么是CAS机制</title>
+    <url>/2018/01/07/%E4%BB%80%E4%B9%88%E6%98%AFCAS%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<blockquote>
+<p>整理自微信公众号：程序员小灰；链接：<a href="http://mp.weixin.qq.com/s/f9PYMnpAgS1gAQYPDuCq-w" target="_blank" rel="noopener">什么是CAS机制</a></p>
+</blockquote>
+<h1 id="原子操作类"><a href="#原子操作类" class="headerlink" title="原子操作类"></a>原子操作类</h1><p>首先我们来看一个例子，这个例子在上一篇“什么是volatile关键字”中也出现过：</p>
+<a id="more"></a>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class VolatileTest2 &#123;</span><br><span class="line">    public volatile static int count &#x3D; 0;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        for (int i &#x3D; 0; i &lt; 2; i++) &#123;</span><br><span class="line">            new Thread(new Runnable() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public void run() &#123;</span><br><span class="line">                    try &#123;</span><br><span class="line">                        Thread.sleep(10);</span><br><span class="line">                    &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                    &#x2F;&#x2F;synchronized (VolatileTest2.class) &#123;</span><br><span class="line">                    for (int i &#x3D; 0; i &lt; 100; i++) &#123;</span><br><span class="line">                        count++;  &#x2F;&#x2F;本身不是原子性操作</span><br><span class="line">                    &#125;</span><br><span class="line">                    &#x2F;&#x2F;&#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br><span class="line">        try &#123;</span><br><span class="line">            Thread.sleep(2000);</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(&quot;count &#x3D; &quot; + count);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们知道volatile关键字不能确保线程安全，所以我们可以使用synchronized关键字来确保线程安全，打开上面代码的注释即可。</p>
+<blockquote>
+<p>但是在某些情况下，synchronize不是最优选择</p>
+</blockquote>
+<p>为什么这么说呢？关键在于性能问题。</p>
+<p>Synchronized关键字会让没有得到锁资源的线程进入<strong>BLOCKED</strong>状态，而后在争夺到锁资源后恢复为<strong>RUNNABLE</strong>状态，这个过程中涉及到操作系统<strong>用户模式</strong>和<strong>内核模式</strong>的转换，代价比较高。</p>
+<p>尽管Java1.6为Synchronized做了优化，增加了从<strong>偏向锁</strong>到<strong>轻量级锁</strong>再到<strong>重量级锁</strong>的过度，但是在最终转变为重量级锁之后，性能仍然较低。</p>
+<blockquote>
+<p>那么有什么方式可以替代同步锁呢？我们可以使用原子操作类</p>
+</blockquote>
+<p>所谓原子操作类，指的是<code>java.util.concurrent.atomic</code>包下，一系列以<code>Atomic</code>开头的包装类。例如<code>AtomicBoolean</code>，<code>AtomicInteger</code>，<code>AtomicLong</code>。它们分别用于<code>Boolean</code>，<code>Integer</code>，<code>Long</code>类型的原子性操作。</p>
+<p>现在我们尝试在代码中引入<code>AtomicInteger</code>类：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class AtomicTest &#123;</span><br><span class="line">    public static AtomicInteger count &#x3D; new AtomicInteger(0);</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        &#x2F;&#x2F;开启两个线程</span><br><span class="line">        for (int i &#x3D; 0; i &lt; 2; i++) &#123;</span><br><span class="line">            new Thread(new Runnable() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public void run() &#123;</span><br><span class="line">                    &#x2F;&#x2F;模拟线程交替的现象</span><br><span class="line">                    try &#123;</span><br><span class="line">                        Thread.sleep(10);</span><br><span class="line">                    &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                    &#x2F;&#x2F;每个线程当中让count值自增100次</span><br><span class="line">                    for (int j &#x3D; 0; j &lt; 100; j++) &#123;</span><br><span class="line">                        count.incrementAndGet();</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br><span class="line">        try &#123;</span><br><span class="line">            Thread.sleep(2000);</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(&quot;count&#x3D;&quot; + count.get());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用AtomicInteger之后，最终的输出结果同样可以保证是200。并且在某些情况下，代码的性能会比Synchronized更好。</p>
+<blockquote>
+<p>Atomic 操作类的底层，正是利用了我们要讲的CAS机制！</p>
+</blockquote>
+<h1 id="什么是CAS"><a href="#什么是CAS" class="headerlink" title="什么是CAS"></a>什么是CAS</h1><p>CAS是英文单词<strong>Compare And Swap</strong>的缩写，翻译过来就是比较并替换。</p>
+<p>CAS机制当中使用了3个基本操作数：内存地址V，旧的预期值<strong>A</strong>，要修改的新值<strong>B</strong>。</p>
+<p>更新一个变量的时候，只有当变量的预期值A和内存地址V当中的实际值相同时，才会将内存地址V对应的值修改为B。</p>
+<p>这样说或许有些抽象，我们来看一个例子：</p>
+<ol>
+<li>在内存地址V当中，存储着值为10的变量。<br><img src="https://i.imgur.com/og9oWA2.jpg" alt=""></li>
+<li>此时线程1想要把变量的值增加1。对线程1来说，旧的预期值A=10，要修改的新值B=11。<br><img src="https://i.imgur.com/kOYNVNf.jpg" alt=""></li>
+<li>在线程1要提交更新之前，另一个线程2抢先一步，把内存地址V中的变量值率先更新成了11。<br><img src="https://i.imgur.com/X6haewH.jpg" alt=""></li>
+<li>线程1开始提交更新，<strong>首先进行A和地址V的实际值比较（Compare）</strong>，发现A不等于V的实际值，提交失败。<br><img src="https://i.imgur.com/yHjBqan.jpg" alt=""></li>
+<li>线程1重新获取内存地址V的当前值，并重新计算想要修改的新值。此时对线程1来说，A=11，B=12。这个重新尝试的过程被称为<strong>自旋</strong>。<br><img src="https://i.imgur.com/NjObY53.jpg" alt=""></li>
+<li>这一次比较幸运，没有其他线程改变地址V的值。线程1进行<strong>Compare</strong>，发现A和地址V的实际值是相等的。<br><img src="https://i.imgur.com/TeMC1ny.jpg" alt=""></li>
+<li>线程1进行<strong>SWAP</strong>，把地址V的值替换为B，也就是12。<br><img src="https://i.imgur.com/MWbwI0o.jpg" alt=""></li>
+</ol>
+<p>从思想上来说，Synchronized属于<strong>悲观锁</strong>，悲观地认为程序中的并发情况严重，所以严防死守。CAS属于<strong>乐观锁</strong>，乐观地认为程序中的并发情况不那么严重，所以让线程不断去尝试更新。</p>
+<blockquote>
+<p>这两种机制没有绝对的好坏，在并发量非常高的情况下，反而用同步锁更合适一些（ninja注：不停的自旋也消耗性能）</p>
+</blockquote>
+<p>那么在java中哪些地方用到了CAS机制呢？<br>例：Atomic系列类以及Lock系列类的底层实现；甚至在java1.6以上版本，synchronized转变为重量级锁之前，也会采用CAS机制</p>
+<blockquote>
+<p>那么CAS机制存在什么样的缺点呢？</p>
+</blockquote>
+<h1 id="CAS的缺点"><a href="#CAS的缺点" class="headerlink" title="CAS的缺点"></a>CAS的缺点</h1><ol>
+<li><p><strong>CPU开销较大</strong><br>在并发量比较高的情况下，如果许多线程反复尝试更新某一个变量，却又一直更新不成功，循环往复，会给CPU带来很大的压力。</p>
+</li>
+<li><p><strong>不能保证代码块的原子性</strong><br>CAS机制所保证的只是一个变量的原子性操作，而不能保证整个代码块的原子性。比如需要保证3个变量共同进行原子性的更新，就不得不使用Synchronized了。</p>
+</li>
+<li><p><strong>ABA问题</strong><br>这是CAS机制最大的问题所在。</p>
+</li>
+</ol>
+<h1 id="ABA问题的解决方法"><a href="#ABA问题的解决方法" class="headerlink" title="ABA问题的解决方法"></a>ABA问题的解决方法</h1><blockquote>
+<p>ninja注</p>
+</blockquote>
+<p>我们来看下面这个例子：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">public class Atomic02Example &#123;</span><br><span class="line">    static AtomicReference&lt;String&gt; atomicInteger &#x3D; new AtomicReference&lt;String&gt;(&quot;A&quot;);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;ABA问题</span><br><span class="line">    public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line">        Thread t1 &#x3D; new Thread(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                atomicInteger.compareAndSet(&quot;A&quot;, &quot;B&quot;);</span><br><span class="line">                atomicInteger.compareAndSet(&quot;B&quot;, &quot;A&quot;);</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        Thread t2 &#x3D; new Thread(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    Thread.sleep(10);</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                boolean flag &#x3D; atomicInteger.compareAndSet(&quot;A&quot;, &quot;B&quot;);</span><br><span class="line">                System.out.println(&quot;是否可以修改成功:&quot; + flag);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        t1.start();</span><br><span class="line">        t2.start();</span><br><span class="line">        t1.join();</span><br><span class="line">        t2.join();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码展示了ABA问题  </p>
+<p>线程1 先执行，将A改成了B，然后再将B改成了A</p>
+<p>线程2 后执行，执行代码输出为<code>是否可以修改成功:true</code>；</p>
+<p>我们将线程1中第一次A记作<strong>A1</strong>，第二次A记作<strong>A2</strong></p>
+<p>若没有ABA问题，线程2应该输出的是<strong>false</strong>，因为我们希望线程2在A1的时候修改，而此时内存中的值是A2，不满足CAS机制，故输出<strong>false</strong> 。<br>但事实上，线程2并不知道此时的A是A1还是A2，所以永远可以修改成功。</p>
+<blockquote>
+<p>那么我们如何区分此时的A是A1还是A2呢？可以使用版本号的方法</p>
+</blockquote>
+<p>使用带版本号的原子类重写代码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class Atomic03Example &#123;</span><br><span class="line">    &#x2F;&#x2F;使用带版本号的原子类</span><br><span class="line">    static AtomicStampedReference&lt;String&gt; reference &#x3D; new AtomicStampedReference&lt;String&gt;(&quot;A&quot;, 0);&#x2F;&#x2F;这里版本号设置为0</span><br><span class="line"></span><br><span class="line">    &#x2F;***解决ABA问题**&#x2F;</span><br><span class="line">    public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line">        Thread t1 &#x3D; new Thread(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;   &#x2F;&#x2F;乐观锁</span><br><span class="line">                reference.compareAndSet(&quot;A&quot;, &quot;B&quot;, reference.getStamp(), reference.getStamp() + 1);&#x2F;&#x2F;后两个参数：当前版本号，新版本号</span><br><span class="line">                reference.compareAndSet(&quot;B&quot;, &quot;A&quot;, reference.getStamp(), reference.getStamp() + 1);</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        Thread t2 &#x3D; new Thread(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    Thread.sleep(10);</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                &#x2F;&#x2F;期望的是在0这个版本的时候进行操作</span><br><span class="line">                boolean flag &#x3D; reference.compareAndSet(&quot;A&quot;, &quot;B&quot;, 0, reference.getStamp() + 1);</span><br><span class="line">                System.out.println(&quot;是否可以修改成功:&quot; + flag);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        t1.start();</span><br><span class="line">        t2.start();</span><br><span class="line">        t1.join();</span><br><span class="line">        t2.join();</span><br><span class="line"></span><br><span class="line">        System.out.println(reference.getReference());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当版本号为0的时候，线程2可以执行操作<br>这里输出结果为<code>是否可以修改成功:false</code><br>所以此时参数值为A（线程2未能修改成功）</p>
+]]></content>
+      <tags>
+        <tag>并发</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>什么是volatile关键字</title>
+    <url>/2018/01/05/%E4%BB%80%E4%B9%88%E6%98%AFvolatile%E5%85%B3%E9%94%AE%E5%AD%97/</url>
+    <content><![CDATA[<blockquote>
+<p>整理自微信公众号：程序员小灰；链接：<a href="http://mp.weixin.qq.com/s/DZkGRTan2qSzJoDAx7QJag" target="_blank" rel="noopener">什么是volatile关键字</a></p>
+</blockquote>
+<h1 id="Java内存模型"><a href="#Java内存模型" class="headerlink" title="Java内存模型"></a>Java内存模型</h1><p>&emsp;&emsp;Java内存模型简称JMM（Java Memory Model），是Java虚拟机所定义的一种抽象规范，用来屏蔽不同硬件和操作系统的内存访问差异，让java程序在各种平台下都能达到一致的内存访问效果。<br>&emsp;&emsp;Java内存模型如下图：<br><img src="https://i.imgur.com/VlA8f9b.png" alt=""></p>
+<a id="more"></a>
+
+<p>这里需要解释几个概念：</p>
+<ol>
+<li><p><strong>主内存（Main Memory）</strong><br>主内存可以简单理解为计算机当中的内存，但又不完全等同。主内存被所有的线程所共享，对于一个共享变量（比如静态变量，或是堆内存中的实例）来说，主内存当中存储了它的“本尊”。</p>
+</li>
+<li><p><strong>工作内存（Working Memory）</strong><br>工作内存可以简单理解为计算机当中的CPU高速缓存，但又不完全等同。每一个线程拥有自己的工作内存，对于一个共享变量来说，工作内存当中存储了它的“副本”。  </p>
+</li>
+</ol>
+<p>线程对共享变量的所有操作都必须在工作内存进行，不能直接读写主内存中的变量。不同线程之间也无法访问彼此的工作内存，变量值的传递只能通过主内存来进行。  </p>
+<blockquote>
+<p>直接操纵主内存太慢了，JVM为了提高性能使用了工作内存。如同CPU高速缓存和主内存的关系。</p>
+</blockquote>
+<p>以上说的这些可能有点抽象，大家来看看下面这个例子：</p>
+<p>对于一个静态变量<br><code>static int s = 0；</code></p>
+<p>线程A执行如下代码：<br><code>s = 3；</code></p>
+<p>那么，JMM的工作流程如下图所示：<br><img src="https://i.imgur.com/l0AuYcT.png" alt=""><br><img src="https://i.imgur.com/M9wRzO7.png" alt=""></p>
+<p>通过一系列内存读写的操作指令（JVM内存模型共定义了8种内存操作指令），线程A把静态变量 s=0 从主内存读到工作内存，再把 s=3 的更新结果同步到主内存当中。从单线程的角度来看，这个过程没有任何问题。</p>
+<p>这时候我们引入线程B，执行如下代码：</p>
+<p><code>System.out.println(&quot;s=&quot; + s);</code></p>
+<blockquote>
+<p>思考：如果线程A先执行，线程B后执行，线程B的输出结果会是什么？</p>
+</blockquote>
+<p>引入线程B以后，当线程A首先执行，极大的可能是出现下面情况：<br><img src="https://i.imgur.com/t88hnkv.png" alt=""><br><img src="https://i.imgur.com/hvyKDTB.png" alt=""><br>此时线程B从主内存得到的s值是3，理所当然输出 s=3，这种情况不难理解。但是，有较小的几率出现另一种情况：<br><img src="https://i.imgur.com/cLtsXut.png" alt=""><br><img src="https://i.imgur.com/TSvXmw1.png" alt=""><br>因为工作内存所更新的变量并不会立即同步到主内存，所以虽然线程A在工作内存当中已经把变量s的值更新成3，但是线程B从主内存得到的变量s的值仍然是0，从而输出 s=0。</p>
+<blockquote>
+<p>怎样才能解决这个问题，使用Synchronized同步锁吗？同步锁虽然可以保证线程安全，但是对程序性能的影响太大了，那么volatile这种轻量级的解决方法登场啦！</p>
+</blockquote>
+<h1 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h1><h2 id="可见性"><a href="#可见性" class="headerlink" title="可见性"></a>可见性</h2><p>volatile关键字具有许多特性，其中最重要的特性就是保证了用volatile修饰的变量对所有线程的可见性。</p>
+<p>这里的可见性是什么意思呢？当一个线程修改了变量的值，新的值会立刻同步到主内存当中。而其他线程读取这个变量的时候，也会从主内存中拉取最新的变量值。</p>
+<blockquote>
+<p>为什么volatile关键字可以有这样的特性？这得益于java语言的先行发生原则（happens-before）</p>
+</blockquote>
+<h2 id="happens-before"><a href="#happens-before" class="headerlink" title="happens-before"></a>happens-before</h2><p>在计算机科学中，先行发生原则是两个事件的结果之间的关系，如果一个事件发生在另一个事件之前，结果必须反映，即使这些事件实际上是乱序执行的（通常是优化程序流程）。</p>
+<p>这里所谓的事件，实际上就是各种指令操作，比如读操作、写操作、初始化操作、锁操作等等。</p>
+<p>先行发生原则作用于很多场景下，包括同步锁、线程启动、线程终止、volatile。我们这里只列举出volatile相关的规则：</p>
+<p>对于一个volatile变量的写操作先行发生于后面对这个变量的读操作。</p>
+<p>回到上述的代码例子，如果在静态变量s之前加上volatile修饰符：</p>
+<p><code>volatile static int s = 0；</code></p>
+<p>线程A执行如下代码：<br><code>s = 3；</code></p>
+<p>这时候我们引入线程B，执行如下代码：<br><code>System.out.println(&quot;s=&quot; + s);</code></p>
+<p>当线程A先执行的时候，把s = 3写入主内存的事件必定会先于读取s的事件。所以线程B的输出一定是s = 3。</p>
+<blockquote>
+<p>volatile关键字可以保证线程安全了吗？事实上并不是，volatile只能保证变量的可见性，并不能保证变量的原子性</p>
+</blockquote>
+<p>我们来看一个例子</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class VolatileTest2 &#123;</span><br><span class="line">    public volatile static int count &#x3D; 0;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        for (int i &#x3D; 0; i &lt; 10; i++) &#123;</span><br><span class="line">            new Thread(new Runnable() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public void run() &#123;</span><br><span class="line">                    try &#123;</span><br><span class="line">                        Thread.sleep(1);</span><br><span class="line">                    &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                    &#x2F;&#x2F;synchronized (VolatileTest2.class) &#123;</span><br><span class="line">                    for (int i &#x3D; 0; i &lt; 100; i++) &#123;</span><br><span class="line">                        count++;  &#x2F;&#x2F;本身不是原子性操作</span><br><span class="line">                    &#125;</span><br><span class="line">                    &#x2F;&#x2F;&#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br><span class="line">        try &#123;</span><br><span class="line">            Thread.sleep(2000);&#x2F;&#x2F;目的让count最后输出</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(&quot;count &#x3D; &quot; + count);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码是什么意思呢？很简单，开启10个线程，每个线程当中让静态变量count自增100次。执行之后会发现，最终count的结果值未必是1000，有可能小于1000。</p>
+<p>使用volatile修饰的变量，为什么并发自增的时候会出现这样的问题呢？这是因为count++这一行代码本身并不是原子性操作，在字节码层面可以拆分成如下指令：</p>
+<p>getstatic        //读取静态变量（count）<br>iconst_1        //定义常量1<br>iadd               //count增加1<br>putstatic        //把count结果同步到主内存</p>
+<p>虽然每一次执行 getstatic 的时候，获取到的都是主内存的最新变量值，但是进行iadd的时候，由于并不是原子性操作，其他线程在这过程中很可能让count自增了很多次。这样一来本线程所计算更新的是一个陈旧的count值，自然无法做到线程安全：<br><img src="https://i.imgur.com/a5Rjv7w.png" alt=""><br><img src="https://i.imgur.com/BhTMtBI.png" alt=""><br>因此，什么时候适合用volatile呢？</p>
+<p><strong>1. 运行结果并不依赖变量的当前值，或者能够确保只有单一的线程修改变量的值。</strong></p>
+<p><strong>2. 变量不需要与其他的状态变量共同参与不变约束。</strong></p>
+<p>第一条很好理解，就是上面的代码例子。第二条是什么意思呢？可以看看下面这个场景：<br><code>volatile static int start = 3;</code><br><code>volatile static int end = 6;</code></p>
+<p>线程A执行如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">while (start &lt; end) &#123;</span><br><span class="line">  &#x2F;&#x2F;do something</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>线程B执行如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">start +&#x3D; 3;</span><br><span class="line">end +&#x3D; 3;</span><br></pre></td></tr></table></figure>
+<p>这种情况下，一旦在线程A的循环中执行了线程B，start有可能先更新成6，造成了一瞬间 start == end，从而跳出while循环的可能性。</p>
+<h1 id="volatile对指令重排的影响"><a href="#volatile对指令重排的影响" class="headerlink" title="volatile对指令重排的影响"></a>volatile对指令重排的影响</h1><h2 id="什么是指令重排"><a href="#什么是指令重排" class="headerlink" title="什么是指令重排"></a>什么是指令重排</h2><p>指令重排是指JVM在编译Java代码的时候，或者CPU在执行JVM字节码的时候，对现有的指令顺序进行重新排序。</p>
+<p>指令重排的目的是为了在不改变程序执行结果的前提下，优化程序的运行效率。需要注意的是，这里所说的不改变执行结果，指的是不改变<strong>单线程</strong>下的程序执行结果。</p>
+<p>然而，指令重排是一把双刃剑，虽然优化了程序的执行效率，但是在某些情况下，会影响到多线程的执行结果。我们来看看下面的例子：<br><code>boolean contextReady = false;</code></p>
+<p>在线程A中执行:  </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">context &#x3D; loadContext();	</span><br><span class="line">contextReady &#x3D; true;</span><br></pre></td></tr></table></figure>
+
+<p>在线程B中执行:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">while( ! contextReady )&#123; </span><br><span class="line">   	sleep(200);</span><br><span class="line">&#125;</span><br><span class="line">doAfterContextReady (context);</span><br></pre></td></tr></table></figure>
+
+
+<p>以上程序看似没有问题。线程B循环等待上下文context的加载，一旦context加载完成，contextReady == true的时候，才执行doAfterContextReady 方法。</p>
+<p>但是，如果线程A执行的代码发生了指令重排，初始化和contextReady的赋值交换了顺序：<br><code>boolean contextReady = false;</code></p>
+<p>在线程A中执行:  </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">contextReady &#x3D; true;  </span><br><span class="line">context &#x3D; loadContext();</span><br></pre></td></tr></table></figure>
+
+<p>在线程B中执行:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">while( ! contextReady )&#123; </span><br><span class="line">   	sleep(200);</span><br><span class="line">&#125;</span><br><span class="line">doAfterContextReady (context);</span><br></pre></td></tr></table></figure>
+
+<p>这个时候，很可能context对象还没有加载完成，变量contextReady 已经为true，线程B直接跳出了循环等待，开始执行doAfterContextReady 方法，结果自然会出现错误。</p>
+<p>需要注意的是，这里java代码的重排只是为了简单示意，真正的指令重排是在字节码指令的层面。</p>
+<blockquote>
+<p>如何解决指令重排问题呢？这里有个法宝内存屏障</p>
+</blockquote>
+<h2 id="什么是内存屏障"><a href="#什么是内存屏障" class="headerlink" title="什么是内存屏障"></a>什么是内存屏障</h2><p>内存屏障（Memory Barrier）是一种CPU指令。</p>
+<p>内存屏障也称为内存栅栏或栅栏指令，是一种屏障指令，它使CPU或编译器对屏障指令之前和之后发出的内存操作执行一个排序约束。 这通常意味着在屏障之前发布的操作被保证在屏障之后发布的操作之前执行。</p>
+<p>内存屏障共分为四种类型：</p>
+<ul>
+<li><p><strong>LoadLoad屏障：</strong><br>抽象场景：Load1; LoadLoad; Load2<br>Load1 和 Load2 代表两条读取指令。在Load2要读取的数据被访问前，保证Load1要读取的数据被读取完毕。</p>
+</li>
+<li><p><strong>StoreStore屏障：</strong><br>抽象场景：Store1; StoreStore; Store2<br>Store1 和 Store2代表两条写入指令。在Store2写入执行前，保证Store1的写入操作对其它处理器可见</p>
+</li>
+<li><p><strong>LoadStore屏障：</strong><br>抽象场景：Load1; LoadStore; Store2<br>在Store2被写入前，保证Load1要读取的数据被读取完毕。</p>
+</li>
+<li><p><strong>StoreLoad屏障：</strong><br>抽象场景：Store1; StoreLoad; Load2<br>在Load2读取操作执行前，保证Store1的写入对所有处理器可见<br>StoreLoad屏障的开销是四种屏障中最大的。</p>
+</li>
+</ul>
+<blockquote>
+<p>volatile做了什么？</p>
+</blockquote>
+<p>在一个变量被volatile修饰后，JVM会为我们做两件事：</p>
+<ol>
+<li>在每个volatile写操作前插入StoreStore屏障，在写操作后插入StoreLoad屏障。</li>
+<li>在每个volatile读操作前插入LoadLoad屏障，在读操作后插入LoadStore屏障。</li>
+</ol>
+<p>或许这样说有些抽象，我们看一看刚才线程A代码的例子：</p>
+<p><code>boolean contextReady = false;</code></p>
+<p>在线程A中执行:<br><code>context = loadContext();</code><br><code>contextReady = true;</code><br>我们给contextReady 增加volatile修饰符，会带来什么效果呢？<br><img src="https://i.imgur.com/C8RfTbU.png" alt=""></p>
+<p>由于加入了StoreStore屏障，屏障上方的普通写入语句 <code>context = loadContext()</code>  和屏障下方的volatile写入语句 <code>contextReady = true</code> 无法交换顺序，从而成功阻止了指令重排序。<br><img src="https://i.imgur.com/SAkjk0d.png" alt=""></p>
+<blockquote>
+<p>那么内存屏障和java语言的happens-before是什么关系呢？</p>
+</blockquote>
+<p>happens-before是JSR-133规范之一，内存屏障是CPU指令。<br>可以简单认为前者是最终目的，后者是实现手段。</p>
+<h2 id="总结特性"><a href="#总结特性" class="headerlink" title="总结特性"></a>总结特性</h2><p><strong>volatile特性之一：</strong></p>
+<p>保证变量在线程之间的可见性。可见性的保证是基于CPU的内存屏障指令，被JSR-133抽象为happens-before原则。</p>
+<p><strong>volatile特性之二：</strong></p>
+<p>阻止编译时和运行时的指令重排。编译时JVM编译器遵循内存屏障的约束，运行时依靠CPU屏障指令来阻止重排。</p>
+]]></content>
+      <tags>
+        <tag>并发</tag>
+        <tag>JMM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>每日刷题计划</title>
+    <url>/2018/01/01/%E6%AF%8F%E6%97%A5%E5%88%B7%E9%A2%98%E8%AE%A1%E5%88%92/</url>
+    <content><![CDATA[<p>github地址：<a href="https://github.com/paramountNinja/nowcoder" target="_blank" rel="noopener">https://github.com/paramountNinja/nowcoder</a></p>
+<blockquote>
+<p>以下记录coding目录，不定期更新（以github目录为准）</p>
+</blockquote>
+<h1 id="nowcoder"><a href="#nowcoder" class="headerlink" title="nowcoder"></a>nowcoder</h1><p>每日刷题计划，记录做过的题目，内容包含剑指offer、程序员面试金典(CTCI)、数据结构</p>
+<a id="more"></a>
+<blockquote>
+<p>下面标题括号内的为对应包名</p>
+</blockquote>
+<h2 id="剑指offer-offer"><a href="#剑指offer-offer" class="headerlink" title="剑指offer(offer)"></a>剑指offer(offer)</h2><p>java实现</p>
+<ul>
+<li>03二维数组中的查找</li>
+<li>04替换空格</li>
+<li>05从尾到头打印链表</li>
+<li>06重建二叉树</li>
+<li>07用两个栈实现队列</li>
+<li>08旋转数组的最小数字</li>
+<li>09斐波那契数列</li>
+<li>09跳台阶</li>
+<li>09变态跳台阶</li>
+<li>09矩阵覆盖</li>
+<li>10二进制中1的个数</li>
+<li>11数值的整数次方</li>
+<li>14调整数组顺序使奇数位于偶数前面</li>
+<li>15链表中倒数第k个结点</li>
+<li>16反转链表</li>
+<li>17合并两个排序的链表</li>
+<li>18树的子结构</li>
+<li>19二叉树的镜像</li>
+<li>20顺时针打印矩阵</li>
+<li>21包含min函数的栈</li>
+<li>22栈的压入弹出序列</li>
+<li>23从上往下打印二叉树</li>
+<li>24二叉搜索树的后序遍历序列</li>
+<li>25二叉树中和为某一值的路径</li>
+<li>26复杂链表的复制</li>
+<li>27二叉搜索树与双向链表</li>
+<li>28字符串的排列</li>
+<li>29数组中出现次数超过一半的数字</li>
+<li>30最小的k个数</li>
+<li>31连续子数组的最大和</li>
+<li>32从1到n整数中1出现的次数</li>
+<li>33把数组排成最小的数</li>
+<li>34丑数</li>
+<li>35第一个只出现一次的字符</li>
+<li>36数组中的逆序对</li>
+<li>37两个链表的第一个公共结点</li>
+<li>38数字在排序数组中出现的次数</li>
+<li>39二叉树的深度</li>
+<li>39判断是否为平衡二叉树</li>
+<li>40数组中只出现一次的数字</li>
+<li>41和为S的连续正数序列</li>
+<li>41和为S的两个数字</li>
+<li>42左旋转字符串</li>
+<li>42翻转单词顺序列</li>
+<li>44扑克牌顺子</li>
+<li>45圆圈中最后剩下的数</li>
+<li>46求1+2+3+…+n</li>
+<li>47不用加减乘除做加法</li>
+<li>49把字符串转换成整数</li>
+<li>50数组中重复的数字</li>
+<li>51构建乘积数组</li>
+<li>52正则表达式匹配</li>
+<li>53表示数值的字符串</li>
+<li>54字符流中第一个不重复的字符</li>
+<li>55链表中环的入口结点</li>
+<li>56删除链表中重复的结点</li>
+<li>57二叉树的下一个结点</li>
+<li>58对称的二叉树</li>
+<li>59按之字形顺序打印二叉树</li>
+<li>60把二叉树打印成多行</li>
+<li>61序列化二叉树</li>
+<li>62二叉搜索树的第k个结点</li>
+<li>63数据流中的中位数</li>
+<li>64滑动窗口的最大</li>
+<li>65矩阵中的路径</li>
+<li>66机器人的运行范围</li>
+</ul>
+<h2 id="程序员金典-ctci"><a href="#程序员金典-ctci" class="headerlink" title="程序员金典(ctci)"></a>程序员金典(ctci)</h2><ul>
+<li>1.1确定字符互异</li>
+<li>1.2原串反转</li>
+<li>1.3确定两串乱序同构</li>
+<li>1.4替换空格(同offer04)</li>
+<li>1.5基本字符串压缩</li>
+<li>1.6像素反转</li>
+<li>1.7清除行列</li>
+<li>1.8翻转字串</li>
+<li>2.2链表中倒数第k个结点(同offer15)</li>
+<li>2.3访问单个节点的删除</li>
+<li>2.4链表分割</li>
+<li>2.5链式A+B</li>
+<li>2.7回文链表</li>
+<li>3.3集合栈</li>
+<li>3.5用两个栈实现队列(同offer07)</li>
+<li>3.6双栈排列</li>
+<li>3.7猫狗收容所</li>
+<li>4.1二叉树平衡检查(同offer39)</li>
+<li>4.2有向路径检查</li>
+<li>4.3高度最小的BST</li>
+<li>4.4输出单层结点</li>
+<li>4.5检查是否为BST二叉查找树(类offer62)</li>
+<li>4.6寻找下一个结点(类offer57)</li>
+<li>4.7二叉树最近公共祖先</li>
+<li>4.9二叉树中和为某一值的路径(同offer25)</li>
+<li>5.1二进制插入</li>
+<li>7.7第k个数</li>
+<li>9.1上楼梯(类offer09)</li>
+<li>9.2_1机器人走方格(类offer66)</li>
+<li>9.2_2机器人走方格有障碍</li>
+<li>9.3.1魔术索引(升序)</li>
+<li>9.3.2魔术索引(不下降)</li>
+<li>9.4集合的子集</li>
+<li>9.5字符串排列(类offer28)</li>
+<li>9.6合法括号序列判断</li>
+<li>9.7洪水</li>
+<li>9.8硬币问题</li>
+<li>11.9数组中的逆序对(同offer36)</li>
+</ul>
+<h2 id="公司模拟真题-simulation"><a href="#公司模拟真题-simulation" class="headerlink" title="公司模拟真题(simulation)"></a>公司模拟真题(simulation)</h2><ul>
+<li>最多硬币问题</li>
+<li>最小不能表示的数(美团)</li>
+<li>整数划分最大乘积(招行信用卡)</li>
+<li>判断字符串由子串复制组成(招行信用卡)</li>
+<li>括号配对所有情况(招行信用卡)</li>
+<li>符合条件的子串(58)</li>
+<li>翻转数列(腾讯)</li>
+<li>歌单组成方式(腾讯)</li>
+<li>因式分解(京东)</li>
+</ul>
+<h2 id="数据结构-base"><a href="#数据结构-base" class="headerlink" title="数据结构(base)"></a>数据结构(base)</h2><ul>
+<li>排序算法（src/base/sort）</li>
+<li>二叉堆（最大堆）</li>
+<li>深度优先搜索DFS</li>
+<li>广度优先搜索BFS</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>数据结构与算法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java异常处理</title>
+    <url>/2017/11/05/Java%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<h2 id="异常"><a href="#异常" class="headerlink" title="异常"></a>异常</h2><p>程序的异常：Throwable</p>
+<ul>
+<li>严重问题：Error  比如说内存溢出。</li>
+<li>问题：Exception<ul>
+<li>编译器问题：不是RuntimeException的异常</li>
+<li>运行时问题：RuntimeException  <a id="more"></a>
+<img src="https://i.imgur.com/2iGT6it.png" alt="异常分类图解"></li>
+</ul>
+</li>
+</ul>
+<p><strong>编译时异常和运行时异常的区别</strong></p>
+<ul>
+<li>编译时异常：Java程序必须显示处理，否则程序就会发生错误，无法通过编译  </li>
+<li>运行时异常：无需显示处理，也可以和编译时异常一样处理</li>
+</ul>
+<p>如果程序出现问题，我们没有做任何处理，最终jvm会做出默认的处理。<br>把异常名字，原因及出现的问题等信息输出在控制台。<br>同时会结束程序。</p>
+<p><strong>自己如何处理异常？</strong></p>
+<ol>
+<li>try…catch…finally</li>
+<li>throws 抛出</li>
+</ol>
+<h2 id="try…catch…"><a href="#try…catch…" class="headerlink" title="try…catch…"></a>try…catch…</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">try&#123;</span><br><span class="line">	可能出现问题的代码;</span><br><span class="line">&#125;catch(异常名 变量)&#123;</span><br><span class="line">	针对问题的处理;</span><br><span class="line">&#125;catch(异常名 变量)&#123;</span><br><span class="line">	针对问题的处理;</span><br><span class="line">&#125;finally&#123;</span><br><span class="line">	资源释放;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：如果try后面跟了多个catch，一旦出现问题，找到和问题匹配的catch，执行catch里面的内容，然后结束try…catch…区域，往后执行。（父类需要放后面，例如Exception需要放最后）</p>
+</blockquote>
+<hr>
+<p><strong>JDK7的处理方案</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">try&#123;</span><br><span class="line">	可能出现问题的代码;</span><br><span class="line">&#125;catch(异常名 变量 | 异常名 变量)&#123;</span><br><span class="line">	针对问题的处理;</span><br><span class="line">&#125;finally&#123;</span><br><span class="line">	资源释放;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：这种写法处理方式是一致的；多个异常间必须是平级关系</p>
+</blockquote>
+<h3 id="异常类方法"><a href="#异常类方法" class="headerlink" title="异常类方法"></a>异常类方法</h3><p><code>getMessage()</code>：获取异常信息，返回字符串。<br><code>toString()</code>：获取异常类名和异常信息，返回字符串。<br><code>printStackTrace()</code>：获取异常类名和异常信息，以及异常出现在程序中的位置。返回值void。<br><code>printStackTrace(PrintStream s)</code>：通常用该方法将异常内容保存在日志文件中，以便查阅。 </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class EceptionDemo &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		String s &#x3D; &quot;2017-11-11&quot;;</span><br><span class="line">		SimpleDateFormat sdf &#x3D; new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;);</span><br><span class="line">		try &#123;</span><br><span class="line">			Date d &#x3D; sdf.parse(s); &#x2F;&#x2F; 发生异常，创建了一个ParseException,然后跑出去，和catch进行匹配</span><br><span class="line">		&#125; catch (ParseException e) &#123;&#x2F;&#x2F; ParseException e &#x3D; new ParseException();</span><br><span class="line">			System.out.println(e.getMessage());&#x2F;&#x2F; Unparseable date: &quot;2017-11-11&quot;</span><br><span class="line">			System.out.println(e.toString());</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="throws"><a href="#throws" class="headerlink" title="throws"></a>throws</h2><ul>
+<li>定义功能方法时，需要把出现的问题暴露出来让<strong>调用者</strong>去处理。那么就通过throws在方法上标识。</li>
+<li><strong>一直往上抛则抛给JVM虚拟机</strong></li>
+<li>编译期异常抛出，将来调用者必须处理；运行时异常抛出，将来调用者可以不处理。</li>
+</ul>
+<h2 id="throw"><a href="#throw" class="headerlink" title="throw"></a>throw</h2><ul>
+<li>在功能方法内部出现某种情况，程序不能继续运行，需要进行跳转时，就用throw把异常对象抛出。</li>
+<li>抛出的是运行时异常不需要处理；抛出的是编译期异常需要上级处理<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class EceptionDemo &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			method();</span><br><span class="line">		&#125; catch (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private static void method() throws Exception &#123;</span><br><span class="line">		int a &#x3D; 10;</span><br><span class="line">		int b &#x3D; 0;</span><br><span class="line">		if (b &#x3D;&#x3D; 0) &#123;</span><br><span class="line">			throw new Exception();</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			System.out.println(a &#x2F; b);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="throws和throw的区别"><a href="#throws和throw的区别" class="headerlink" title="throws和throw的区别"></a>throws和throw的区别</h2><p><strong>throws</strong></p>
+<ul>
+<li>用在方法声明后面，跟的是异常类名</li>
+<li>可以跟多个异常类名，用逗号隔开</li>
+<li>表示抛出异常，由该方法的调用者来处理</li>
+<li>throws表示出现异常的一种可能性，并不一定会发生这些异常</li>
+</ul>
+<p><strong>throw</strong></p>
+<ul>
+<li>用在方法体内，跟的是异常对象名</li>
+<li>只能抛出一个异常对象名</li>
+<li>表示抛出异常，由方法体内的语句处理</li>
+<li>throw则是抛出了异常，执行throw则一定抛出了某种异常</li>
+</ul>
+<h2 id="finally"><a href="#finally" class="headerlink" title="finally"></a>finally</h2><p><strong>finally的特点</strong></p>
+<ul>
+<li>被finally控制的语句体一定会执行</li>
+<li>特殊情况：在执行到finally之前jvm退出了(比如System.exit(0))</li>
+</ul>
+<p><strong>finally的作用</strong></p>
+<ul>
+<li>用于释放资源，在IO流操作和数据库操作中会见到</li>
+</ul>
+<p><strong>final,finally和finalize的区别</strong></p>
+<ul>
+<li>final：最终的意思。<ul>
+<li>修饰类，类不能继承；</li>
+<li>修饰变量，变量是常量；</li>
+<li>修饰方法，方法不能被重写。</li>
+</ul>
+</li>
+<li>finally：异常的一部分，用于释放资源。</li>
+<li>finalize：是Object类的一个方法，用于垃圾回收。</li>
+</ul>
+<p><strong>如果catch里面有return语句，请问finally的代码还会执行吗?如果会，请问是在return前还是return后。</strong></p>
+<ul>
+<li>会，前。准确的说应该在中间。代码演示</li>
+</ul>
+<blockquote>
+<p>输出结果为30</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class EceptionDemo &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		System.out.println(getInt());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private static int getInt() &#123;</span><br><span class="line">		int a &#x3D; 10;</span><br><span class="line">		try &#123;</span><br><span class="line">			System.out.println(a &#x2F; 0);</span><br><span class="line">			a &#x3D; 20;</span><br><span class="line">		&#125; catch (ArithmeticException e) &#123;</span><br><span class="line">			a &#x3D; 30;</span><br><span class="line">			return a;</span><br><span class="line">			&#x2F;&#x2F; return a在程序执行到这一步的时候，这里不是return a 而是return 30 这个返回路径就形成了。</span><br><span class="line">			&#x2F;&#x2F; 但是也要执行finally的内容，执行完执行return 30 的操作</span><br><span class="line">		&#125; finally &#123;</span><br><span class="line">			a &#x3D; 40;</span><br><span class="line">			&#x2F;&#x2F;return a;&#x2F;&#x2F;如果这里打开，最后return注释掉结果就是40了</span><br><span class="line">		&#125;</span><br><span class="line">		return a;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="自定义异常"><a href="#自定义异常" class="headerlink" title="自定义异常"></a>自定义异常</h2><ul>
+<li>继承自Exception</li>
+<li>继承自RuntimeException</li>
+</ul>
+<blockquote>
+<p>例子：考试成绩必须在0-100之间</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;我的异常类</span><br><span class="line">public class MyException extends Exception &#123;</span><br><span class="line">	public MyException() &#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public MyException(String message) &#123;</span><br><span class="line">		super(message);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;判断分数类，有一个有异常处理的方法&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class Teacher &#123;</span><br><span class="line">	public void check(int score) throws MyException &#123;</span><br><span class="line">		if (score &gt; 100 || score &lt; 0) &#123;</span><br><span class="line">			throw new MyException(&quot;分数必须在0-100之间&quot;);</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			System.out.println(&quot;分数没有问题&quot;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;测试类，遇到异常方法需要处理&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class StudentDemo &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Scanner sc &#x3D; new Scanner(System.in);</span><br><span class="line">		System.out.println(&quot;请输入学生成绩：&quot;);</span><br><span class="line">		int score &#x3D; sc.nextInt();</span><br><span class="line"></span><br><span class="line">		Teacher t &#x3D; new Teacher();</span><br><span class="line">		try &#123;</span><br><span class="line">			t.check(score);</span><br><span class="line">		&#125; catch (MyException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="异常注意事项"><a href="#异常注意事项" class="headerlink" title="异常注意事项"></a>异常注意事项</h2><ul>
+<li>子类重写父类方法时，子类的方法必须抛出相同的异常或父类异常的子类。(父亲坏了，儿子不能比父亲更坏)</li>
+<li>如果父类抛出了多个异常，子类重写父类时，只能抛出相同的异常或者是他的子集，子类不能抛出父类没有的异常</li>
+<li>如果被重写的方法没有异常抛出,那么子类的方法绝对不可以抛出异常,如果子类方法内有异常发生，那么子类只能try，不能throws</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>异常处理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>类加载与反射技术</title>
+    <url>/2017/11/04/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%8F%8D%E5%B0%84%E6%8A%80%E6%9C%AF/</url>
+    <content><![CDATA[<h2 id="类的加载"><a href="#类的加载" class="headerlink" title="类的加载"></a>类的加载</h2><blockquote>
+<p>当程序要使用某个类时，如果该类还未被加载到内存中，则系统会通过加载，连接，初始化三步来实现对这个类进行初始化。</p>
+</blockquote>
+<a id="more"></a>
+<ol>
+<li><p><strong>加载</strong></p>
+<ul>
+<li>将class文件读入内存，创建一个Class对象</li>
+<li>任何类被使用时系统都会建立一个Class对象</li>
+</ul>
+</li>
+<li><p><strong>连接</strong></p>
+<ul>
+<li>验证 是否有正确的内部结构，并和其他类协调一致</li>
+<li>准备 负责为类的静态成员分配内存，并设置默认初始化值</li>
+<li>解析 将类的二进制数据中的符号引用替换为直接引用</li>
+</ul>
+</li>
+<li><p><strong>初始化</strong></p>
+</li>
+</ol>
+<p><strong>类初始化时机</strong></p>
+<ul>
+<li>创建类的实例</li>
+<li>访问类的静态变量，或者为静态变量赋值</li>
+<li>调用类的静态方法</li>
+<li>使用反射方式来强制创建某个类或接口对应的java.lang.Class对象<br>初始化某个类的子类</li>
+<li>直接使用java.exe命令来运行某个主类</li>
+</ul>
+<h3 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h3><ul>
+<li>负责将.class文件加载到内在中，并为之生成对应的Class对象。</li>
+<li>虽然我们不需要关心类加载机制，但是了解这个机制我们就能更好的理解程序的运行。</li>
+</ul>
+<p><strong>类加载器的组成</strong></p>
+<ol>
+<li><strong>Bootstrap ClassLoader 根类加载器</strong><br>也被称为引导类加载器，负责Java核心类的加载<br>比如System,String等。在JDK中JRE的lib目录下rt.jar文件中</li>
+<li><strong>Extension ClassLoader 扩展类加载器</strong><br>负责JRE的扩展目录中jar包的加载。<br>在JDK中JRE的lib目录下ext目录</li>
+<li><strong>Sysetm ClassLoader 系统类加载器</strong><br>负责在JVM启动时加载来自java命令的class文件，以及classpath环境变量所指定的jar包和类路径</li>
+</ol>
+<p>获取类加载器：Class对象中的方法<code>getClassLoader()</code>;<br>例如：<code>实例对象.getClass().getClassLoader()</code></p>
+<h2 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h2><ul>
+<li>JAVA反射机制是在<strong>运行状态</strong>中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性；这种动态获取的信息以及动态调用对象的方法的功能称为java语言的反射机制。</li>
+<li>要想解剖一个类，必须先要获取到该类的<strong>字节码文件对象</strong>。而解剖使用的就是<strong>Class类中的方法</strong>，所以先要获取到每一个字节码文件对应的Class类型的对象。</li>
+</ul>
+<p><strong>获取class文件对象的方式</strong></p>
+<ol>
+<li>Object类的<code>getClass()</code>方法</li>
+<li>数据类型的静态属性<code>class</code></li>
+<li>Class类中的静态方法<code>forName(String className)</code></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Person p &#x3D; new Person();</span><br><span class="line">&#x2F;&#x2F; 方式1</span><br><span class="line">Class c &#x3D; p.getClass();</span><br><span class="line">&#x2F;&#x2F; 方式2</span><br><span class="line">Class c2 &#x3D; Person.class;</span><br><span class="line">&#x2F;&#x2F; 方式3</span><br><span class="line">Class c3 &#x3D; Class.forName(&quot;cn.ninja.Person&quot;);&#x2F;&#x2F; 全路径名</span><br></pre></td></tr></table></figure>
+
+<p><strong>通过反射获取构造方法并使用</strong>  </p>
+<blockquote>
+<p>构造一个资源类Person  </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">package reflect;</span><br><span class="line">public class Person &#123;</span><br><span class="line">	private String name;</span><br><span class="line">	int age;</span><br><span class="line">	public String address;</span><br><span class="line">	&#x2F;&#x2F;公有的无参构造函数</span><br><span class="line">	public Person() &#123;</span><br><span class="line">	&#125;</span><br><span class="line">	&#x2F;&#x2F;私有的有参构造函数</span><br><span class="line">	private Person(String name) &#123;</span><br><span class="line">		this.name &#x3D; name;</span><br><span class="line">	&#125;</span><br><span class="line">	&#x2F;&#x2F;默认限定名的有参构造函数</span><br><span class="line">	Person(String name, int age) &#123;</span><br><span class="line">		this.name &#x3D; name;</span><br><span class="line">		this.age &#x3D; age;</span><br><span class="line">	&#125;</span><br><span class="line">	&#x2F;&#x2F;公有的有参构造函数</span><br><span class="line">	public Person(String name, int age, String address) &#123;</span><br><span class="line">		this.name &#x3D; name;</span><br><span class="line">		this.age &#x3D; age;</span><br><span class="line">		this.address &#x3D; address;</span><br><span class="line">	&#125;</span><br><span class="line">	&#x2F;&#x2F;以下是一些方法</span><br><span class="line">	public void show() &#123;</span><br><span class="line">		System.out.println(&quot;show&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void method(String s) &#123;</span><br><span class="line">		System.out.println(&quot;method&quot; + s);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getString(String s, int i) &#123;</span><br><span class="line">		return s + &quot;---&quot; + i;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void function() &#123;</span><br><span class="line">		System.out.println(&quot;function&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public String toString() &#123;</span><br><span class="line">		return &quot;Person [name&#x3D;&quot; + name + &quot;, age&#x3D;&quot; + age + &quot;, address&#x3D;&quot; + address</span><br><span class="line">				+ &quot;]&quot;;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>在一个测试类中，有异常的抛出异常</p>
+</blockquote>
+<ul>
+<li>获取字节码文件对象<br><code>Class&lt;?&gt; c = Class.forName(&quot;reflect.Person&quot;);//括号里为该类的全限定名</code>  </li>
+<li>获取构造方法<br><code>Constructor&lt;?&gt;[] cons = c.getConstructors();//返回所有公共构造方法</code><br><code>Constructor&lt;?&gt;[] cons = c.getDeclaredConstructors();// 返回所有构造函数</code>  </li>
+<li>获取单个构造方法<br><code>Constructor&lt;?&gt; con = c.getConstructor();// 无参的构造函数</code><br><code>Constructor&lt;?&gt; con1 = c.getConstructor(String.class, int.class,String.class);// 有参的构造函数</code><br><code>Constructor&lt;?&gt; con2 = c.getDeclaredConstructor(String.class);// 获取指定的构造器，可以用来获取私有构造器</code>  </li>
+<li>使用该构造函数类创建实例<br><code>Object object = con.newInstance();</code><br><code>Object object1 = con1.newInstance(&quot;james&quot;, 33, &quot;cleveland&quot;);</code><br><code>con2.setAccessible(true);// 遇到私有，可使用暴力访问；指示反射的对象在使用时取消java语言访问检查</code><br><code>Object object2 = con2.newInstance(&quot;wade&quot;);</code></li>
+</ul>
+<p><strong>通过反射获取成员变量</strong></p>
+<blockquote>
+<p>资源类是上面的Person类，在一个测试类中，有异常的抛出异常</p>
+</blockquote>
+<ul>
+<li>获取字节码文件<br><code>Class&lt;?&gt; c = Class.forName(&quot;reflect.Person&quot;);</code>  </li>
+<li>获取所有的成员变量<br><code>Field[] fields = c.getFields();//公共的</code><br><code>Field[] fields = c.getDeclaredFields();</code>  </li>
+<li>通过无参构造方法创建对象<br><code>Constructor&lt;?&gt; con = c.getConstructor();</code><br><code>Object obj = con.newInstance();</code>  </li>
+<li>获取单个成员变量<br><code>Field addressField = c.getField(&quot;address&quot;);</code>  <code>addressField.set(obj, &quot;上海&quot;);// 给obj这个实例对象的address字段设置为上海</code><br><code>Field nameField = c.getDeclaredField(&quot;name&quot;);// 获取私有的</code><br><code>nameField.setAccessible(true);// 暴力访问</code><br><code>nameField.set(obj, &quot;ninja&quot;);</code>  </li>
+</ul>
+<p><strong>通过反射获取成员方法</strong></p>
+<blockquote>
+<p>资源类是上面的Person类，在一个测试类中，有异常的抛出异常</p>
+</blockquote>
+<p><code>Class&lt;?&gt; c = Class.forName(&quot;reflect.Person&quot;);</code>  </p>
+<ul>
+<li>获取所有方法<br><code>Method[] methods = c.getMethods();//获取自己的包括父亲的公共方法</code><br><code>Method[] methods = c.getDeclaredMethods();// 获取自己的所有类</code>  </li>
+<li>构造实例对象<br><code>Constructor&lt;?&gt; con = c.getConstructor();</code><br><code>Object obj = con.newInstance();</code>  </li>
+<li>获取单个方法并使用<br><code>Method m1 = c.getMethod(&quot;show&quot;);// 第一个参数:方法名；第二个参数往后：方法参数的class类型</code><br><code>m1.invoke(obj);// 第一个参数：第二个参数往后：调用该方法的实际参数</code><br><code>Method m2 = c.getMethod(&quot;method&quot;, String.class);</code><br><code>m2.invoke(obj, &quot;hello&quot;);</code><br><code>Method m3 = c.getMethod(&quot;getString&quot;, String.class, int.class);</code><br><code>Object objString = m3.invoke(obj, &quot;hello&quot;, 100);</code><br><code>Method m4 = c.getDeclaredMethod(&quot;function&quot;);</code>  <code>m4.setAccessible(true);</code><br><code>m4.invoke(obj);</code></li>
+</ul>
+<h2 id="反射案例"><a href="#反射案例" class="headerlink" title="反射案例"></a>反射案例</h2><blockquote>
+<p>体现反射的优越性，很多框架运用的就是反射的原理</p>
+</blockquote>
+<p><strong>通过反射运行配置文件内容</strong></p>
+<blockquote>
+<p>优化代码，不需要频繁修改java代码，只需要修改配置文件信息即可</p>
+</blockquote>
+<p>创建如下结构的文件<br>|-Teacher.java<br>|-Student.java<br>|-Test.java<br>|-class.txt</p>
+<p>Student类：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">package reflect;</span><br><span class="line"></span><br><span class="line">public class Student &#123;</span><br><span class="line">	public void love() &#123;</span><br><span class="line">		System.out.println(&quot;爱生活，爱学习&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Teacher类：<br>将Student类中的爱生活，爱学习，改成爱生活，爱工作，即两个类输出内容不同方法名相同  </p>
+<p>class.txt配置文件：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">className&#x3D;reflect.Teacher</span><br><span class="line">methodName&#x3D;love</span><br></pre></td></tr></table></figure>
+<p>Test.java测试类</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">package reflect;</span><br><span class="line"></span><br><span class="line">import java.io.FileReader;</span><br><span class="line">import java.lang.reflect.Method;</span><br><span class="line">import java.util.Properties;</span><br><span class="line"></span><br><span class="line">public class Test &#123;</span><br><span class="line">	public static void main(String[] args) throws Exception &#123;</span><br><span class="line">		Properties p &#x3D; new Properties();</span><br><span class="line">		FileReader fr &#x3D; new FileReader(&quot;class.txt&quot;);</span><br><span class="line">		p.load(fr);</span><br><span class="line">		fr.close();</span><br><span class="line"></span><br><span class="line">		String className &#x3D; p.getProperty(&quot;className&quot;);</span><br><span class="line">		String methodName &#x3D; p.getProperty(&quot;methodName&quot;);</span><br><span class="line">		Class&lt;?&gt; c &#x3D; Class.forName(className);</span><br><span class="line">		Object obj &#x3D; c.newInstance();</span><br><span class="line">		Method method &#x3D; c.getMethod(methodName);</span><br><span class="line">		method.invoke(obj);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果想打印老师的love方法内容，那么就在配置信息中修改内容就可以了！</p>
+</blockquote>
+<p><strong>给ArrrayList<Integer>的一个对象，加入一个字符串数据</strong></p>
+<blockquote>
+<p>不能直接调用add方法，因为泛型其实是给编译器看的，但我们可以通过反射越过泛型检查！</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import java.lang.reflect.Method;</span><br><span class="line">import java.util.ArrayList;</span><br><span class="line"></span><br><span class="line">public class ArrayListDemo &#123;</span><br><span class="line">	public static void main(String[] args) throws Exception &#123;</span><br><span class="line">		ArrayList&lt;Integer&gt; array &#x3D; new ArrayList&lt;Integer&gt;();</span><br><span class="line">		Class&lt;? extends ArrayList&gt; c &#x3D; array.getClass();</span><br><span class="line">		Method method &#x3D; c.getMethod(&quot;add&quot;, Object.class);</span><br><span class="line">		method.invoke(array, &quot;hello&quot;);</span><br><span class="line">		System.out.println(array);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>实现设置某对象属性值的功能</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line">public class Tool &#123;</span><br><span class="line">	public static void setProperty(Object obj, String propertyName, Object value)</span><br><span class="line">			throws Exception &#123;</span><br><span class="line">		&#x2F;&#x2F; 根据对象获取字节码文件对象</span><br><span class="line">		Class&lt;? extends Object&gt; c &#x3D; obj.getClass();</span><br><span class="line">		&#x2F;&#x2F; 获取该对象的propertyName的成员变量</span><br><span class="line">		Field field &#x3D; c.getDeclaredField(propertyName);</span><br><span class="line">		&#x2F;&#x2F; 取消访问检查</span><br><span class="line">		field.setAccessible(true);</span><br><span class="line">		&#x2F;&#x2F; 给该对象的成员变量赋值为指定的值</span><br><span class="line">		field.set(obj, value);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) throws Exception &#123;</span><br><span class="line">		Worker w &#x3D; new Worker();</span><br><span class="line">		Tool.setProperty(w, &quot;name&quot;, &quot;james&quot;);</span><br><span class="line">		System.out.println(w.toString());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Worker &#123;</span><br><span class="line">	private String name;</span><br><span class="line">	public int age;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public String toString() &#123;</span><br><span class="line">		return &quot;Worker [name&#x3D;&quot; + name + &quot;, age&#x3D;&quot; + age + &quot;]&quot;;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h2><p><strong>代理</strong>：本来应该自己做的事情，却请了别人来做，被请的人就是代理对象。举例：春季回家买票让人代买  </p>
+<p><strong>动态代理</strong>：在程序运行过程中产生的这个对象  </p>
+<ul>
+<li>而程序运行过程中产生对象其实就是反射讲解的内容，所以，动态代理其实就是通过反射来生成一个代理</li>
+<li>在Java中<code>java.lang.reflect</code>包下提供了一个<code>Proxy</code>类和一个<code>InvocationHandler</code>接口，通过使用这个类和接口就可以生成动态代理对象。JDK提供的代理只能针对<strong>接口</strong>做代理。我们有更强大的代理cglib</li>
+<li><code>Proxy</code>类中的方法创建动态代理类对象<br><code>public static Object newProxyInstance(ClassLoader loader,Class&lt;?&gt;[] interfaces,InvocationHandler h)</code><br>最终会调用<code>InvocationHandler</code>的方法</li>
+<li>InvocationHandler<br><code>Object invoke(Object proxy,Method method,Object[]</code> </li>
+</ul>
+<blockquote>
+<p>任务需求：在登录功能前后，多打印权限校验以及日志记录<br>代码清单：  </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;StudentDao接口&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public interface StudentDao &#123;</span><br><span class="line">	public abstract void login();</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;StudentDao接口的实现&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class StudentDaoImpl implements StudentDao &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void login() &#123;</span><br><span class="line">		System.out.println(&quot;登录功能&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;InvocationHandler处理类进行一些其他操作&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class MyInvocationHandler implements InvocationHandler &#123;</span><br><span class="line">	private Object target;&#x2F;&#x2F; 目标对象</span><br><span class="line"></span><br><span class="line">	public MyInvocationHandler(Object target) &#123;</span><br><span class="line">		this.target &#x3D; target;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public Object invoke(Object proxy, Method method, Object[] args)</span><br><span class="line">			throws Throwable &#123;</span><br><span class="line">		System.out.println(&quot;权限校验&quot;);</span><br><span class="line">		Object result &#x3D; method.invoke(target, args);</span><br><span class="line">		System.out.println(&quot;日志记录&quot;);</span><br><span class="line">		return result;&#x2F;&#x2F; 返回的是代理对象</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;测试类&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">import java.lang.reflect.Proxy;</span><br><span class="line"></span><br><span class="line">public class Test &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		StudentDao s &#x3D; new StudentDaoImpl();</span><br><span class="line">		&#x2F;&#x2F; 创建一个对象作为s的代理对象</span><br><span class="line">		MyInvocationHandler handler &#x3D; new MyInvocationHandler(s);</span><br><span class="line">		StudentDao proxy &#x3D; (StudentDao) Proxy.newProxyInstance(s.getClass()</span><br><span class="line">				.getClassLoader(), s.getClass().getInterfaces(), handler);</span><br><span class="line">		proxy.login();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>若之后新建了一个老师类，同样可以进行代理操作。</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>类加载</tag>
+        <tag>反射技术</tag>
+        <tag>动态代理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>多线程基础知识点</title>
+    <url>/2017/11/02/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
+    <content><![CDATA[<h2 id="并发、并行、同步"><a href="#并发、并行、同步" class="headerlink" title="并发、并行、同步"></a>并发、并行、同步</h2><ul>
+<li>并发：逻辑上同时发生，指在某一时间段内同时运行多个程序。</li>
+<li>并行：物理上同时发生，指在某一时间点同时运行多个程序。</li>
+<li>同步：特点：多个线程使用的是<strong>同一个锁对象</strong>。同步的出现解决了多线程的安全问题。当线程相当多时，因为每个线程都会判断同步上的锁，这是很耗费资源的，无形中降低程序的运行效率。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h2><ul>
+<li>通过任务管理器看到进程的存在。</li>
+<li>只有运行的程序才会出现进程。</li>
+<li>就是<strong>正在运行的程序。是系统进行资源分配和调用的独立单位</strong>。</li>
+<li>每一个进程都有它自己的内存空间和系统资源。</li>
+</ul>
+<p><strong>多进程的意义</strong></p>
+<p>单进程的计算机只能做一件事情，现在的计算机可以做多件事情。<br>比如：一边玩游戏（游戏进程），一边听音乐（音乐进程）。<br>现在的计算机都支持多进程，可以在一个时间段内执行多个任务，提高CPU的使用率。</p>
+<p><strong><em>问题：一边玩游戏一边听音乐是同时进行的吗？</em></strong><br>不是，单核CPU在某一时间点上只能做一件事情。只是CPU做着程序间的高效切换让我们觉得是同时进行的。</p>
+<h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><blockquote>
+<p>线程依赖于进程而存在</p>
+</blockquote>
+<ul>
+<li>在同一个进程内又可以执行多个任务。每一个任务是一个线程。</li>
+<li>线程是<strong>程序的执行单元，执行路径</strong>。是<strong>程序使用CPU的最基本的调度单位</strong>。</li>
+<li>单线程：程序只有一条执行路径。</li>
+<li>多线程：程序有多条执行路径。</li>
+</ul>
+<p><strong>多线程的意义</strong></p>
+<p>多线程的存在，不是提高程序的执行速度，而是为了提高应用程序的使用率。<br>程序的执行其实都是在抢CPU的资源，CPU的执行权。<br>多个进程是在抢这个资源，某一个进程如果执行路径比较多，就会有更高的几率抢到CPU的执行权。<br>不敢保证哪个线程能够在哪个时刻抢到，所以线程的执行有<strong>随机性</strong>。<br>比如：扫雷程序（一个计时器，一个鼠标点击）；迅雷下载</p>
+<p><strong>线程两种调度模型</strong></p>
+<ul>
+<li>分时调度模型 所有线程轮流使用CPU的使用权，平均分配每个线程占用CPU的时间片。</li>
+<li>抢占式调度模型 优先让优先级高的线程使用CPU，如果线程的优先级相同，那么随机选择一个，优先级高的线程获取的CPU时间片相对多一些。</li>
+</ul>
+<h2 id="多线程的原理与实现"><a href="#多线程的原理与实现" class="headerlink" title="多线程的原理与实现"></a>多线程的原理与实现</h2><h3 id="Java程序运行原理"><a href="#Java程序运行原理" class="headerlink" title="Java程序运行原理"></a>Java程序运行原理</h3><p>由java命令启动JVM，JVM启动相当于启动了一个进程。<br>由该进程创建一个主线程去调用main方法。</p>
+<blockquote>
+<p>JVM虚拟机启动是<strong>多线程</strong>的。原因是垃圾回收线程也要先启动，否则很容易出现内存溢出。（主线程和垃圾回收线程已经由两个线程了，还有其他的线程）</p>
+</blockquote>
+<h3 id="如何实现多线程"><a href="#如何实现多线程" class="headerlink" title="如何实现多线程"></a>如何实现多线程</h3><blockquote>
+<p><strong>由C/C++去调用系统功能创建进程，然后由Java提供一些类（Thread）去调用线程</strong>，就实现了多线程程序。</p>
+</blockquote>
+<p>由于线程是依赖进程而存在的，所以我们应该先创建一个进程出来。<br>而进程是由系统创建的，所以我们应该去调用系统功能创建一个进程。<br>Java不能直接调用系统功能，所以没有办法直接实现多线程程序。<br>但是，java可以调用C/C+ +写好的程序来实现多线程程序。</p>
+<p><em>查看API，发现有几种方式实现多线程程序。</em><br><strong>方式一：继承Thread类</strong></p>
+<ol>
+<li>自定义MyThread继承Thread类</li>
+<li>重写<code>run()</code>方法，用来包含那些被线程执行的代码<br><code>run()</code>方法的调用其实就是普通方法的调用，看到的是单线程的效果。</li>
+<li>创建对象</li>
+<li><code>start()</code>方法，首先启动了线程，然后再由jvm去调用该线程的<code>run()</code>方法。</li>
+</ol>
+<p><em>获取线程名字的方法</em>：</p>
+<blockquote>
+<p><code>public final String getName()</code>方法：（thread子类）获取线程的名称</p>
+<p><code>public final String setName()</code>方法：设置线程名称，创建对象之后可以调用修改名称</p>
+<p>创建线程时，有参构造设置线程名字，注意自定义线程类需要调用父类的有参构造器。</p>
+<p>通过返回当前执行的线程对象获取名字<code>Thread.currentThread().getName()</code></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class MyThread extends Thread &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		for (int i &#x3D; 0; i &lt; 200; i++) &#123;&#x2F;&#x2F;用循环模拟耗时</span><br><span class="line"> 			System.out.println(getName() + &quot;---&quot; + i);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line"></span><br><span class="line">public class ThreadDemo &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">	&#x2F;&#x2F;创建两个线程对象，分别启动，每个线程只能启动一次，否则IllegalThreadStateException异常</span><br><span class="line">		MyThread m1 &#x3D; new MyThread();</span><br><span class="line">		MyThread m2 &#x3D; new MyThread();</span><br><span class="line">		m1.start();</span><br><span class="line">		m2.start();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>结果是两个线程抢资源，两个线程的400个数字（1~200）交替打印出。</p>
+</blockquote>
+<p>如下获取和设置优先级，优先级高线程获取的CPU时间片相对多，但由于随机性，不一定先出现。<br>优先级为1~10，数字越大优先级越高。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">m1.getPriority();</span><br><span class="line">m2.getPriority();</span><br><span class="line">m1.setPriority(1);</span><br><span class="line">m2.setPriority(10) ;</span><br></pre></td></tr></table></figure>
+
+<p><strong>方式二：实现Runnable接口</strong>（常用）</p>
+<ol>
+<li>自定义类MyRunnable实现Runnable接口</li>
+<li>重写run方法</li>
+<li>创建MyRunnable类的对象</li>
+<li>创建Thread类的对象，并把3步骤的对象作为构造参数传递</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class MyRunnable implements Runnable &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		for (int i &#x3D; 0; i &lt; 100; i++) &#123;</span><br><span class="line">			System.out.println(Thread.currentThread().getName() + &quot;:&quot; + i);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class MyRunnableDemo &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		MyRunnable my &#x3D; new MyRunnable();</span><br><span class="line">		Thread t1 &#x3D; new Thread(my,&quot;james&quot;);</span><br><span class="line">		Thread t2 &#x3D; new Thread(my,&quot;wade&quot;);</span><br><span class="line">		t1.start();</span><br><span class="line">		t2.start();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>问题：方式2比方式1的优点</p>
+<p>答：</p>
+<p>A：可以避免由于java单继承带来的局限性。</p>
+<p>B：适合多个相同程序的代码去处理同一个资源的情况，把线程同程序的代码，数据有效分离，较好的体现了面向对象的设计思想。</p>
+</blockquote>
+<p><strong>方式三：实现Callable接口</strong></p>
+<blockquote>
+<p>需要用线程池配合,请先阅读后面线程池章节内容</p>
+</blockquote>
+<p>多线程计算求和案例：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;Callable带泛型的，其实指的是call()方法的返回值类型</span><br><span class="line">public class MyCallable implements Callable&lt;Integer&gt; &#123;</span><br><span class="line">	private int number;</span><br><span class="line"></span><br><span class="line">	public MyCallable(int number) &#123;</span><br><span class="line">		this.number &#x3D; number;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public Integer call() throws Exception &#123;</span><br><span class="line">		int sum &#x3D; 0;</span><br><span class="line">		for (int x &#x3D; 1; x &lt;&#x3D; number; x++) &#123;</span><br><span class="line">			sum +&#x3D; x;</span><br><span class="line">		&#125;</span><br><span class="line">		return sum;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class TestDemo &#123;</span><br><span class="line">	public static void main(String[] args) throws InterruptedException,</span><br><span class="line">			ExecutionException &#123;</span><br><span class="line">		&#x2F;&#x2F; 创建线程池对象</span><br><span class="line">		ExecutorService pool &#x3D; Executors.newFixedThreadPool(2);</span><br><span class="line">		Future&lt;Integer&gt; f1 &#x3D; pool.submit(new MyCallable(100));</span><br><span class="line">		Future&lt;Integer&gt; f2 &#x3D; pool.submit(new MyCallable(200));</span><br><span class="line"></span><br><span class="line">		Integer i1 &#x3D; f1.get();</span><br><span class="line">		Integer i2 &#x3D; f2.get();</span><br><span class="line">		System.out.println(i1);</span><br><span class="line">		System.out.println(i2);</span><br><span class="line">		&#x2F;&#x2F; 结束</span><br><span class="line">		pool.shutdown();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>方式四：匿名内部类方法创建并开启线程</strong></p>
+<blockquote>
+<p>本质是该类或者接口的子类对象</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class Demo &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		new Thread() &#123;</span><br><span class="line">			&#x2F;&#x2F; 重写run方法</span><br><span class="line">			public void run() &#123;</span><br><span class="line">				for (int i &#x3D; 0; i &lt; 100; i++) &#123;</span><br><span class="line">					System.out.println(Thread.currentThread().getName() + &quot;:&quot;+ i);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;;</span><br><span class="line">		&#125;.start();</span><br><span class="line">		&#x2F;&#x2F; &#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">		new Thread(new Runnable() &#123;</span><br><span class="line"></span><br><span class="line">			@Override</span><br><span class="line">			public void run() &#123;</span><br><span class="line">				for (int i &#x3D; 0; i &lt; 100; i++) &#123;</span><br><span class="line">					System.out.println(Thread.currentThread().getName() + &quot;:&quot;+ i);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;) &#123;</span><br><span class="line">		&#125;.start();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="线程控制"><a href="#线程控制" class="headerlink" title="线程控制"></a>线程控制</h2><blockquote>
+<p><strong>休眠线程</strong>（隔一段时间运行一次，sleep，线程类中）；</p>
+<p><strong>加入线程</strong>（运行完该线程才去运行其他线程，join，测试过程中）；</p>
+<p><strong>礼让线程</strong>（使得运行次序尽量交替进行，yield，线程类中）</p>
+<p><strong>守护线程</strong>（当一个线程结束之后，其他线程也将不在运行，坦克大战，测试过程中）</p>
+<p><strong>中断线程</strong>（超过一段时间可以将其停止，interrupt，测试过程中）</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;休眠线程</span><br><span class="line">import java.util.Date;</span><br><span class="line">public class ThreadSleep extends Thread &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		for (int i &#x3D; 0; i &lt; 100; i++) &#123;</span><br><span class="line">			System.out.println(getName() + &quot;---&quot; + i + &quot; 日期&quot; + new Date());</span><br><span class="line">			try &#123;</span><br><span class="line">				Thread.sleep(1000);</span><br><span class="line">			&#125; catch (InterruptedException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;加入线程（测试的时候创建了三个线程对象分别为t1,t2,t3,这三个对象不一定是同一个线程类）</span><br><span class="line">&#x2F;&#x2F;注意顺序，只有当t3在最上面调用start()并且紧跟join()时，才为t3执行完成后，再进行其他两个线程的执行</span><br><span class="line">t3.start();</span><br><span class="line">try &#123;</span><br><span class="line">	t3.join();</span><br><span class="line">&#125; catch (InterruptedException e) &#123;</span><br><span class="line">	e.printStackTrace();</span><br><span class="line">&#125;</span><br><span class="line">t2.start();</span><br><span class="line">t1.start();</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;礼让线程</span><br><span class="line">&#x2F;&#x2F;使得这个线程类添加礼让机制，在测试中，如果创建的两个线程都有礼让机制，那么可以在一定程度上使得次序变得更加规则。</span><br><span class="line">public class ThreadYield extends Thread &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		for (int i &#x3D; 0; i &lt; 1000; i++) &#123;</span><br><span class="line">			System.out.println(getName() + &quot;---&quot; + i);</span><br><span class="line">			Thread.yield();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;守护线程</span><br><span class="line">&#x2F;&#x2F;在测试类中创建了三个线程类对象t1，t2，t3，后两个设置为守护线程，则t1结束之后，后两者也结束运行了</span><br><span class="line">t1.setName(&quot;刘备&quot;);</span><br><span class="line">t2.setName(&quot;关羽&quot;);</span><br><span class="line">t3.setName(&quot;张飞&quot;);</span><br><span class="line">t2.setDaemon(true);</span><br><span class="line">t3.setDaemon(true);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;中断线程</span><br><span class="line">public class ThreadStop extends Thread &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		System.out.println(&quot;开始执行&quot;);</span><br><span class="line">		try &#123;</span><br><span class="line">			Thread.sleep(10000);</span><br><span class="line">		&#125; catch (InterruptedException e) &#123;</span><br><span class="line">			System.out.println(&quot;线程终止了&quot;);</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println(&quot;结束执行&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class TestDemo &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		ThreadStop t &#x3D; new ThreadStop();</span><br><span class="line">		t.start();</span><br><span class="line">		&#x2F;&#x2F; 超过三秒不醒过来，就终止它</span><br><span class="line">		try &#123;</span><br><span class="line">			Thread.sleep(3000);</span><br><span class="line">			t.interrupt();</span><br><span class="line">		&#125; catch (InterruptedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="线程的生命周期"><a href="#线程的生命周期" class="headerlink" title="线程的生命周期"></a>线程的生命周期</h2><blockquote>
+<p><strong>1.新建</strong>：创建线程对象</p>
+<p><strong>2.就绪</strong>：有执行资格，没有执行权</p>
+<p><strong>3.运行</strong>：有执行资格，有执行权<br>—&gt;（<strong>阻塞</strong>）：由于一些操作让线程处于该状态，没有执行资格，没有执行权，另一些操作可以把它激活，激活后处于就绪状态。</p>
+<p><strong>4.死亡</strong>：线程对象变成垃圾，等待被回收</p>
+</blockquote>
+<p><img src="https://i.imgur.com/SVhdgjd.png" alt="线程生命周期初步"></p>
+<h2 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h2><p><strong>判断一个程序是否会有线程安全问题的标准</strong></p>
+<ol>
+<li>是否有多线程环境</li>
+<li>是否有共享数据</li>
+<li>是否有多条语句操作共享数据</li>
+</ol>
+<p><strong><em>如何确保线程安全呢？由判断是否有线程安全问题的标准可知，<br>因为12点改变不了，我们只能对3这一点进行修改！</em></strong></p>
+<h3 id="同步（锁机制）"><a href="#同步（锁机制）" class="headerlink" title="同步（锁机制）"></a>同步（锁机制）</h3><p><strong>法1：同步代码块</strong></p>
+<blockquote>
+<p>对象obj作为一把锁的功能</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">private Object obj &#x3D; new Object();</span><br><span class="line">public void run() &#123;</span><br><span class="line">			synchronized (obj) &#123;  &#x2F;&#x2F;也可用this，如果是静态的方法，则是类的字节码文件对象，</span><br><span class="line">            ......</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>法2：把同步关键字加在方法上。</strong></p>
+<blockquote>
+<p>非静态方法时，锁是this（即，当前对象类实例）</p>
+<p>静态方法时，锁是类.class（类的字节码文件对象，并没有实例）</p>
+</blockquote>
+<p>注：如果同步代码块和方法同步同时存在且需要唯一原子运行，则同步代码块括号里面的锁需要和方法同步的锁保持一致！</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public void run() &#123;</span><br><span class="line">			sellTicket();</span><br><span class="line">		&#125;</span><br><span class="line">private (static) synchronized void sellTicket()&#123; &#x2F;&#x2F;默认锁对象是this，静态时默认为类.class</span><br><span class="line">......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>法3：Lock锁</strong></p>
+<blockquote>
+<p>使用Lock接口，ReentrantLock是Lock的实现类。</p>
+</blockquote>
+<p>为了清晰的表达如何加锁和释放锁，JDK5之后提供了一个新的锁对象Lock</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">private Lock lock &#x3D; new ReentrantLock();</span><br><span class="line">public void run()&#123;</span><br><span class="line">	...</span><br><span class="line">    try&#123;</span><br><span class="line">        lock.lock();</span><br><span class="line">    	&#x2F;&#x2F;需要加锁的代码</span><br><span class="line">        ...</span><br><span class="line">    &#125;finally&#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="容器中线程安全"><a href="#容器中线程安全" class="headerlink" title="容器中线程安全"></a>容器中线程安全</h3><blockquote>
+<p>以下为线程安全的类，效率比较低</p>
+</blockquote>
+<p><code>StringBuffer sb = new StringBuffer();</code></p>
+<p><code>Vector&lt;String&gt; v = new Vector&lt;String&gt;();</code></p>
+<p><code>Hashtable&lt;String, String&gt; h = new Hashtable&lt;String, String&gt;();</code></p>
+<p>Vector是线程安全的，但一般也不用!<br>如果需要线程安全的，我们可以使用以下方法来替代Vector:</p>
+<p><code>List&lt;String&gt; list = Collections.synchronizedList(new ArrayList&lt;String&gt;());</code></p>
+<h2 id="死锁问题"><a href="#死锁问题" class="headerlink" title="死锁问题"></a>死锁问题</h2><ul>
+<li><strong>同步弊端</strong>：效率低，如果出现了同步嵌套，就容易产生死锁问题。</li>
+<li><strong>死锁</strong>：是指两个或两个以上的线程在执行的过程中，因争夺资源产生的一种互相等待现象。</li>
+</ul>
+<p>死锁趣味例子：中国人，美国人吃饭问题。正常情况：中国人两支筷子，美国人一刀和一叉；现在情况：中国人一筷一刀，美国人一叉和一筷。两个人互相等对方给对方资源，产生死锁。</p>
+<p>代码例子：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;定义两个锁</span><br><span class="line">public class Lock &#123;</span><br><span class="line">	public static final Object lock1 &#x3D; new Object();</span><br><span class="line">	public static final Object lock2 &#x3D; new Object();</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">&#x2F;&#x2F;死锁情况的线程类</span><br><span class="line">public class DieLock extends Thread &#123;</span><br><span class="line">	private boolean flag;</span><br><span class="line"></span><br><span class="line">	public DieLock(boolean flag) &#123;</span><br><span class="line">		this.flag &#x3D; flag;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		if (flag) &#123;</span><br><span class="line">			synchronized (Lock.lock1) &#123;</span><br><span class="line">				System.out.println(&quot;if 1&quot;);</span><br><span class="line">				synchronized (Lock.lock2) &#123;</span><br><span class="line">					System.out.println(&quot;if 2&quot;);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			synchronized (Lock.lock2) &#123;</span><br><span class="line">				System.out.println(&quot;else 2&quot;);</span><br><span class="line">				synchronized (Lock.lock1) &#123;</span><br><span class="line">					System.out.println(&quot;else 1&quot;);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">测试类</span><br><span class="line">public class TestDemo &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		DieLock t1 &#x3D; new DieLock(true);</span><br><span class="line">		DieLock t2 &#x3D; new DieLock(false);</span><br><span class="line">		t1.start();</span><br><span class="line">		t2.start();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="线程间通信"><a href="#线程间通信" class="headerlink" title="线程间通信"></a>线程间通信</h2><blockquote>
+<p>不同种类的线程间针对<strong>同一个资源</strong>的操作。</p>
+</blockquote>
+<h3 id="生产者消费者"><a href="#生产者消费者" class="headerlink" title="生产者消费者"></a>生产者消费者</h3><p>举例图解：<br><img src="https://i.imgur.com/zx2dyfa.png" alt="生产者消费者"></p>
+<p>例子：学生</p>
+<blockquote>
+<p>资源类：Student</p>
+<p>设置学生数据：SetThread（生产者）</p>
+<p>获取学生数据：GetThread（消费者）</p>
+<p>测试类：StudentDemo</p>
+</blockquote>
+<p>对线程的同一资源进行操作：在外界把这个数据创造出来，通过构造函数传递给其他的类。</p>
+<p><strong>思路：</strong></p>
+<ul>
+<li>A：生产者 先看是否有数据，有就等待，没有就生产，生产完之后通知消费者来消费</li>
+<li>B：消费者 先看是否有数据，有就消费，没有就等待。通知生产者生产数据</li>
+</ul>
+<p>为了处理这样的问题，Java就提供了一种机制，<strong>等待唤醒机制</strong> 。</p>
+<h3 id="等待唤醒"><a href="#等待唤醒" class="headerlink" title="等待唤醒"></a>等待唤醒</h3><p><code>Object</code>类中提供了三个方法：（这些方法的调用必须通过锁对象调用，而使用的锁对象是任意锁对象。所以，必须定义在Object类中。）</p>
+<ul>
+<li><code>wait()</code>:等待</li>
+<li><code>notify()</code>:唤醒单个线程</li>
+<li><code>notifyAll()</code>:唤醒所有线程</li>
+</ul>
+<p><strong>重要特征</strong>：</p>
+<ol>
+<li><code>wait()</code>方法之后就释放锁，将来唤醒的时候从这里开始执行</li>
+<li>唤醒并不表示有执行权，必须还是去抢执行权</li>
+</ol>
+<p>例子代码如下：（注意：不同种类的线程需要加同一把锁，这里选择学生类实例来作为锁）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;Student类&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class Student &#123;</span><br><span class="line">	String name;</span><br><span class="line">	int age;</span><br><span class="line">	boolean flag;&#x2F;&#x2F; 默认情况下没有数据，如果为true，说明有数据</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;设置学生数据线程类&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class SetThread implements Runnable &#123;</span><br><span class="line">	private Student s;</span><br><span class="line">	private int x &#x3D; 0;</span><br><span class="line"></span><br><span class="line">	public SetThread(Student s) &#123;</span><br><span class="line">		this.s &#x3D; s;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		while (true) &#123;</span><br><span class="line">			synchronized (s) &#123;</span><br><span class="line">				&#x2F;&#x2F; 判断有没有数据</span><br><span class="line">				if (s.flag) &#123;</span><br><span class="line">					try &#123;</span><br><span class="line">						s.wait();&#x2F;&#x2F;如果有就等待</span><br><span class="line">					&#125; catch (InterruptedException e) &#123;</span><br><span class="line">						e.printStackTrace();</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">				if (x % 2 &#x3D;&#x3D; 0) &#123;</span><br><span class="line">					s.name &#x3D; &quot;james&quot;;</span><br><span class="line">					s.age &#x3D; 32;</span><br><span class="line">				&#125; else &#123;</span><br><span class="line">					s.name &#x3D; &quot;kobe&quot;;</span><br><span class="line">					s.age &#x3D; 37;</span><br><span class="line">				&#125;</span><br><span class="line">				x++;</span><br><span class="line">				&#x2F;&#x2F; 修改标记</span><br><span class="line">				s.flag &#x3D; true;</span><br><span class="line">				&#x2F;&#x2F; 唤醒线程</span><br><span class="line">				s.notify();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;读取学生数据线程类&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class GetThread implements Runnable &#123;</span><br><span class="line">	private Student s;</span><br><span class="line"></span><br><span class="line">	public GetThread(Student s) &#123;</span><br><span class="line">		this.s &#x3D; s;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		while (true) &#123;</span><br><span class="line">			synchronized (s) &#123;</span><br><span class="line">				if (!s.flag) &#123;</span><br><span class="line">					try &#123;</span><br><span class="line">						s.wait();&#x2F;&#x2F;如果没有对象则等待</span><br><span class="line">					&#125; catch (InterruptedException e) &#123;</span><br><span class="line">						e.printStackTrace();</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">				System.out.println(s.name + &quot;:&quot; + s.age);</span><br><span class="line">				&#x2F;&#x2F; 修改标记</span><br><span class="line">				s.flag &#x3D; false;</span><br><span class="line">				&#x2F;&#x2F; 唤醒线程</span><br><span class="line">				s.notify();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;测试结果类&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class StudentDemo &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		&#x2F;&#x2F;创建资源</span><br><span class="line">		Student s &#x3D; new Student();</span><br><span class="line">		&#x2F;&#x2F;设置和获取的类</span><br><span class="line">		SetThread st &#x3D; new SetThread(s);</span><br><span class="line">		GetThread gt &#x3D; new GetThread(s);</span><br><span class="line">		&#x2F;&#x2F;线程类</span><br><span class="line">		Thread t1 &#x3D; new Thread(st);</span><br><span class="line">		Thread t2 &#x3D; new Thread(gt);</span><br><span class="line">		&#x2F;&#x2F;启动线程</span><br><span class="line">		t2.start();</span><br><span class="line">		t1.start();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>现象：严格交替打印</p>
+</blockquote>
+<p>对以上代码进行优化，使得设置获取功能封装到资源类中，并加同步机制。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;资源类Student&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class Student &#123;</span><br><span class="line">	private String name;</span><br><span class="line">	private int age;</span><br><span class="line">	private boolean flag;&#x2F;&#x2F; 表示有无对象</span><br><span class="line"></span><br><span class="line">	public synchronized void set(String name, int age) &#123;</span><br><span class="line">		if (this.flag) &#123;&#x2F;&#x2F; 有对象</span><br><span class="line">			try &#123;</span><br><span class="line">				this.wait();&#x2F;&#x2F; 等待</span><br><span class="line">			&#125; catch (InterruptedException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		&#x2F;&#x2F; 没有对象则设置对象信息</span><br><span class="line">		this.name &#x3D; name;</span><br><span class="line">		this.age &#x3D; age;</span><br><span class="line">		&#x2F;&#x2F; 修改标记</span><br><span class="line">		this.flag &#x3D; true;</span><br><span class="line">		&#x2F;&#x2F; 唤醒线程</span><br><span class="line">		this.notify();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public synchronized void get() &#123;</span><br><span class="line">		if (!this.flag) &#123;&#x2F;&#x2F; 没有对象</span><br><span class="line">			try &#123;</span><br><span class="line">				this.wait();&#x2F;&#x2F; 等待</span><br><span class="line">			&#125; catch (InterruptedException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		&#x2F;&#x2F; 获取数据</span><br><span class="line">		System.out.println(this.name + &quot;---&quot; + this.age);</span><br><span class="line">		&#x2F;&#x2F; 修改标记</span><br><span class="line">		this.flag &#x3D; false;</span><br><span class="line">		&#x2F;&#x2F; 唤醒线程</span><br><span class="line">		this.notify();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class SetThread implements Runnable &#123;</span><br><span class="line">	private Student s;</span><br><span class="line">	private int x &#x3D; 0;</span><br><span class="line"></span><br><span class="line">	public SetThread(Student s) &#123;</span><br><span class="line">		this.s &#x3D; s;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		while (true) &#123;</span><br><span class="line">			if (x % 2 &#x3D;&#x3D; 0) &#123;</span><br><span class="line">				s.set(&quot;james&quot;, 33);</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				s.set(&quot;wade&quot;, 35);</span><br><span class="line">			&#125;</span><br><span class="line">			x++;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class GetThread implements Runnable &#123;</span><br><span class="line">	private Student s;</span><br><span class="line"></span><br><span class="line">	public GetThread(Student s) &#123;</span><br><span class="line">		this.s &#x3D; s;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		while (true) &#123;</span><br><span class="line">			s.get();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;测试类&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class TestDemo &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		&#x2F;&#x2F; 创建资源</span><br><span class="line">		Student s &#x3D; new Student();</span><br><span class="line"></span><br><span class="line">		SetThread st &#x3D; new SetThread(s);</span><br><span class="line">		GetThread gt &#x3D; new GetThread(s);</span><br><span class="line">		Thread t1 &#x3D; new Thread(st);</span><br><span class="line">		Thread t2 &#x3D; new Thread(gt);</span><br><span class="line">		t1.start();</span><br><span class="line">		t2.start();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="线程状态转换图"><a href="#线程状态转换图" class="headerlink" title="线程状态转换图"></a>线程状态转换图</h2><p><img src="https://i.imgur.com/IsAjaln.png" alt="线程状态转换图"><br>常见的情况：<br>A:新建–就绪–运行–死亡<br>B:新建–就绪–运行–就绪–运行–死亡<br>C:新建–就绪–运行–其他阻塞–就绪–运行–死亡<br>D:新建–就绪–运行–同步阻塞–就绪–运行–死亡<br>E:新建–就绪–运行–等待阻塞–同步阻塞–就绪–运行–死亡</p>
+<h2 id="线程组"><a href="#线程组" class="headerlink" title="线程组"></a>线程组</h2><blockquote>
+<p>Java中使用ThreadGroup来表示线程组，它可以对一批线程进行分类管理<br>Java允许程序直接对线程组进行控制。</p>
+</blockquote>
+<p>线程默认情况下属于main线程组  </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;当前的线程对象当前的线程组的名字,也可以直接线程实例.getThreadGroup().getName()</span><br><span class="line">Thread.currentThread().getThreadGroup().getName();</span><br></pre></td></tr></table></figure>
+
+<p>修改线程组：创建一个线程组，创建其他线程的时候，把其他线程的组指定为我们自己新建线程组</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ThreadGroup tg &#x3D; new ThreadGroup(&quot;这是一个新的组&quot;);</span><br><span class="line">MyRunnable my &#x3D; new MyRunable();</span><br><span class="line">Thread t1 &#x3D; new Thread(tg,my,&quot;james&quot;);</span><br><span class="line">tg.setDaemon(true);&#x2F;&#x2F;表示该组线程都是守护线程，好处可以对一个组的线程进行统一控制操作，但较少使用</span><br></pre></td></tr></table></figure>
+
+<h2 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h2><p>程序启动一个新线程成本是比较高的，因为它涉及到要与操作系统进行交互。而使用线程池可以很好的提高性能，尤其是当程序中要使用大量生命周期很短的线程时，应该考虑使用线程池。</p>
+<ul>
+<li>线程池中的每个线程代码结束后，并不会死亡，而是再次回到线程池中成为空闲状态，等待下一个对象来使用。</li>
+<li>在JDK5之前，我们必须手动实现自己的线程池，从JDK5开始，java内置支持线程池。（查看Executors工厂类）</li>
+</ul>
+<p><strong>如何实现线程池？</strong><br>A：创建一个线程池对象，控制要创建几个线程对象（Executors类方法来创建）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public static ExecutorService newFixedThreadPool(int nThreads);</span><br></pre></td></tr></table></figure>
+<p>B：ExecutorService对象表示一个线程池，这种线程池的线程可以执行：<br>可以执行Runnable对象或者Callable对象代表的线程，做一个类可以实现Runnable接口<br>C：调用如下方法即可</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Future&lt;?&gt; submit(Runnable task)</span><br><span class="line">&lt;T&gt; Future&lt;T&gt; submit(Callable&lt;T&gt; task)</span><br></pre></td></tr></table></figure>
+<p>D：结束线程池</p>
+<p><strong>线程池代码演示如下：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class MyRunnable implements Runnable &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		for (int i &#x3D; 0; i &lt; 100; i++) &#123;</span><br><span class="line">			System.out.println(Thread.currentThread().getName() + &quot;:&quot; + i);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">import java.util.concurrent.ExecutorService;</span><br><span class="line">import java.util.concurrent.Executors;</span><br><span class="line"></span><br><span class="line">public class ExecutorsDemo &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		&#x2F;&#x2F; 创建一个线程池对象，控制要创建几个线程对象。</span><br><span class="line">		ExecutorService pool &#x3D; Executors.newFixedThreadPool(2);</span><br><span class="line">		&#x2F;&#x2F; 可以执行Runnable对象或者Callable对象代表的线程</span><br><span class="line">		pool.submit(new MyRunnable());</span><br><span class="line">		pool.submit(new MyRunnable());</span><br><span class="line">		&#x2F;&#x2F; 结束线程池</span><br><span class="line">		pool.shutdown();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="定时器"><a href="#定时器" class="headerlink" title="定时器"></a>定时器</h2><blockquote>
+<p>定时器是一个应用十分广泛的线程工具，可用于调度多个定时任务以后台线程的方式执行。</p>
+</blockquote>
+<p>java中，可以用过Timer（定时）和TimerTask（任务）来实现定义调度的功能。开发中使用Quartz，一个java编写的开源调度框架。  </p>
+<p>注：TimerTask是一个抽象类，需要继承并重写他的方法</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import java.util.Timer;</span><br><span class="line">import java.util.TimerTask;</span><br><span class="line"></span><br><span class="line">public class TimerDemo &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		&#x2F;&#x2F; 创建定时器对象</span><br><span class="line">		Timer t &#x3D; new Timer();</span><br><span class="line">		&#x2F;&#x2F; 3秒后执行爆炸任务</span><br><span class="line">		t.schedule(new MyTask(t), 3000);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 做一个任务</span><br><span class="line">class MyTask extends TimerTask &#123;</span><br><span class="line">	private Timer t;</span><br><span class="line"></span><br><span class="line">	public MyTask() &#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public MyTask(Timer t) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.t &#x3D; t;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		System.out.println(&quot;boom&quot;);</span><br><span class="line">		t.cancel();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>案例</strong>：在指定的时间删除指定目录</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class TimerTest &#123;</span><br><span class="line">	public static void main(String[] args) throws ParseException &#123;</span><br><span class="line">		Timer t &#x3D; new Timer();</span><br><span class="line">		String s &#x3D; &quot;2017-11-11 12:00:00&quot;;</span><br><span class="line">		SimpleDateFormat sdf &#x3D; new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;);</span><br><span class="line">		Date d &#x3D; sdf.parse(s);</span><br><span class="line">		t.schedule(new DeleteFolder(), d);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 创建一个任务</span><br><span class="line">class DeleteFolder extends TimerTask &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		File srcFolder &#x3D; new File(&quot;demo&quot;);</span><br><span class="line">		deleteFolder(srcFolder);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void deleteFolder(File srcFolder) &#123;</span><br><span class="line">		File[] fileArray &#x3D; srcFolder.listFiles();</span><br><span class="line">		if (fileArray !&#x3D; null) &#123;</span><br><span class="line">			for (File file : fileArray) &#123;</span><br><span class="line">				if (file.isDirectory()) &#123;</span><br><span class="line">					deleteFolder(file);</span><br><span class="line">				&#125; else &#123;</span><br><span class="line">					file.delete();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			srcFolder.delete();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h2><p><strong>1.多线程有几种实现方案，分别是哪几种？</strong><br>两种。<br>继承Thread类<br>实现Runnable接口<br>扩展一种：实现Callable接口。这个和线程池结合。</p>
+<p><strong>2.同步有几种方式，分别是什么？</strong><br>两种。同步代码块和同步方法。</p>
+<p><strong>3.启动一个线程使用run()还是start(),有什么区别</strong><br>start()<br>run():封装了被线程执行的代码，直接调用仅仅是普通方法的调用。<br>start()：启动线程，并由JVM自动调用run()方法。</p>
+<p><strong>4.sleep()和wait()方法的区别</strong><br>sleep：必须指定时间；不释放锁<br>wait：可以指定也可以不指定时间；释放锁</p>
+<p><strong>5.为什么wait(),notify(),notifyAll()等方法都定义在Object类中</strong><br>因为这些方法的调用时依赖于锁对象的，而同步代码块的锁对象是任意锁。而Object代表任意的对象，所以定义在这里。</p>
+<p><strong>6.线程的生命周期图</strong></p>
+]]></content>
+      <tags>
+        <tag>多线程</tag>
+        <tag>并发</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>深入理解java虚拟机笔记1</title>
+    <url>/2017/10/31/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%AC%94%E8%AE%B01/</url>
+    <content><![CDATA[<h2 id="Java内存区域与内存溢出异常"><a href="#Java内存区域与内存溢出异常" class="headerlink" title="Java内存区域与内存溢出异常"></a>Java内存区域与内存溢出异常</h2><p>java虚拟机在执行程序过程中，把 <strong>管理的内存</strong> 划分若干不同数据区域。<br><img src="https://i.imgur.com/pRuJpNj.png" alt=""></p>
+<a id="more"></a>
+
+<ol>
+<li><p><strong>程序计数器</strong></p>
+<ol>
+<li>内存较小空间；当前线程所执行的字节码的行号指示器。</li>
+<li>字节码解释器工作：改变计数器的值选取下一条需要执行的字节码指令，计数器功能有分支、循环、跳转、异常处理、线程恢复等。</li>
+<li><strong>多线程</strong>情况下，通过线程轮流切换并分配处理器执行时间。一个处理器内核只执行一条线程指令。每条线程需要一个独立的程序计数器。互不影响，独立存储的内存区域为 <strong>线程私有</strong> 的内存。（注：超线程处理器的cpu线程数不等于cpu的核心数）。<a href="https://zhidao.baidu.com/question/872330577606459452.html" target="_blank" rel="noopener" title="处理器几核几线程的意思">处理器几核几线程</a></li>
+<li>如果正在执行Native方法，则计数器值为空<code>Undefined</code>（注：Native方法：Java调用非Java代码的接口。方法的实现由非Java语言实现，比如C或C++。）</li>
+<li><strong>唯一一个</strong>在java虚拟机规范中<strong>没有规定</strong>任何<code>OutOfMemoryError</code>（内存溢出）情况的内存区域。</li>
+</ol>
+</li>
+<li><p><strong>java虚拟机栈</strong></p>
+<ol>
+<li><p><strong>线程私有</strong>，生命周期与线程相同</p>
+</li>
+<li><p>描述的是java方法执行的内存模型：方法在执行的同时创建一个<strong>栈帧</strong>，用于存储<strong>局部变量表、操作数栈、动态链接、方法出口</strong>等信息。</p>
+</li>
+<li><p>每个方法从调用到执行完成的过程，就对应一个栈帧在虚拟机栈中入栈到出栈的过程。</p>
+</li>
+<li><p><strong>局部变量表</strong>存放了<strong>编译期</strong>可知的</p>
+<ul>
+<li>基本数据类型（<code>byte char boolean short int long float double</code>）</li>
+<li>对象引用 </li>
+<li>returnAddress类型（指向了一条字节码指令的地址）</li>
+</ul>
+</li>
+<li><p>两种异常:1.如果线程请求的栈深度大于虚拟机所允许的深度。将抛出<code>StackOverflowError</code>异常；2.如果扩展时无法申请到足够的内存，就会抛出<code>OutOfMemoryError</code>异常。</p>
+</li>
+</ol>
+</li>
+<li><p><strong>本地方法栈</strong></p>
+<ol>
+<li>虚拟机栈为虚拟机执行java方法（也就是字节码）服务，而本地方法栈则为虚拟机使用到的Native方法服务。</li>
+<li>两种异常（同虚拟机栈）：<code>StackOverflowError</code> <code>OutOfMemoryError</code></li>
+</ol>
+</li>
+<li><p><strong>Java堆</strong></p>
+<ol>
+<li>内存最大的一块，<strong>线程共享</strong>，在虚拟机启动时创建</li>
+<li>存放<strong>对象实例</strong>，几乎所有对象实例都在这里分配内存</li>
+<li>垃圾回收器管理的主要区域，所以也叫 <strong>GC堆</strong></li>
+<li>可以处于物理上不连续的内存空间中，只要逻辑上连续即可</li>
+<li>如果堆无法再扩展时，<code>OutOfMemoryError</code></li>
+</ol>
+</li>
+<li><p><strong>方法区</strong></p>
+<ol>
+<li><strong>线程共享</strong> </li>
+<li>存储<strong>已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码</strong>等数据</li>
+<li>java虚拟机规范把方法区描述为堆的一个逻辑部分，但它有一个<strong>别名Non-Heap（非堆）</strong></li>
+<li>不需要连续的内存，可以选择固定大小，可扩展，可以选择不实现垃圾收集</li>
+<li>当方法区无法满足内存分配需求时，将抛出<code>OutOfMemoryError</code>异常</li>
+<li><strong>运行时常量池</strong>：方法区的一部分，用于存放编译期生成的各种字面量和符号引用。</li>
+</ol>
+</li>
+<li><p><strong>直接内存</strong></p>
+<ol>
+<li>不是虚拟机运行时数据区的一部分</li>
+<li>可以使用Native函数库直接分配堆外内存，避免了在java堆和Native堆中来回复制数据</li>
+</ol>
+</li>
+</ol>
+<h2 id="HotSpot虚拟机对象探秘"><a href="#HotSpot虚拟机对象探秘" class="headerlink" title="HotSpot虚拟机对象探秘"></a>HotSpot虚拟机对象探秘</h2><h3 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h3><p>虚拟机遇到一条new指令时：总结来说步骤：</p>
+<blockquote>
+<p>1）类加载检查，2）分配内存空间，3）初始化，4）设置对象头信息</p>
+</blockquote>
+<ol>
+<li>首先检查这个指令的参数是否能在<strong>常量池</strong>中定位到一个类的符号引用，并检查这个符号引用代表的类是否已被加载、解析和初始化过。如果没有，那么必须先执行相应的类加载过程。</li>
+<li>类加载检查通过后，虚拟机将为新生对象分配内存。内存大小在类加载完成后可完全确定，为对象分配空间的任务等同于把一块确定大小的内存从<strong>Java堆</strong>中划分出来。<br>分配方式有如下两种，<strong>选择哪种由java堆是否规整决定，而java堆是否规整由所采用的垃圾收集器是否带有压缩整理功能决定</strong>。<ol>
+<li><strong>指针碰撞</strong>：假设Java堆中内存是绝对规整的，所用过得放一边，没用过的放一边，中间放着一个指针作为分界点的指示器，则新对象所分配内存就是把那个指针向空间空间挪动一个对象大小的距离。</li>
+<li><strong>空闲列表</strong>：如果Java堆中内存不规整，已使用的内存和空闲内存相互交错，则虚拟机必须维护一个列表，记录哪些内存块是可用的，分配的时候从列表中找到一块足够大的空间划分给对象实例，并更新列表上的记录。</li>
+</ol>
+<strong>并发</strong>情况下，可能出现正在给对象A分配内存，指针还没来得及修改，对象B又同时使用原来的指针分配内存。<br><strong>解决方法</strong>：1对分配内存空间的动作进行同步处理，保证操作的原子性；2内存分配的动作按照线程划分在不同的空间中进行，即每个线程在Java堆中预先分配一小块内存（本地线程分配缓冲TLAB）。用完并分配新的TLAB的时候，才需要同步锁定。</li>
+<li>内存分配完成后，虚拟机将分配到的内存空间都初始化为零值（不包括对象头），保证了对象的实例字段在Java代码中可以不赋初始值就直接使用，程序能访问到这些字段的数据类型所对应的零值。</li>
+<li>虚拟机对对象进行必要的设置，例如：对象是哪个类的实例，如何找到类的元数据信息、对象的哈希码、对象的GC分代年龄等信息。信息存放在对象的对象头中。</li>
+<li>一般来说（字节码中是否跟随invokespecial指令决定），执行new指令之后会接着执行<init>方法，把对象按照程序员的意愿进行初始化，这样可用对象才算完全产生出来。</li>
+</ol>
+<h3 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h3><p>HotSpot中，对象在内存中存储的布局可以分为3块区域：</p>
+<blockquote>
+<p><strong>对象头、实例数据、对齐填充</strong>。</p>
+</blockquote>
+<ol>
+<li><p>对象头包括两部分信息，</p>
+<ol>
+<li>存储对象自身的<strong>运行时数据</strong>（如哈希吗、GC分代年龄、锁状态标志、线程持有的锁、 偏向线程ID、 偏向时间戳等。</li>
+<li>类型指针（对象指向它类元数据的指针），<strong>虚拟机通过这个指针来确定这个对象是哪个类的实例</strong>。如果对象是一个Java数组，那在对象头中还必须有一块用于记录数组长度的数据。</li>
+</ol>
+</li>
+<li><p>实例数据（对象真正存储的有效信息）</p>
+<ol>
+<li>程序代码中所定义的各种类型的字段内容。</li>
+<li>无论是从父类继承下来的，还是在子类中定义的，都需要记录起来。</li>
+<li>存储顺序会受到虚拟机分配策略参数（FieldsAllocationStyle）和字段在Java源码中定义顺序的影响。</li>
+</ol>
+</li>
+<li><p>对齐填充</p>
+<ol>
+<li>并不必然存在，没有特别含义，占位符作用。</li>
+<li>HotSpot VM的自动内存管理要求对象起始地址必须是8字节的整数倍，对象头部分正好是8字节的倍数，若对象实例数据部分没有对齐时，就需要通过对齐填充来补全。</li>
+</ol>
+</li>
+</ol>
+<h3 id="对象的访问定位"><a href="#对象的访问定位" class="headerlink" title="对象的访问定位"></a>对象的访问定位</h3><blockquote>
+<p>通过栈上的reference数据来操作堆上的具体对象<br>对象访问方式也是取决于虚拟机实现而定的。<br>目前主流的访问方式：句柄、直接指针。</p>
+</blockquote>
+<ol>
+<li><p>句柄</p>
+<ol>
+<li>堆中划分一块内存作为句柄池</li>
+<li>reference中存储的就是对象的句柄地址</li>
+<li>句柄中包含<strong>对象实例数据</strong>与<strong>类型数据</strong>各自的具体地址信息</li>
+<li>优势：reference中存储的是稳定的句柄地址，在对象被移动（垃圾收集时移动对象是非常普遍的行为）时只会改变句柄中的实例数据指针，而reference本身不需要修改。<br><img src="https://i.imgur.com/EiuG8Gd.png" alt="通过句柄访问对象"></li>
+</ol>
+</li>
+<li><p>直接指针</p>
+<ol>
+<li>若使用直接指针访问，Java堆对象的布局中就必须考虑如何放置访问类型数据的相关信息</li>
+<li>reference中存储的直接就是对象地址</li>
+<li>速度更快，它节省了一次指针定位的时间开销，由于对象的访问在Java中非常频繁，因此这类开销积少成多后也是一项非常可观的执行成本。 </li>
+<li>HotSpot使用直接指针访问。<br><img src="https://i.imgur.com/38gegU0.png" alt="通过直接指针访问对象"></li>
+</ol>
+</li>
+</ol>
+<h2 id="实战：OutOfMemoryError异常"><a href="#实战：OutOfMemoryError异常" class="headerlink" title="实战：OutOfMemoryError异常"></a>实战：OutOfMemoryError异常</h2><blockquote>
+<p>除了程序计数器外，其他几个运行时区域都有发生OutOfMemoryError异常的可能。</p>
+</blockquote>
+<h3 id="Java堆溢出"><a href="#Java堆溢出" class="headerlink" title="Java堆溢出"></a>Java堆溢出</h3><blockquote>
+<p>VM Args：-Xms20m-Xmx20m-XX：+HeapDumpOnOutOfMemoryError<br>限制Java堆20MB，不可扩展，即将堆的最小值Xms和最小值Xmx都设置为一样的<br>+HeapDumpOnOutOfMemoryError可以让虚拟机在出现内存溢出异常时Dump出当前的内存堆<br>转储快照以便事后进行分析。<br>异常测试：不断创建新的对象</p>
+</blockquote>
+<p>Java堆用于存储对象实例，只要不断地创建对象，并且保证GC Roots到对象之间有可达<br>路径来避免垃圾回收机制清除这些对象，那么在对象数量到达最大堆的容量限制后就会产生<br>内存溢出异常。</p>
+<h3 id="虚拟机栈和本地方法栈溢出"><a href="#虚拟机栈和本地方法栈溢出" class="headerlink" title="虚拟机栈和本地方法栈溢出"></a>虚拟机栈和本地方法栈溢出</h3><blockquote>
+<p>VM Args：-Xss128k<br>将栈内存容量设置为128k<br>异常测试：定义大量本地变量（局部变量），增大此变量表的长度，不停运行一个方法<br>异常测试：创建很多线程导致内存溢出</p>
+</blockquote>
+<ol>
+<li>HotSpot虚拟机中并不区分虚拟机栈和本地方法栈</li>
+<li>如果线程请求的栈深度大于虚拟机所允许的最大深度，将抛出StackOverflowError异常。</li>
+<li>如果虚拟机在扩展栈时无法申请到足够的内存空间，则抛出OutOfMemoryError异常。</li>
+<li>一些互相重叠的地方：当栈空间无法继续分配时，到底是内存太小，还是已使用的栈空间太大，其本质上只是对同一件事情的两种描述而已</li>
+<li>在单个线程下，无论是由于栈帧太大还是虚拟机栈容量太小，当内存无法分配的时候，虚拟机抛出的都是StackOverflowError异常。</li>
+<li>如果测试时不限于单线程，通过不断地建立线程的方式倒是可以产生内存溢出异常。但是这样产生的内存溢出异常与栈空间是否足够大并不存在任何联系，或者准确地说，在这种情况下，为每个线程的栈分配的内存越大，反而越容易产生内存溢出异常。</li>
+</ol>
+<h3 id="方法区和运行时常量池溢出"><a href="#方法区和运行时常量池溢出" class="headerlink" title="方法区和运行时常量池溢出"></a>方法区和运行时常量池溢出</h3><blockquote>
+<p>VM Args：-XX：PermSize=10M-XX：MaxPermSize=10M<br>JDK1.6之前版本，常量池分配在永久代内，通过-XX：PermSize和-XX：MaxPermSize限制方法区大小，从而间接限制其中常量池的容量<br>方法区用于存放Class的相关信息，如类名、 访问修饰符、 常量池、 字段描述、 方法描述<br>等。 对于这些区域的测试，基本的思路是运行时产生大量的类去填满方法区，直到溢出</p>
+</blockquote>
+<h3 id="本机直接内存溢出"><a href="#本机直接内存溢出" class="headerlink" title="本机直接内存溢出"></a>本机直接内存溢出</h3><blockquote>
+<p>VM Args：-Xmx20M-XX：MaxDirectMemorySize=10M</p>
+</blockquote>
+<p>由DirectMemory导致的内存溢出，一个明显的特征是在Heap Dump文件中不会看见明显<br>的异常，如果发现OOM之后Dump文件很小，而程序中又直接或间接使用了NIO，那就<br>可以考虑检查一下是不是这方面的原因。</p>
+]]></content>
+      <tags>
+        <tag>JVM</tag>
+        <tag>内存分配</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>简单的聊天室demo</title>
+    <url>/2017/07/04/%E7%AE%80%E5%8D%95%E7%9A%84%E8%81%8A%E5%A4%A9%E5%AE%A4demo/</url>
+    <content><![CDATA[<blockquote>
+<p>主要讲解网上聊天的基本原理，没有涉及到图形用户界面，这里用console终端进行展示</p>
+</blockquote>
+<p>&emsp;&emsp;聊天室的多线程的用处在于，我们不需要等待接收端展现数据就可以进行再一次的数据传输。这如同我们在微信上聊天，我们可以同时发很多表情包，而不用等待它展现在屏幕上。并且，可以实现发送和接收在一个屏幕上展示的功能。</p>
+<h2 id="发送端线程"><a href="#发送端线程" class="headerlink" title="发送端线程"></a>发送端线程</h2><p>&emsp;&emsp;首先，我们做一个发送端线程，这里的线程我们均使用实现Runnable接口的方法，请参见，<a href="http://blog.csdn.net/ninja_z/article/details/73356430" target="_blank" rel="noopener">多线程的实现方法</a>。</p>
+<a id="more"></a>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class SendThread implements Runnable &#123;</span><br><span class="line">	private DatagramSocket ds;</span><br><span class="line">	&#x2F;&#x2F; 使用外部传入Socket</span><br><span class="line">	public SendThread(DatagramSocket ds) &#123;</span><br><span class="line">		this.ds &#x3D; ds;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			&#x2F;&#x2F; 创建一个使用默认大小输入缓冲区的缓冲字符输入流</span><br><span class="line">			BufferedReader br &#x3D; new BufferedReader(new InputStreamReader(</span><br><span class="line">					System.in));</span><br><span class="line">			String line &#x3D; null;</span><br><span class="line">			while ((line &#x3D; br.readLine()) !&#x3D; null) &#123;&#x2F;&#x2F;读取输入的内容</span><br><span class="line">				if (&quot;886&quot;.equals(line)) &#123;&#x2F;&#x2F;如果是886就退出</span><br><span class="line">					break;</span><br><span class="line">				&#125;</span><br><span class="line">				byte[] bys &#x3D; line.getBytes();</span><br><span class="line">				&#x2F;&#x2F;将数据打包</span><br><span class="line">				DatagramPacket dp &#x3D; new DatagramPacket(bys, bys.length,</span><br><span class="line">						InetAddress.getByName(&quot;DESKTOP-RVPDLCN&quot;), 12306);</span><br><span class="line">				&#x2F;&#x2F;用Socket进行发送</span><br><span class="line">				ds.send(dp);</span><br><span class="line">			&#125;</span><br><span class="line">			ds.close();</span><br><span class="line">		&#125; catch (IOException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="接收端线程"><a href="#接收端线程" class="headerlink" title="接收端线程"></a>接收端线程</h2><p>接收端不需要关闭资源，一直接收数据</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class ReceiveThread implements Runnable &#123;</span><br><span class="line">	DatagramSocket ds;</span><br><span class="line">	&#x2F;&#x2F;使用外部传入的Socket</span><br><span class="line">	public ReceiveThread(DatagramSocket ds) &#123;</span><br><span class="line">		this.ds &#x3D; ds;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		while (true) &#123;&#x2F;&#x2F;无限接收</span><br><span class="line">			byte[] bys &#x3D; new byte[1024];</span><br><span class="line">			DatagramPacket dp &#x3D; new DatagramPacket(bys, bys.length);</span><br><span class="line">			try &#123;</span><br><span class="line">				ds.receive(dp);</span><br><span class="line">			&#125; catch (IOException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			String ip &#x3D; dp.getAddress().getHostAddress();</span><br><span class="line">			String s &#x3D; new String(dp.getData(), 0, dp.getLength());</span><br><span class="line">			System.out.println(&quot;from&quot; + ip + &quot;data is:&quot; + s);</span><br><span class="line">			&#x2F;&#x2F; 接收端一直开着等待接收数据，不需要关闭</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>用于控制两个线程的开启，使得在一个窗口中展现发送和接收的效果</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class ChatRoom &#123;</span><br><span class="line">	public static void main(String[] args) throws SocketException &#123;</span><br><span class="line">		&#x2F;&#x2F;创建两个Socket一个用于发送，一个用于接收</span><br><span class="line">		DatagramSocket dsSend &#x3D; new DatagramSocket();</span><br><span class="line">		DatagramSocket dsReceive &#x3D; new DatagramSocket(12306);</span><br><span class="line">		&#x2F;&#x2F;传入Socket并创建线程</span><br><span class="line">		SendThread st &#x3D; new SendThread(dsSend);</span><br><span class="line">		ReceiveThread rt &#x3D; new ReceiveThread(dsReceive);</span><br><span class="line">		Thread t1 &#x3D; new Thread(st);</span><br><span class="line">		Thread t2 &#x3D; new Thread(rt);</span><br><span class="line">		&#x2F;&#x2F;开启线程</span><br><span class="line">		t1.start();</span><br><span class="line">		t2.start();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="效果展示"><a href="#效果展示" class="headerlink" title="效果展示"></a>效果展示</h2><p><img src="http://i.imgur.com/ZueYKua.png" alt="chatroom"></p>
+<p>&emsp;&emsp;输入一句话，显示来自哪个ip 内容是什么。我们可以看到这里自己跟自己聊。<br>&emsp;&emsp;那么如何实现多人聊天呢？很简单，这里用到ip地址分类中的广播地址，只要在发送端中，将<code>InetAddress.getByName(&quot;DESKTOP-RVPDLCN&quot;)</code>修改为<code>InetAddress.getByName(&quot;xxx.xxx.xxx.255&quot;)</code>即可实现多人聊天的功能。注意：这里的DESKTOP-RVPDLCN是我的电脑的名字，也可以改成其对应的ip地址，例如我的ip地址是192.168.3.7，那么我们只要将其改为192.168.3.255就能实现广播了。<br>&emsp;&emsp;或许你会觉得在一个窗体里发送和接收看起来很费劲，当然，那是因为我们这里没有使用将输入和显示窗体分开的技术，想象一下qq聊天的界面。这里主要讲解了其中的原理。</p>
+<blockquote>
+<p>记录了如何制作一个简易聊天室的过程。这里有前端技术以及其他的一些功能还需要进一步的学习。</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>多线程</tag>
+        <tag>计算机网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>网络编程</title>
+    <url>/2017/07/04/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</url>
+    <content><![CDATA[<blockquote>
+<p>“网络编程就是，通过网络互连的计算机在运行程序的时候，进行数据交换的过程”</p>
+</blockquote>
+<p>网络模型：</p>
+<ul>
+<li>OSI  &emsp;&emsp;&emsp; <a href="http://baike.baidu.com/item/OSI/5520" target="_blank" rel="noopener">开放系统互联Open System Interconnection</a> 定义计算机互联标准</li>
+<li>TCP/IP&emsp;&emsp; <a href="http://baike.baidu.com/item/TCP%2FIP协议" target="_blank" rel="noopener">由网络层的IP协议和传输层的TCP协议组成</a> 定义传输标准</li>
+</ul>
+<h2 id="OSI七层概述-从上到下"><a href="#OSI七层概述-从上到下" class="headerlink" title="OSI七层概述(从上到下)"></a>OSI七层概述(从上到下)</h2><ul>
+<li><strong>应用层：</strong> 终端应用如：FTP/HTTP(各种文件传输下载)，WEB(IE浏览)，QQ等电脑屏幕上看得见的东西。</li>
+<li><strong>表示层：</strong> 对接收的数据进行解释，加密解密，压缩解压等(计算机识别的东西变成人类识别的东西如图片声音)</li>
+<li><strong>会话层：</strong> 通过传输层(端口号：传输端口与接收端口)建立数据传输的通路。主要在你系统之间发起会话或者接收会话请求(设备之间需要互相认识可以是Ip也可以是MAC或者是主机名)</li>
+<li><strong>传输层：</strong> 定义一些传输数据的协议和端口号（www端口80等），如：TCP(传输控制协议，传输效率低，可靠性强，用于传输可靠性要求高，数据量大的数据)，UDP(用户数据报协议，与TCP特性相反，用于传输可靠性要求不高，数据量小的数据，如QQ聊天数据)。主要是将从下层接收的数据进行分段和传输，到达目的地址后再进行重组，常常把这一层数据叫做段。</li>
+<li><strong>网络层：</strong> 主要将从下层接收到的数据进行IP地址（例192.168.0.1）的封装和解封装。在这一层工作的设备是路由器，常把这层数据叫做数据包。</li>
+<li><strong>数据链路层：</strong> 主要将从物理层接收到的数据进行MAC地址(网卡的地址)的封装与解封装。常把这一层数据叫做帧。这一层工作的设备是交换机，数据通过交换机来传输。</li>
+<li><strong>物理层：</strong> 主要定义物理设备标准，如网线的接口类型，光纤的接口类型，各种传输介质的传输速率等。主要用来传输比特流，就是由01转化为电流弱强来进行传输，到达目的地后转换为01，这一层数据叫做比特。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="网络通信三要素"><a href="#网络通信三要素" class="headerlink" title="网络通信三要素"></a>网络通信三要素</h2><ul>
+<li><strong>IP地址</strong> </li>
+<li><strong>端口</strong></li>
+<li><strong>协议</strong></li>
+</ul>
+<h3 id="IP地址"><a href="#IP地址" class="headerlink" title="IP地址"></a>IP地址</h3><p><strong>网络中计算机的唯一标识。组成：网络号段+主机号段</strong><br>A类IP地址:第一段号码为网络号码，剩下的三段号码为本地计算机的号码 256*256*256<br>B类IP地址:前二段号码为网络号码，剩下的二段号码为本地计算机的号码<br>C类IP地址:前三段号码为网络号码，剩下的一段号码为本地计算机的号码</p>
+<p><strong>IP地址的分类：</strong><br>A类    1.0.0.1—127.255.255.254    </p>
+<ul>
+<li>10.X.X.X是私有地址(私有地址就是在互联网上不使用，而被用在局域网络中的地址)            </li>
+<li>127.X.X.X是保留地址，做循环测试用的。</li>
+</ul>
+<p>B类    128.0.0.1—191.255.255.254    </p>
+<ul>
+<li>172.16.0.0—172.31.255.255是私有地址。</li>
+<li>169.254.X.X是保留地址。</li>
+</ul>
+<p>C类    192.0.0.1—223.255.255.254    </p>
+<ul>
+<li>192.168.X.X是私有地址</li>
+</ul>
+<p>D类    224.0.0.1—239.255.255.254     </p>
+<p>E类    240.0.0.1—247.255.255.254    </p>
+<p><strong>特殊IP地址</strong><br>127.0.0.1 回环地址(本机)<br>x.x.x.255 广播地址<br>x.x.x.0   网络地址</p>
+<p><strong>两个DOS命令</strong><br>ipconfig 查看本机ip地址<br>ping + ip地址 测试本机与指定的ip地址间通信是否有问题  </p>
+<p><strong>InetAddress类 可获取ip</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class InetAddressDemo &#123;</span><br><span class="line">	public static void main(String[] args) throws UnknownHostException &#123;</span><br><span class="line">	InetAddress address &#x3D; InetAddress.getByName(&quot;DESKTOP-RVPDLCN&quot;);&#x2F;&#x2F; 根据主机名或者IP地址的字符串表示得到IP地址对象</span><br><span class="line">	&#x2F;&#x2F; 获取主机名和IP地址</span><br><span class="line">	String name &#x3D; address.getHostName();</span><br><span class="line">	String ip &#x3D; address.getHostAddress();</span><br><span class="line">	System.out.println(name + &quot;---&quot; + ip);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="端口号"><a href="#端口号" class="headerlink" title="端口号"></a>端口号</h3><p>正在运行的程序的标识<br>有效端口：0~65535，其中0~1024系统使用或保留端口。</p>
+<h3 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h3><p>通信的规则（在应用层上）  </p>
+<p><strong>UDP 如发短信</strong></p>
+<ul>
+<li>把数据打包</li>
+<li>数据有限制</li>
+<li>不建立连接</li>
+<li>速度快</li>
+<li>不可靠</li>
+</ul>
+<p><strong>TCP 如打电话</strong></p>
+<ul>
+<li>建立连接通道</li>
+<li>数据无限制</li>
+<li>速度慢</li>
+<li>可靠</li>
+</ul>
+<h2 id="Socket编程"><a href="#Socket编程" class="headerlink" title="Socket编程"></a>Socket编程</h2><p>Socket编程，网络编程，套接字编程。  Socket包含：<strong>IP地址+端口</strong><br>其本身不是协议，而是对协议的封装，或者说是一个可调用接口（api）</p>
+<h3 id="Socket原理机制"><a href="#Socket原理机制" class="headerlink" title="Socket原理机制"></a>Socket原理机制</h3><ol>
+<li>通信的两端都有Socket。</li>
+<li>网络通信其实就是Socket间的通信。</li>
+<li>数据在两个Socket间通过IO传输。</li>
+</ol>
+<h3 id="发送和接收数据"><a href="#发送和接收数据" class="headerlink" title="发送和接收数据"></a>发送和接收数据</h3><p>DatagramSocket(用来发送接收)&emsp;&emsp;DatagramPacket（用来打包）&emsp;&emsp;InetAddress（用来获取地址）</p>
+<h4 id="UDP案例"><a href="#UDP案例" class="headerlink" title="UDP案例"></a>UDP案例</h4><p>操作方法，先打开接收端，再打开发送端。当然如果不打开接收端也不会报错，因为UDP的特点就是不保证一定能收到数据。</p>
+<p><strong>UDP协议发送数据</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class SendDemo &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		&#x2F;&#x2F; 创建发送端Socket对象</span><br><span class="line">		DatagramSocket ds &#x3D; new DatagramSocket();</span><br><span class="line">		&#x2F;&#x2F; 创建数据并把数据打包</span><br><span class="line">		byte[] bys &#x3D; &quot;hello,udp,我来了&quot;.getBytes();</span><br><span class="line">		int length &#x3D; bys.length;</span><br><span class="line">		InetAddress address &#x3D; InetAddress.getByName(&quot;DESKTOP-RVPDLCN&quot;);</span><br><span class="line">		int port &#x3D; 10086;</span><br><span class="line">		&#x2F;&#x2F;传入的四个数据分别为，将要发送的数据，其长度，远程主机的IP地址和远程主机的端口号。</span><br><span class="line">		DatagramPacket dp &#x3D; new DatagramPacket(bys, length, address, port);</span><br><span class="line">		&#x2F;&#x2F; 调用Socket对象的发送方法发送数据包</span><br><span class="line">		ds.send(dp);</span><br><span class="line">		&#x2F;&#x2F; 释放资源</span><br><span class="line">		ds.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>UDP协议接收数据</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class ReceiveDemo &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		&#x2F;&#x2F; 创建接收端Socket对象</span><br><span class="line">		DatagramSocket ds &#x3D; new DatagramSocket(10086);</span><br><span class="line">		&#x2F;&#x2F; 创建一个数据包（接收容器）</span><br><span class="line">		byte[] bys &#x3D; new byte[1024];</span><br><span class="line">		int length &#x3D; bys.length;</span><br><span class="line">		DatagramPacket dp &#x3D; new DatagramPacket(bys, length);</span><br><span class="line">		&#x2F;&#x2F; 调用Socket对象的接收方法接收数据</span><br><span class="line">		ds.receive(dp);&#x2F;&#x2F; 阻塞式</span><br><span class="line">		&#x2F;&#x2F; 解析数据包，并显示在控制台,获取对方的ip</span><br><span class="line">		InetAddress address &#x3D; dp.getAddress();</span><br><span class="line">		String ip &#x3D; address.getHostAddress();</span><br><span class="line">		byte[] bys2 &#x3D; dp.getData();</span><br><span class="line">		int len &#x3D; dp.getLength();</span><br><span class="line">		String s &#x3D; new String(bys2, 0, len);</span><br><span class="line">		System.out.println(ip + &quot;:&quot; + s);</span><br><span class="line">		&#x2F;&#x2F; 释放资源</span><br><span class="line">		ds.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>以下对代码进行优化，使用链式编程等技巧</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class SendDemo2 &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		DatagramSocket ds &#x3D; new DatagramSocket();</span><br><span class="line">		byte[] bys &#x3D; &quot;helloworld&quot;.getBytes();</span><br><span class="line">		DatagramPacket dp &#x3D; new DatagramPacket(bys, bys.length,</span><br><span class="line">				InetAddress.getByName(&quot;DESKTOP-RVPDLCN&quot;), 12345);</span><br><span class="line">		ds.send(dp);</span><br><span class="line">		ds.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class ReceiveDemo2 &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		DatagramSocket ds &#x3D; new DatagramSocket(12345);</span><br><span class="line">		byte[] bys &#x3D; new byte[1024];</span><br><span class="line">		DatagramPacket dp &#x3D; new DatagramPacket(bys, bys.length);</span><br><span class="line">		ds.receive(dp);</span><br><span class="line">		String ip &#x3D; dp.getAddress().getHostAddress();</span><br><span class="line">		String s &#x3D; new String(dp.getData(), 0, dp.getLength());</span><br><span class="line">		System.out.println(&quot;from&quot; + ip + &quot;data is:&quot; + s);</span><br><span class="line">		ds.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>使用键盘录入进行数据传输</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class SendDemo2 &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		DatagramSocket ds &#x3D; new DatagramSocket();</span><br><span class="line">		&#x2F;&#x2F; 封装键盘录入数据</span><br><span class="line">		BufferedReader br &#x3D; new BufferedReader(new InputStreamReader(System.in));</span><br><span class="line">		String line &#x3D; null;</span><br><span class="line">		while ((line &#x3D; br.readLine()) !&#x3D; null) &#123;</span><br><span class="line">			if (&quot;886&quot;.equals(line)) &#123;</span><br><span class="line">				break;</span><br><span class="line">			&#125;</span><br><span class="line">			byte[] bys &#x3D; line.getBytes();</span><br><span class="line">			DatagramPacket dp &#x3D; new DatagramPacket(bys, bys.length,</span><br><span class="line">					InetAddress.getByName(&quot;DESKTOP-RVPDLCN&quot;), 12346);</span><br><span class="line">                    &#x2F;&#x2F;如果想让所有人知道，可以改为广播地址xxx.xxx.xxx.255</span><br><span class="line">			ds.send(dp);</span><br><span class="line">		&#125;</span><br><span class="line">		ds.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;</span><br><span class="line">public class ReceiveDemo2 &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		DatagramSocket ds &#x3D; new DatagramSocket(12346);</span><br><span class="line">		while (true) &#123;</span><br><span class="line">			byte[] bys &#x3D; new byte[1024];</span><br><span class="line">			DatagramPacket dp &#x3D; new DatagramPacket(bys, bys.length);</span><br><span class="line">			ds.receive(dp);</span><br><span class="line">			String ip &#x3D; dp.getAddress().getHostAddress();</span><br><span class="line">			String s &#x3D; new String(dp.getData(), 0, dp.getLength());</span><br><span class="line">			System.out.println(&quot;from&quot; + ip + &quot;data is:&quot; + s);</span><br><span class="line">			&#x2F;&#x2F; 接收端一直开着等待接收数据，不需要关闭</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>小例子：</strong> 使用多线程及UDP协议完成聊天室，详情见下次博客</p>
+<h4 id="TCP案例"><a href="#TCP案例" class="headerlink" title="TCP案例"></a>TCP案例</h4><p>客户端键盘录入数据，服务器输出到控制台</p>
+<p>TCP需要保持连接通道，所以必须先开启接收端再开启发送端。这里我们先写一个服务器端。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class ClientDemo &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		Socket s &#x3D; new Socket(&quot;10.202.198.103&quot;, 6666);</span><br><span class="line">		&#x2F;&#x2F; 键盘录入</span><br><span class="line">		BufferedReader br &#x3D; new BufferedReader(new InputStreamReader(System.in));</span><br><span class="line">		&#x2F;&#x2F; 把通道内的流给包装一下</span><br><span class="line">		BufferedWriter bw &#x3D; new BufferedWriter(new OutputStreamWriter(</span><br><span class="line">				s.getOutputStream()));</span><br><span class="line">		String line &#x3D; null;</span><br><span class="line">		while ((line &#x3D; br.readLine()) !&#x3D; null) &#123;</span><br><span class="line">			&#x2F;&#x2F; 键盘录入数据要自定义结束标记</span><br><span class="line">			if (&quot;886&quot;.equals(line)) &#123;</span><br><span class="line">				break;</span><br><span class="line">			&#125;</span><br><span class="line">			bw.write(line);</span><br><span class="line">			&#x2F;&#x2F;行分隔符</span><br><span class="line">			bw.newLine();</span><br><span class="line">			bw.flush();</span><br><span class="line">		&#125;</span><br><span class="line">		&#x2F;&#x2F; 释放资源</span><br><span class="line">		s.close();</span><br><span class="line">		&#x2F;&#x2F; br.close(); 有结束标记了不需要关闭</span><br><span class="line">		&#x2F;&#x2F; bw.close(); s关了，bw必关了</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>客户端</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class ServerDemo &#123;</span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		&#x2F;&#x2F; 创建Socket对象</span><br><span class="line">		ServerSocket ss &#x3D; new ServerSocket(6666);</span><br><span class="line">		&#x2F;&#x2F; 监听客户端连接</span><br><span class="line">		Socket s &#x3D; ss.accept();</span><br><span class="line">		String ip &#x3D; s.getInetAddress().getHostAddress();</span><br><span class="line">		&#x2F;&#x2F; 包装通道内的流</span><br><span class="line">		BufferedReader br &#x3D; new BufferedReader(new InputStreamReader(</span><br><span class="line">				s.getInputStream()));</span><br><span class="line">		String line &#x3D; null;</span><br><span class="line">		while ((line &#x3D; br.readLine()) !&#x3D; null) &#123;</span><br><span class="line">			System.out.println(ip + &quot;---&quot; + line);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		s.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先打开接收端（服务器端）再打开发送端（服务器端），并输入信息。最终效果如下：</p>
+<p><img src="http://i.imgur.com/znUJ9I3.png" alt="">)<img src="http://i.imgur.com/WKDbuQR.png" alt=""></p>
+<p>当然，tcp更多的用于文件例如图片传输，但原理是一样的。</p>
+<blockquote>
+<p>记录了学习网络编程的基础知识</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>计算机网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>年轻就是要折腾</title>
+    <url>/2017/07/02/%E5%B9%B4%E8%BD%BB%E5%B0%B1%E6%98%AF%E8%A6%81%E6%8A%98%E8%85%BE/</url>
+    <content><![CDATA[<blockquote>
+<p>折腾是对梦想的尊重，是对学习的热情。</p>
+</blockquote>
+<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><p>&emsp;&emsp;想来搭建博客加上纠结以及折腾的时间也有三四天吧。故事要从前一阵子说起吧，当时在朋友圈里看到一个已经毕业的师哥说他个人博客开通了打赏功能（意思当然是开玩笑的让大家给他打赏），就特意跑去他的个人博客去看了下，用的是next中的一款主题（公认的简洁最受欢迎的主题）。当时就想着个人博客还需要域名挺麻烦的，也没有搭建的想法。<br>&emsp;&emsp;后来，由于暑假的到来，想着这暑假也是一个充电的好机会，就开始在CSDN上记录一些东西。学习技术免不了查找资料，突然发现个人博客还挺常见的，似乎是一种潮流。于是就跑去知乎（毕竟是大佬云集的地方）特意查了下有关个人博客的东西。满屏的hexo+github，大概是这样的一些教程：<a href="https://zhuanlan.zhihu.com/p/26625249" target="_blank" rel="noopener">GitHub+Hexo 搭建个人网站详细教程</a> and <a href="https://zhuanlan.zhihu.com/p/25471760" target="_blank" rel="noopener">教你免费搭建个人博客，Hexo&amp;Github</a> 。于是就开始看起来。其实教程属于傻瓜式教程啦，基本每一步都非常的详细。说到这里，也是很佩服这些大佬和有心人，那么多图片那么多链接以及说明文，只有认真写过良心博客的人才知道多么的费劲费事吧。当然这点也是我现在明白并加以养成下去的习惯—写博客的过程也是知识巩固的过程，写说明文的过程，也是培养自己的表达能力，至于图片…你们懂得，除了最重要的一点让读者能够易懂之外，就是为了美观啦~（此处应该有图片^_^）当然更重要的一点，培养自己的耐心，这也是我在学习生活过程当中要加强的一点。</p>
+<h2 id="选择"><a href="#选择" class="headerlink" title="选择"></a>选择</h2><p>&emsp;&emsp;其实呢，我一开始就选的是现在这个主题BeanTech，<a href="https://github.com/YenYuHsuan/hexo-theme-beantech" target="_blank" rel="noopener">这里附上github的源码</a>。当然这个模板归根溯源要回到<a href="https://github.com/paramountNinja/Huxpro.github.io" target="_blank" rel="noopener">Hux</a>的主题。在这里也感谢二位。然而，我却在这两者之间来回纠结替换了好久，以至于我已经熟练地掌握了整个搭建的过程，包括一些Hexo，Jekyll的使用方法以及各自的文件夹架构，当然这是后话了。那么纠结的原因，一个主要是，我喜欢BeanTech的阅读文章时右边的目录同时又喜欢Hux的Kramdown的类github风格的编译器。（但凡我前端技术好一点，我就可以把他们两个结合起来，就不用纠结了。）然而问题就是Hux（Jekyll）需要使用的是js来写目录，而BeanTech（Hexo）使用的是node.js来写的，而我不会这两者的转化。当然，我也试过在网上找plugins来实现目录的功能。然而也已失败而告终，究其原因，好像是因为Jekyll最后的文章页面，是好几个html拼接而成的，尝试了n次也没能将其拼接成功后的js代码连接上。当然这个过程中也不是一无所获的，也发现了很多优秀的生成目录的开源代码，例如：<a href="https://github.com/i5ting/i5ting_ztree_toc" target="_blank" rel="noopener">ztree_toc</a> and <a href="http://git.oschina.net/yaohaixiao/AutocJS" target="_blank" rel="noopener">AutocJS</a>等等。最后我依然选择了BeanTech，并将其代码块加上了高亮的效果，不让其黑色背景白色文字看起来过于呆板。选择他的原因当然是因为好看的目录以及其他的一些新增的小功能。<br>&emsp;&emsp;有时候总感觉自己的追求完美和一种自学查找资料的能力之前产生了矛盾，自学能力或者说解决问题的能力一直是我所想要提高的地方。虽然纠结浪费了很多时间，但与其说是浪费时间，倒不如说是在做自己感兴趣的事，不断汲取新知识的过程。</p>
+<h2 id="有感"><a href="#有感" class="headerlink" title="有感"></a>有感</h2><p>&emsp;&emsp;其实，很久以来都没有记东西的习惯，自己的文字功底也大不如前，但文字也是一种能力的体现，是一种性格的磨练。博客的搭建可能就告一段落了，之后我的重心将会放在笔记本身。几天来，收获也是颇多，比如，我发现了一个和知乎一样神奇的app—简书（虽然以前看到过，但没怎么用过）；比如，我知道了英语的重要性，无论是看github上的readme或者是stackflow上看一些错误的解决或者是看官方的使用文档。克服心理恐惧，读多了，感兴趣了，就有动力读下去了，就真的懂了；比如，前文中提到的各种小工具，优秀的开源代码；比如让我回顾了git的语法并重新拾起github，在之后的日子里准备利用起来。<br>&emsp;&emsp;搭建博客，这只是一个学习生活的开头，接下来…</p>
+<blockquote>
+<p>既然选择了远方，便只顾风雨兼程，相信厚积薄发的力量</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>生活</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>统计当前网站在线用户信息的简单实例</title>
+    <url>/2017/07/02/%E7%BB%9F%E8%AE%A1%E5%BD%93%E5%89%8D%E7%BD%91%E7%AB%99%E5%9C%A8%E7%BA%BF%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E4%BE%8B/</url>
+    <content><![CDATA[<blockquote>
+<p>“本例基于Web基础的servlet展开，虽然较简单，但对Web的三大组件进行了结合。 ”</p>
+</blockquote>
+<p><strong>主要实现三个功能</strong>：</p>
+<ul>
+<li>提供用户登录界面，提供注销功能。</li>
+<li>显示当前网站的所有登录用户信息 </li>
+<li>管理员可以踢除指定的登录用户</li>
+</ul>
+<a id="more"></a>
+
+<p><strong>友情提示：</strong> Web的三大组件都需要在web.xml中配置哦！</p>
+<h2 id="登录界面-login-jsp"><a href="#登录界面-login-jsp" class="headerlink" title="登录界面 login.jsp"></a>登录界面 login.jsp</h2><p>这里比较简单，假设什么人都能进入，不涉及数据库</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;form action&#x3D;&quot;$&#123;pageContext.request.contextPath &#125;&#x2F;LoginServlet&quot; method&#x3D;&quot;post&quot;&gt;</span><br><span class="line">	用户名:&lt;input type&#x3D;&quot;text&quot; name&#x3D;&quot;username&quot; &#x2F;&gt;&lt;br&gt;</span><br><span class="line">	&lt;input type&#x3D;&quot;submit&quot; value&#x3D;&quot;提交&quot;&#x2F;&gt;</span><br><span class="line">&lt;&#x2F;form&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="处理登录请求-LoginServlet"><a href="#处理登录请求-LoginServlet" class="headerlink" title="处理登录请求 LoginServlet"></a>处理登录请求 LoginServlet</h2><p>由于什么人都能进入，所有我们省去了校验用户名等操作，即假设登录成功。我们将拿到的用户数据放到session域中。核心代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">String username &#x3D; request.getParameter(&quot;username&quot;);</span><br><span class="line">HttpSession session  &#x3D; request.getSession(true);</span><br><span class="line">session.setAttribute(&quot;user&quot;, username);</span><br><span class="line">&#x2F;&#x2F; 把登录用户的IP地址存放到session中</span><br><span class="line">session.setAttribute(&quot;ip&quot;, request.getRemoteHost());</span><br><span class="line">&#x2F;&#x2F; 跳转到用户主页</span><br><span class="line">response.sendRedirect(request.getContextPath() + &quot;&#x2F;index.jsp&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>此时我们已经将用户的数据存入到了session域当中去了。但如果我们的用户名是中文的很有可能出现乱码。这里我们需要添加一个解决post乱码的代码。<br>在最前面加上：<code>request.setCharacterEncoding(&quot;utf-8&quot;);</code>很显然，这句代码是复用的，每一个servlet都需要它的支持，这时候我们想到另一种一劳永逸的方法，就是添加一个过滤器，对其进行过滤，解决代码复写问题，详细代码见<a href="http://blog.csdn.net/ninja_z/article/details/73801005#t4" target="_blank" rel="noopener">post/get乱码过滤器解决方案</a></p>
+<h3 id="监听器-OnLineListener"><a href="#监听器-OnLineListener" class="headerlink" title="监听器 OnLineListener"></a>监听器 OnLineListener</h3><p>由于我们需要得到所有在线用户的信息，就需要监听user属性名称的增加。响应的接口的介绍参见<a href="http://blog.csdn.net/ninja_z/article/details/73826354#t10" target="_blank" rel="noopener">HttpSessionAttributeLisener</a><br>下面是该监听器的具体代码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class OnLineListener implements HttpSessionAttributeListener &#123;</span><br><span class="line">	&#x2F;**</span><br><span class="line">	 * 当用户登录成功后,会执行session.setAttribute(&quot;user&quot;, username); 该方法用于监听用户的user属性的添加</span><br><span class="line">	 *&#x2F;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void attributeAdded(HttpSessionBindingEvent event) &#123;</span><br><span class="line">		&#x2F;&#x2F; 得到属性名</span><br><span class="line">		String name &#x3D; event.getName();</span><br><span class="line">		ServletContext context &#x3D; event.getSession().getServletContext();</span><br><span class="line">		&#x2F;&#x2F;如果取出的属性名是user的话，即拿到用户名</span><br><span class="line">		if (&quot;user&quot;.equals(name)) &#123;</span><br><span class="line">			&#x2F;&#x2F; 同步的代码块,为了避免多个登录用户同时操作onLine数据时引发的并发问题</span><br><span class="line">			synchronized (OnLineListener.class) &#123;</span><br><span class="line">				&#x2F;&#x2F; 1 把当前登录的session对象封装到map集合中</span><br><span class="line">				&#x2F;&#x2F; 1.1 先从context域中获取session数据</span><br><span class="line">				Map&lt;String, HttpSession&gt; onLine &#x3D; (Map&lt;String, HttpSession&gt;) context</span><br><span class="line">						.getAttribute(&quot;onLine&quot;);</span><br><span class="line">				&#x2F;&#x2F; 1.2 如果网站第一个登录用户,onLine为null,这时新建一个map集合</span><br><span class="line">				if (onLine &#x3D;&#x3D; null) &#123;</span><br><span class="line">					onLine &#x3D; new HashMap&lt;String, HttpSession&gt;();</span><br><span class="line">				&#125;</span><br><span class="line">				&#x2F;&#x2F; 1.3把当前用户的session存入map集合</span><br><span class="line">				HttpSession session &#x3D; event.getSession();</span><br><span class="line">				onLine.put(session.getId(), session);</span><br><span class="line">				&#x2F;&#x2F; 2 把封装好的map保存到context域中</span><br><span class="line">				context.setAttribute(&quot;onLine&quot;, onLine);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void attributeReplaced(HttpSessionBindingEvent event) &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	&#x2F;&#x2F;这部分代码可先不看，阅读之后内容回头再看</span><br><span class="line">	@Override</span><br><span class="line">	public void attributeRemoved(HttpSessionBindingEvent event) &#123;</span><br><span class="line">		String name &#x3D; event.getName();</span><br><span class="line">		ServletContext context &#x3D; event.getSession().getServletContext();</span><br><span class="line">		String sessionId &#x3D; event.getSession().getId();</span><br><span class="line">		if (&quot;user&quot;.equals(name)) &#123;</span><br><span class="line">			&#x2F;&#x2F; 1 获取context域中的map集合</span><br><span class="line">			Map&lt;String, HttpSession&gt; onLine &#x3D; (Map&lt;String, HttpSession&gt;) context</span><br><span class="line">					.getAttribute(&quot;onLine&quot;);</span><br><span class="line">			&#x2F;&#x2F; 2 移除对应的session对象</span><br><span class="line">			onLine.remove(sessionId);</span><br><span class="line">			&#x2F;&#x2F; 3 把修改后的map保存到context域中</span><br><span class="line">			context.setAttribute(&quot;onLine&quot;, onLine);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>web.xml中的配置</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;listener&gt;</span><br><span class="line">	&lt;listener-class&gt;cn.ninja.web.OnLineListener&lt;&#x2F;listener-class&gt;</span><br><span class="line">&lt;&#x2F;listener&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong> 这里的编程技巧，onLine是先取再判断是否为空，空则说明是第一个用户，在新建一个Map。这样的写法完美的避免了每一次进入监听器都会重新建立一个Map的错误。并且，这里选择将Map放入context域中，其原因是context都能取得到，而session虽然也能取得到，但其每一个session对应一个用户使其并不合适放所有用户的集合。</p>
+<h2 id="网站主页-index-jsp"><a href="#网站主页-index-jsp" class="headerlink" title="网站主页 index.jsp"></a>网站主页 index.jsp</h2><p>主要包括显示用户名，安全退出功能，查看在线登录用户功能</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">欢迎回来,$&#123;sessionScope.user &#125;,</span><br><span class="line">&lt;a href&#x3D;&quot;$&#123;pageContext.request.contextPath &#125;&#x2F;LogoutServlet&quot;&gt;【安全退出】&lt;&#x2F;a&gt;&lt;br&#x2F;&gt;</span><br><span class="line">&lt;a href&#x3D;&quot;$&#123;pageContext.request.contextPath &#125;&#x2F;GetOnLineServlet&quot;&gt;【查看在线登录用户】&lt;&#x2F;a&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="处理查看在线用户请求-GetOnLineServlet"><a href="#处理查看在线用户请求-GetOnLineServlet" class="headerlink" title="处理查看在线用户请求 GetOnLineServlet"></a>处理查看在线用户请求 GetOnLineServlet</h2><p>我们想要获得在线用户的登录名，ip地址，登录时间，最后访问时间。但是，我们之前获得的Map没办法直接取到这些值。所以我们这里先定义一个JavaBean取名为OnLineBean，来封装这些属性：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">private String sessionId;&#x2F;&#x2F; session对象的id，它的作用我们之后再讲</span><br><span class="line">private String name;&#x2F;&#x2F; 登录名</span><br><span class="line">private String ip;&#x2F;&#x2F; ip</span><br><span class="line">private String loginTime;&#x2F;&#x2F; 登录时间</span><br><span class="line">private String lastTime;&#x2F;&#x2F; 最后访问时间</span><br><span class="line">&#x2F;&#x2F;getter setter方法</span><br></pre></td></tr></table></figure>
+
+<p>以下我们给出GetOnLineServlet的核心代码，用于获得每个属性，并转发到在线用户信息界面</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 1从context域中取出map集合</span><br><span class="line">Map&lt;String, HttpSession&gt; onLine &#x3D; (Map&lt;String, HttpSession&gt;) this</span><br><span class="line">		.getServletContext().getAttribute(&quot;onLine&quot;);</span><br><span class="line">&#x2F;&#x2F; 2 创建一个新的List集合</span><br><span class="line">List&lt;OnLineBean&gt; list &#x3D; new ArrayList&lt;OnLineBean&gt;();</span><br><span class="line">SimpleDateFormat sdf &#x3D; new SimpleDateFormat(&quot;yyyy-MM-dd hh:mm:ss&quot;);</span><br><span class="line">&#x2F;&#x2F; 3遍历map集合</span><br><span class="line">if (onLine !&#x3D; null) &#123;</span><br><span class="line">	synchronized (GetOnLineServlet.class) &#123;</span><br><span class="line">		for (Entry&lt;String, HttpSession&gt; entry : onLine.entrySet()) &#123;</span><br><span class="line">			OnLineBean bean &#x3D; new OnLineBean();</span><br><span class="line">			bean.setSessionId(entry.getKey());</span><br><span class="line">			HttpSession session &#x3D; entry.getValue();</span><br><span class="line">			bean.setName((String) session.getAttribute(&quot;user&quot;));</span><br><span class="line">			bean.setIp((String) session.getAttribute(&quot;ip&quot;));</span><br><span class="line">			bean.setLoginTime(sdf.format(new Date(session</span><br><span class="line">					.getCreationTime())));</span><br><span class="line">			bean.setLastTime(sdf.format(new Date(session</span><br><span class="line">					.getLastAccessedTime())));</span><br><span class="line">			&#x2F;&#x2F; 把封装好的javabean放入list集合中</span><br><span class="line">			list.add(bean);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F; 4 把list转发到jsp页面中</span><br><span class="line">request.setAttribute(&quot;list&quot;, list);</span><br><span class="line">request.getRequestDispatcher(&quot;&#x2F;online.jsp&quot;).forward(request, response);</span><br></pre></td></tr></table></figure>
+
+<h2 id="在线用户列表页面-onLine-jsp"><a href="#在线用户列表页面-onLine-jsp" class="headerlink" title="在线用户列表页面 onLine.jsp"></a>在线用户列表页面 onLine.jsp</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;table align&#x3D;&quot;left&quot; border&#x3D;&quot;1&quot; width&#x3D;&quot;600px&quot;&gt;</span><br><span class="line">    	&lt;tr&gt;</span><br><span class="line">    		&lt;th&gt;编号&lt;&#x2F;th&gt;</span><br><span class="line">    		&lt;th&gt;登录名&lt;&#x2F;th&gt;</span><br><span class="line">    		&lt;th&gt;登录时间&lt;&#x2F;th&gt;</span><br><span class="line">    		&lt;th&gt;最后访问时间&lt;&#x2F;th&gt;</span><br><span class="line">    		&lt;th&gt;IP&lt;&#x2F;th&gt;</span><br><span class="line">    		&lt;th&gt;操作&lt;&#x2F;th&gt;</span><br><span class="line">    	&lt;&#x2F;tr&gt;</span><br><span class="line">  &lt;c:forEach items&#x3D;&quot;$&#123;requestScope.list &#125;&quot; var&#x3D;&quot;bean&quot; varStatus&#x3D;&quot;varSta&quot;&gt;</span><br><span class="line">    	&lt;tr&gt;</span><br><span class="line">    		&lt;td&gt;$&#123;varSta.count &#125;&lt;&#x2F;td&gt;</span><br><span class="line">    		&lt;td&gt;$&#123;bean.name &#125;&lt;&#x2F;td&gt;</span><br><span class="line">    		&lt;td&gt;$&#123;bean.loginTime &#125;&lt;&#x2F;td&gt;</span><br><span class="line">    		&lt;td&gt;$&#123;bean.lastTime &#125;&lt;&#x2F;td&gt;</span><br><span class="line">    		&lt;td&gt;$&#123;bean.ip &#125;&lt;&#x2F;td&gt;</span><br><span class="line">    		&lt;td&gt;&lt;a href&#x3D;&quot;$&#123;pageContext.request.contextPath &#125;&#x2F;KickOutServlet?sessionId&#x3D;$&#123;bean.sessionId &#125;&quot;&gt;移除&lt;&#x2F;a&gt;&lt;&#x2F;td&gt;</span><br><span class="line">    	&lt;&#x2F;tr&gt;</span><br><span class="line">  &lt;&#x2F;c:forEach&gt;  	</span><br><span class="line">&lt;&#x2F;table&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="踢人功能请求-KickOutServlet"><a href="#踢人功能请求-KickOutServlet" class="headerlink" title="踢人功能请求 KickOutServlet"></a>踢人功能请求 KickOutServlet</h2><p>由onLine.jsp 可知，发生踢人请求时，会传递一个sessionId的参数，这也就是为什么需要把它包装在OnLineBean中的原因。接着我们从Map中获得相应的session对象，并将其信息remove，最后重定向到查看在线用户的网页上来。<br>这里需要使用之前的那个OnLineListener监听器来删除一些信息。见attributeRemoved方法。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 1 接收到踢出的id</span><br><span class="line">String sessionId &#x3D; request.getParameter(&quot;sessionId&quot;);</span><br><span class="line">&#x2F;&#x2F; 2 强制注销指定id的用户</span><br><span class="line">Map&lt;String, HttpSession&gt; onLine &#x3D; (Map&lt;String, HttpSession&gt;) this</span><br><span class="line">		.getServletContext().getAttribute(&quot;onLine&quot;);</span><br><span class="line">&#x2F;&#x2F; 查找需要注销的session对象</span><br><span class="line">HttpSession session &#x3D; onLine.get(sessionId);</span><br><span class="line">if (session !&#x3D; null) &#123;</span><br><span class="line">	session.removeAttribute(&quot;user&quot;);&#x2F;&#x2F; 自动会调用监听器,移除map中的已经注销的用户信息</span><br><span class="line">	session.removeAttribute(&quot;ip&quot;);</span><br><span class="line">&#125;</span><br><span class="line">response.sendRedirect(request.getContextPath() + &quot;&#x2F;GetOnLineServlet&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>这样，我们就可以成功踢人啦~<br>慢着，如果到此为止的话，我们实现的是相互踢人，这显然是不合理的。应该拥有管理权限的人才能踢人哦。<br>所以呢，我们这里需要加一个过滤器，将不是管理员的人过滤掉，这里的管理员暂且就定为本地ip啦~</p>
+<h3 id="管理员过滤器-SecuryFilter"><a href="#管理员过滤器-SecuryFilter" class="headerlink" title="管理员过滤器 SecuryFilter"></a>管理员过滤器 SecuryFilter</h3><p>我们将这个过滤器主要用来对KickOutServlet进行过滤，也就是在执行这个请求前执行过滤器，如果是管理员就放行。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class SecuryFilter implements Filter &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void destroy() &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void doFilter(ServletRequest request, ServletResponse response,</span><br><span class="line">			FilterChain chain) throws IOException, ServletException &#123;</span><br><span class="line">		&#x2F;&#x2F;获得ip地址</span><br><span class="line">		String ip &#x3D; request.getRemoteHost();</span><br><span class="line">		response.setContentType(&quot;text&#x2F;html;charset&#x3D;utf-8&quot;);&#x2F;&#x2F;这句可以放进乱码过滤器</span><br><span class="line">		if (&quot;localhost&quot;.equals(ip) || &quot;127.0.0.1&quot;.equals(ip)) &#123;</span><br><span class="line">			&#x2F;&#x2F; 1管理员</span><br><span class="line">			chain.doFilter(request, response);</span><br><span class="line"></span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			&#x2F;&#x2F; 2非管理员</span><br><span class="line">			response.getWriter().write(&quot;别想删除了,你不是管理员&quot;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void init(FilterConfig filterConfig) throws ServletException &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>web.xml中对过滤器进行配置</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;filter&gt;</span><br><span class="line">	&lt;filter-name&gt;SecuryFilter&lt;&#x2F;filter-name&gt;</span><br><span class="line">	&lt;filter-class&gt;cn.ninja.web.SecuryFilter&lt;&#x2F;filter-class&gt;</span><br><span class="line">&lt;&#x2F;filter&gt;</span><br><span class="line">&lt;filter-mapping&gt;</span><br><span class="line">	&lt;filter-name&gt;SecuryFilter&lt;&#x2F;filter-name&gt;</span><br><span class="line">	&lt;url-pattern&gt;&#x2F;KickOutServlet&lt;&#x2F;url-pattern&gt;</span><br><span class="line">&lt;&#x2F;filter-mapping&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="用户的注销功能请求-LogoutServlet"><a href="#用户的注销功能请求-LogoutServlet" class="headerlink" title="用户的注销功能请求 LogoutServlet"></a>用户的注销功能请求 LogoutServlet</h2><p>用户注销，同样的会触发removeAttribute对应的监听器，这里即OnLineListener，所以不用再写啦~<br>最后重定向到登录界面。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * 用户注销,删除保存登录成功时session对象中的数据</span><br><span class="line"> *&#x2F;</span><br><span class="line">HttpSession session &#x3D; request.getSession(false);</span><br><span class="line">if (session !&#x3D; null) &#123;</span><br><span class="line">	session.removeAttribute(&quot;user&quot;);</span><br><span class="line">	session.removeAttribute(&quot;ip&quot;);</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;* 这里触发监听器 *&#x2F;</span><br><span class="line"></span><br><span class="line">response.sendRedirect(request.getContextPath() + &quot;&#x2F;login.jsp&quot;);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>到此，全部的功能都已经实现啦~虽然这是个简单的小案例，但涵盖的内容包括了Web的三大组件，以及过滤器监听器，特记录下来，对这块知识做个总结。</p>
+<blockquote>
+<p>“本次案例并没有使用多个ip去测，之后需要学习如何在一台电脑上虚拟多个局域网ip，来访问网站，以实现查看多个用户登录信息的测试”</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>Web基础</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Welcome</title>
+    <url>/2017/07/01/Welcome/</url>
+    <content><![CDATA[<blockquote>
+<p>“Start a new process， just now！ ”</p>
+</blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Ninja 的 Blog 就这么开通了。</p>
+<p>2017 年 7月，暑假真的到来了，是时候重新续上能量，好好的记录下学习与生活了！</p>
+<hr>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><p>故事即将开启…<br>fighting！</p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>拥抱七月及暑假的到来！</p>
+<p>—— Ninja 记于 2017.7.2</p>
+]]></content>
+      <tags>
+        <tag>生活</tag>
+      </tags>
+  </entry>
+</search>
